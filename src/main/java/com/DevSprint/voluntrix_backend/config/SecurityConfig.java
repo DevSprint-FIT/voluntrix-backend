@@ -16,9 +16,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF for APIs
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))  // Disable CSRF only for APIs
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                            "/swagger-ui/**", 
+                            "/v3/api-docs/**",
+                            "/swagger-ui.html"
+                        ).permitAll()
                         .requestMatchers("/api/public/**").permitAll() // Allow all requests under `/api/public/`
                         .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
                         .anyRequest().authenticated() // Require authentication for everything else
@@ -40,7 +45,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
-        return source; // Correct Return
+        return source;
     }
 
     @Bean

@@ -1,6 +1,6 @@
 package com.DevSprint.voluntrix_backend.repositories;
 
-import com.DevSprint.voluntrix_backend.models.Event;
+import com.DevSprint.voluntrix_backend.Entities.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

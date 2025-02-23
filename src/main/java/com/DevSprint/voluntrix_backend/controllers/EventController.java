@@ -1,6 +1,7 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
-import com.DevSprint.voluntrix_backend.models.Event;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import com.DevSprint.voluntrix_backend.Entities.Event;
 import com.DevSprint.voluntrix_backend.services.EventService;
 import org.springframework.web.bind.annotation.*;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/public/events")
+@SecurityRequirement(name = "bearerAuth")
 public class EventController {
     private final EventService eventService;
 

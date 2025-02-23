@@ -1,4 +1,4 @@
-package com.DevSprint.voluntrix_backend.models;
+package com.DevSprint.voluntrix_backend.Entities;
 
 import jakarta.persistence.*;
 import lombok.*;
