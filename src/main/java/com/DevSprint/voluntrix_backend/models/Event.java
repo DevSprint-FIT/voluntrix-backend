@@ -24,4 +24,10 @@ public class Event {
 
     @Column(nullable = false)
     private LocalDateTime eventDate;
+
+    public Event(String title, String description, LocalDateTime eventDate) {
+        this.title = title;
+        this.description = description;
+        this.eventDate = eventDate;
+    }
 }

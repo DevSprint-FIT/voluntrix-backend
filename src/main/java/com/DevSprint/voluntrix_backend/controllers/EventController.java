@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/events")
+@RequestMapping("/api/public/events")
 public class EventController {
     private final EventService eventService;
 
@@ -18,5 +18,10 @@ public class EventController {
     @GetMapping
     public List<Event> getEvents(){
         return eventService.getAllEvents();
+    }
+
+    @PostMapping
+    public Event createEvent(@RequestBody Event event) {
+        return eventService.createEvent(event);
     }
 }
