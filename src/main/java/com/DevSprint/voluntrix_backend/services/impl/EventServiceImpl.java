@@ -30,4 +30,10 @@ public class EventServiceImpl implements EventService{
         eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found"));
         eventRepository.deleteById(eventId);
     }
+
+    @Override
+    public EventDTO getEventById(Long eventId) {
+        entityDTOConvert.toEventDTO(eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found")));
+        return entityDTOConvert.toEventDTO(eventRepository.getReferenceById(eventId));
+    }
 }
