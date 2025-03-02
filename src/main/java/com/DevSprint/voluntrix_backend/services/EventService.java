@@ -1,5 +1,7 @@
 package com.DevSprint.voluntrix_backend.services;
 
-public interface EventService {
+import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 
+public interface EventService {
+    void addEvent(EventDTO eventDTO);
 }
