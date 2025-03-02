@@ -1,5 +1,7 @@
 package com.DevSprint.voluntrix_backend.services.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
@@ -35,5 +37,10 @@ public class EventServiceImpl implements EventService{
     public EventDTO getEventById(Long eventId) {
         entityDTOConvert.toEventDTO(eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found")));
         return entityDTOConvert.toEventDTO(eventRepository.getReferenceById(eventId));
+    }
+
+    @Override
+    public List<EventDTO> getAllEvents() {
+        return entityDTOConvert.toEventDTOList(eventRepository.findAll());
     }
 }
