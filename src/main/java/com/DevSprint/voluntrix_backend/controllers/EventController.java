@@ -3,12 +3,15 @@ package com.DevSprint.voluntrix_backend.controllers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
+import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.services.EventService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,5 +34,24 @@ public class EventController {
         
         eventService.addEvent(eventDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
+        
+        if (eventId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            eventService.deleteEvent(eventId);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (EventNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
