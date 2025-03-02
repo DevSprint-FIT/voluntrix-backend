@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,21 +25,21 @@ import lombok.RequiredArgsConstructor;
 public class EventController {
 
     private final EventService eventService;
-    
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> addEvent(@RequestBody EventDTO eventDTO) {
-        
+
         if (eventDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        
+
         eventService.addEvent(eventDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{eventId}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
-        
+
         if (eventId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -46,6 +47,24 @@ public class EventController {
         try {
             eventService.deleteEvent(eventId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (EventNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{eventId}")
+    public ResponseEntity<EventDTO> getEventById(@PathVariable Long eventId) {
+
+        if (eventId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            var selectedEvent = eventService.getEventById(eventId);
+            return ResponseEntity.ok(selectedEvent);
         } catch (EventNotFoundException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
