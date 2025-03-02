@@ -6,4 +6,6 @@ public interface EventService {
     void addEvent(EventDTO eventDTO);
 
     void deleteEvent(Long eventId);
+
+    EventDTO getEventById(Long eventId);
 }
