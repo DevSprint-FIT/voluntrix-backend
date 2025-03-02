@@ -2,9 +2,25 @@ package com.DevSprint.voluntrix_backend.services.impl;
 
 import org.springframework.stereotype.Service;
 
+import com.DevSprint.voluntrix_backend.dtos.EventDTO;
+import com.DevSprint.voluntrix_backend.repositories.EventRepository;
 import com.DevSprint.voluntrix_backend.services.EventService;
+import com.DevSprint.voluntrix_backend.utils.EntityDTOConvert;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class EventServiceImpl implements EventService{
 
+    private final EventRepository eventRepository;
+    private final EntityDTOConvert entityDTOConvert;
+
+    @Override
+    public void addEvent(EventDTO eventDTO) {
+        var eventEntity = entityDTOConvert.toEventEntity(eventDTO);
+        eventRepository.save(eventEntity);
+    }
 }
