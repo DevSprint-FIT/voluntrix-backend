@@ -29,25 +29,25 @@ import jakarta.persistence.Table;
 public class EventEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long eventId;
 
-    private String title;
-    private String description;
-    private String location;
+    private String eventtitle;
+    private String eventDescription;
+    private String eventLocation;
 
-    private LocalDate date;
-    private LocalTime time;
+    private LocalDate eventDate;
+    private LocalTime eventTime;
 
-    private String imageUrl;
-
-    @Enumerated(EnumType.STRING)
-    private EventType type; // ONLINE or OFFLINE
+    private String eventImageUrl;
 
     @Enumerated(EnumType.STRING)
-    private EventVisibility visibility; // PRIVATE or PUBLIC
+    private EventType eventType; // ONLINE or ONSITE
 
     @Enumerated(EnumType.STRING)
-    private EventStatus status; // DRAFT, PENDING, ACTIVE, COMPLETE, DENIED
+    private EventVisibility eventVisibility; // PRIVATE or PUBLIC
+
+    @Enumerated(EnumType.STRING)
+    private EventStatus eventStatus; // DRAFT, PENDING, ACTIVE, COMPLETE, DENIED
 
     private Boolean sponsorshipEnabled;
     private Boolean donationEnabled;
