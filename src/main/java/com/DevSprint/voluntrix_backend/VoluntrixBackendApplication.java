@@ -2,8 +2,14 @@ package com.DevSprint.voluntrix_backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication
+@EnableJpaRepositories // optimize performence
+@EnableWebMvc
+@EnableTransactionManagement
 public class VoluntrixBackendApplication {
 
 	public static void main(String[] args) {
