@@ -16,20 +16,20 @@ import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 @AllArgsConstructor
 @Data
 public class EventDTO implements Serializable{
-    private Long id;
+    private Long eventId;
 
-    private String title;
-    private String description;
-    private String location;
+    private String eventtitle;
+    private String eventDescription;
+    private String eventLocation;
 
-    private LocalDate date;
-    private LocalTime time;
+    private LocalDate eventDate;
+    private LocalTime eventTime;
 
-    private String imageUrl;
+    private String eventImageUrl;
 
-    private EventType type; // ONLINE or ONSITE
-    private EventVisibility visibility; // PRIVATE or PUBLIC
-    private EventStatus status; // DRAFT, PENDING, ACTIVE, COMPLETE, DENIED
+    private EventType eventType; // ONLINE or ONSITE
+    private EventVisibility eventVisibility; // PRIVATE or PUBLIC
+    private EventStatus eventStatus; // DRAFT, PENDING, ACTIVE, COMPLETE, DENIED
 
     private Boolean sponsorshipEnabled;
     private Boolean donationEnabled;
