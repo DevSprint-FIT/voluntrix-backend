@@ -35,12 +35,29 @@ public class EventServiceImpl implements EventService{
 
     @Override
     public EventDTO getEventById(Long eventId) {
-        entityDTOConvert.toEventDTO(eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found")));
+        eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found"));
         return entityDTOConvert.toEventDTO(eventRepository.getReferenceById(eventId));
     }
 
     @Override
     public List<EventDTO> getAllEvents() {
         return entityDTOConvert.toEventDTOList(eventRepository.findAll());
+    }
+
+    @Override
+    public void updateEvent(Long eventId, EventDTO eventDTO) {
+        var selectedEvent = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found"));
+        
+        selectedEvent.setEventtitle(eventDTO.getEventtitle());
+        selectedEvent.setEventDescription(eventDTO.getEventDescription());
+        selectedEvent.setEventLocation(eventDTO.getEventLocation());
+        selectedEvent.setEventDate(eventDTO.getEventDate());
+        selectedEvent.setEventTime(eventDTO.getEventTime());
+        selectedEvent.setEventImageUrl(eventDTO.getEventImageUrl());
+        selectedEvent.setEventType(eventDTO.getEventType());
+        selectedEvent.setEventVisibility(eventDTO.getEventVisibility());
+        selectedEvent.setEventStatus(eventDTO.getEventStatus());
+        selectedEvent.setSponsorshipEnabled(eventDTO.getSponsorshipEnabled());
+        selectedEvent.setDonationEnabled(eventDTO.getDonationEnabled());
     }
 }
