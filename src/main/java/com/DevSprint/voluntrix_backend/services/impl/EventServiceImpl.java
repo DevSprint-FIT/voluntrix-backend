@@ -53,7 +53,7 @@ public class EventServiceImpl implements EventService {
         var selectedEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
-        selectedEvent.setEventtitle(eventDTO.getEventtitle());
+        selectedEvent.setEventTitle(eventDTO.getEventTitle());
         selectedEvent.setEventDescription(eventDTO.getEventDescription());
         selectedEvent.setEventLocation(eventDTO.getEventLocation());
         selectedEvent.setEventDate(eventDTO.getEventDate());

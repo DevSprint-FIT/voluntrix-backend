@@ -21,7 +21,7 @@ public class EntityDTOConvert {
         var eventDTO = new EventDTO();
 
         eventDTO.setEventId(eventEntity.getEventId());
-        eventDTO.setEventtitle(eventEntity.getEventtitle());
+        eventDTO.setEventTitle(eventEntity.getEventTitle());
         eventDTO.setEventDescription(eventEntity.getEventDescription());
         eventDTO.setEventLocation(eventEntity.getEventLocation());
         eventDTO.setEventDate(eventEntity.getEventDate());
@@ -42,7 +42,7 @@ public class EntityDTOConvert {
         var eventEntity = new EventEntity();
 
         eventEntity.setEventId(eventDTO.getEventId());
-        eventEntity.setEventtitle(eventDTO.getEventtitle());
+        eventEntity.setEventTitle(eventDTO.getEventTitle());
         eventEntity.setEventDescription(eventDTO.getEventDescription());
         eventEntity.setEventLocation(eventDTO.getEventLocation());
         eventEntity.setEventDate(eventDTO.getEventDate());
@@ -63,7 +63,7 @@ public class EntityDTOConvert {
             EventDTO eventDTO = new EventDTO();
 
             eventDTO.setEventId(entity.getEventId());
-            eventDTO.setEventtitle(entity.getEventtitle());
+            eventDTO.setEventTitle(entity.getEventTitle());
             eventDTO.setEventDescription(entity.getEventDescription());
             eventDTO.setEventLocation(entity.getEventLocation());
             eventDTO.setEventDate(entity.getEventDate());

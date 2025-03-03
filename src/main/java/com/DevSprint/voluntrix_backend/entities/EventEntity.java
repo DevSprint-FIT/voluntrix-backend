@@ -32,7 +32,7 @@ public class EventEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long eventId;
 
-    private String eventtitle;
+    private String eventTitle;
     private String eventDescription;
     private String eventLocation;
 
