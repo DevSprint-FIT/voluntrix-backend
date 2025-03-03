@@ -1,7 +1,9 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
+import com.DevSprint.voluntrix_backend.enums.EventType;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.services.EventService;
 
@@ -101,5 +105,20 @@ public class EventController {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<EventDTO>> getFilteredEvent(
+            @RequestParam(value = "eventLocation", required = false) String eventLocation,
+            @RequestParam(value = "eventDate", required = false) 
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate eventDate,
+            @RequestParam(value = "eventType", required = false) EventType eventType) {
+
+        if (eventLocation == null && eventDate == null && eventType == null) {
+            return ResponseEntity.ok(eventService.getAllEvents()); // Redirect to `getAllEvents()` if no filters are provided
+        }
+
+        List<EventDTO> filteredEventList = eventService.getFilterEvent(eventLocation, eventDate, eventType);
+        return ResponseEntity.ok(filteredEventList);
     }
 }
