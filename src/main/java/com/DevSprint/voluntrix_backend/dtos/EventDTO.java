@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class EventDTO implements Serializable {
     private Long eventId;
 
-    private String eventtitle;
+    private String eventTitle;
     private String eventDescription;
     private String eventLocation;
 
