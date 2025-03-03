@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,6 +65,7 @@ public class EventController {
         if (eventId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
         try {
             var selectedEvent = eventService.getEventById(eventId);
             return ResponseEntity.ok(selectedEvent);
@@ -79,5 +81,25 @@ public class EventController {
     @GetMapping
     public ResponseEntity<List<EventDTO>> getAllEvents() {
         return ResponseEntity.ok(eventService.getAllEvents());
+    }
+
+    @PatchMapping(value = "/{eventId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> updateEvent(@PathVariable Long eventId, @RequestBody EventDTO eventDTO) {
+
+        if (eventId == null || eventDTO == null) {
+            eventService.updateEvent(eventId, eventDTO);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        
+        try {
+            eventService.updateEvent(eventId, eventDTO);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (EventNotFoundException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
