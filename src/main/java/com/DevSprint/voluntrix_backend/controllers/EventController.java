@@ -90,7 +90,7 @@ public class EventController {
             eventService.updateEvent(eventId, eventDTO);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        
+
         try {
             eventService.updateEvent(eventId, eventDTO);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

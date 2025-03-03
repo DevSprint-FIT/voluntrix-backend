@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class EventDTO implements Serializable{
+public class EventDTO implements Serializable {
     private Long eventId;
 
     private String eventtitle;

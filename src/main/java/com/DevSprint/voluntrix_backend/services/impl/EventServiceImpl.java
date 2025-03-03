@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class EventServiceImpl implements EventService{
+public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final EntityDTOConvert entityDTOConvert;
@@ -46,8 +46,9 @@ public class EventServiceImpl implements EventService{
 
     @Override
     public void updateEvent(Long eventId, EventDTO eventDTO) {
-        var selectedEvent = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found"));
-        
+        var selectedEvent = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
         selectedEvent.setEventtitle(eventDTO.getEventtitle());
         selectedEvent.setEventDescription(eventDTO.getEventDescription());
         selectedEvent.setEventLocation(eventDTO.getEventLocation());

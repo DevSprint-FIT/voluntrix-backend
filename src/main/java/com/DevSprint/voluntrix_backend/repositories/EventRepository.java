@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 
 @Repository
-public interface EventRepository extends JpaRepository<EventEntity, Long>{
+public interface EventRepository extends JpaRepository<EventEntity, Long> {
 }
