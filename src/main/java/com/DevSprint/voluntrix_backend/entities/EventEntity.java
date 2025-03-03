@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import com.DevSprint.voluntrix_backend.enums.EventStatus;
 import com.DevSprint.voluntrix_backend.enums.EventType;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -35,7 +36,9 @@ public class EventEntity {
     private String eventDescription;
     private String eventLocation;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate eventDate;
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime eventTime;
 
     private String eventImageUrl;
