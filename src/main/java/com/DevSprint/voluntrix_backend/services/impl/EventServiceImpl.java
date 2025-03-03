@@ -1,10 +1,14 @@
 package com.DevSprint.voluntrix_backend.services.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
+import com.DevSprint.voluntrix_backend.entities.EventEntity;
+import com.DevSprint.voluntrix_backend.enums.EventType;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
 import com.DevSprint.voluntrix_backend.services.EventService;
@@ -60,5 +64,24 @@ public class EventServiceImpl implements EventService {
         selectedEvent.setEventStatus(eventDTO.getEventStatus());
         selectedEvent.setSponsorshipEnabled(eventDTO.getSponsorshipEnabled());
         selectedEvent.setDonationEnabled(eventDTO.getDonationEnabled());
+    }
+
+    @Override
+    public List<EventDTO> getFilterEvent(String eventLocation, LocalDate eventDate, EventType eventType) {
+        Specification<EventEntity> spec = Specification.where(null);
+
+        if (eventType != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("eventType"), eventType));
+        }
+
+        if (eventLocation != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("eventLocation"), "%" + eventLocation + "%"));
+        }
+
+        if (eventDate != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("eventDate"), eventDate));
+        }
+
+        return entityDTOConvert.toEventDTOList(eventRepository.findAll(spec));
     }
 }
