@@ -1,31 +1,15 @@
 package com.DevSprint.voluntrix_backend.services;
 
-import com.DevSprint.voluntrix_backend.Entities.Sponsor;
-import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
-import org.springframework.stereotype.Service;
+import com.DevSprint.voluntrix_backend.Entities.SponsorEntity;
+import com.DevSprint.voluntrix_backend.dtos.SponsorDTO;
 import java.util.List;
 
-@Service
-public class SponsorService {
-    private final SponsorRepository sponsorRepository;
+public interface SponsorService {
+    List<SponsorEntity> getAllSponsors() ;
 
-    public SponsorService(SponsorRepository sponsorRepository) {
-        this.sponsorRepository = sponsorRepository;
-    }
+    SponsorEntity getSponsorById(Long id) ;
 
-    public List<Sponsor> getAllSponsors() {
-        return sponsorRepository.findAll();
-    }
+    void saveSponsor(SponsorDTO sponsorDTO);
 
-    public Sponsor getSponsorById(Long id) {
-        return sponsorRepository.findById(id).orElse(null);
-    }
-
-    public Sponsor saveSponsor(Sponsor sponsor) {
-        return sponsorRepository.save(sponsor);
-    }
-
-    public void deleteSponsor(Long id) {
-        sponsorRepository.deleteById(id);
-    }
+    void deleteSponsor(Long id);
 }
