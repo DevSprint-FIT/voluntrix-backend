@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 public class VolunteerDTO {
-    private Long volunteer_id;
+    private Long volunteerId;
     private String firstName;
     private String lastName;
     private String email;
