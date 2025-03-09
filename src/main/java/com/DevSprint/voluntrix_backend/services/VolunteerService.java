@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class VolunteerService {
@@ -17,7 +18,22 @@ public class VolunteerService {
        this.volunteerRepository = volunteerRepository;
     }
 
-    public Volunteer createVolunteer(VolunteerDTO volunteerDTO) {
+    private VolunteerDTO convertToDTO(Volunteer volunteer) {
+        VolunteerDTO volunteerDTO = new VolunteerDTO();
+        volunteerDTO.setVolunteerId(volunteer.getVolunteerId());
+        volunteerDTO.setFirstName(volunteer.getFirstName());
+        volunteerDTO.setLastName(volunteer.getLastName());
+        volunteerDTO.setEmail(volunteer.getEmail());
+        volunteerDTO.setInstitute(volunteer.getInstitute());
+        volunteerDTO.setInterestAreas(volunteer.getInterestAreas());
+        volunteerDTO.setAvailabilityStatus(volunteer.getAvailabilityStatus());
+        volunteerDTO.setPreferredOrganizations(volunteer.getPreferredOrganizations());
+        volunteerDTO.setVolunteerLevel(volunteer.getVolunteerLevel());
+        volunteerDTO.setRewardPoints(volunteer.getRewardPoints());
+        return volunteerDTO;
+    }
+
+    public VolunteerDTO createVolunteer(VolunteerDTO volunteerDTO) {
         Volunteer volunteer = new Volunteer();
         volunteer.setFirstName(volunteerDTO.getFirstName());
         volunteer.setLastName(volunteerDTO.getLastName());
@@ -29,18 +45,23 @@ public class VolunteerService {
         volunteer.setVolunteerLevel(1);
         volunteer.setRewardPoints(0);
 
-        return volunteerRepository.save(volunteer);
+        Volunteer savedVolunteer = volunteerRepository.save(volunteer);
+        return convertToDTO(savedVolunteer);
     }
 
-    public List<Volunteer> getAllVolunteers() {
-        return volunteerRepository.findAll();
-   }
-
-    public Optional<Volunteer> getVolunteerById(Long volunteerId) {
-        return volunteerRepository.findById(volunteerId);
+    public List<VolunteerDTO> getAllVolunteers() {
+        List<Volunteer> volunteers = volunteerRepository.findAll();
+        return volunteers.stream()
+                         .map(this::convertToDTO)
+                         .collect(Collectors.toList());
     }
 
-    public Volunteer updateVolunteer(Long volunteerId, VolunteerDTO volunteerDTO) {
+    public VolunteerDTO getVolunteerById(Long volunteerId) {
+        Optional<Volunteer> volunteer = volunteerRepository.findById(volunteerId);
+        return volunteer.map(this::convertToDTO).orElse(null);
+    }
+
+    public VolunteerDTO updateVolunteer(Long volunteerId, VolunteerDTO volunteerDTO) {
         Optional<Volunteer> existingVolunteer = volunteerRepository.findById(volunteerId);
 
         if (existingVolunteer.isPresent()) {
@@ -53,14 +74,19 @@ public class VolunteerService {
             volunteer.setAvailabilityStatus(volunteerDTO.getAvailabilityStatus());
             volunteer.setPreferredOrganizations(volunteerDTO.getPreferredOrganizations());
 
-            return volunteerRepository.save(volunteer);
-        } 
-        else {
+            Volunteer updatedVolunteer = volunteerRepository.save(volunteer);
+            return convertToDTO(updatedVolunteer);
+        } else {
             throw new RuntimeException("Volunteer not found with ID: " + volunteerId);
         }
     }
 
-    public void deleteVolunteer(Long volunteerId) {
-        volunteerRepository.deleteById(volunteerId);
+    public boolean deleteVolunteer(Long volunteerId) {
+        if (volunteerRepository.existsById(volunteerId)) {
+            volunteerRepository.deleteById(volunteerId);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
