@@ -1,7 +1,7 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
+import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import com.DevSprint.voluntrix_backend.entities.Organization;
 import com.DevSprint.voluntrix_backend.services.OrganizationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,40 +19,35 @@ public class OrganizationController {
         this.organizationService = organizationService;
     }
 
-
     @GetMapping("/{id}")
-    public ResponseEntity<Organization> getOrganizationDetails(@PathVariable Long id) {
-        Optional<Organization> organization = organizationService.getOrganizationDetails(id);
-        return organization.map(ResponseEntity::ok)
+    public ResponseEntity<OrganizationDTO> getOrganizationDetails(@PathVariable Long id) {
+        Optional<OrganizationDTO> organizationDTO = organizationService.getOrganizationDetails(id);
+        return organizationDTO.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
     @GetMapping
-    public ResponseEntity<List<Organization>> getAllOrganizations() {
-        List<Organization> organizations = organizationService.getAllOrganizations();
-        return ResponseEntity.ok(organizations);
+    public ResponseEntity<List<OrganizationDTO>> getAllOrganizations() {
+        List<OrganizationDTO> organizationDTOs = organizationService.getAllOrganizations();
+        return ResponseEntity.ok(organizationDTOs);
     }
+
     @PostMapping
-    public ResponseEntity<Organization> createOrganization(@RequestBody Organization organization) {
-        Organization createdOrganization = organizationService.createOrganization(organization);
+    public ResponseEntity<OrganizationDTO> createOrganization(@RequestBody OrganizationDTO organizationDTO) {
+        OrganizationDTO createdOrganization = organizationService.createOrganization(organizationDTO);
         return ResponseEntity.status(201).body(createdOrganization);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Organization> updateOrganization(@PathVariable Long id, @RequestBody Organization updatedOrganization){
-        Optional<Organization> organization = organizationService.updateOrganization(id, updatedOrganization);
-        return organization.map(ResponseEntity::ok)
+    public ResponseEntity<OrganizationDTO> updateOrganization(@PathVariable Long id, @RequestBody OrganizationDTO updatedDTO) {
+        Optional<OrganizationDTO> updatedOrganization = organizationService.updateOrganization(id, updatedDTO);
+        return updatedOrganization.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrganization(@PathVariable Long id){
+    public ResponseEntity<Void> deleteOrganization(@PathVariable Long id) {
         boolean deleted = organizationService.deleteOrganization(id);
-        if(deleted){
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 }
