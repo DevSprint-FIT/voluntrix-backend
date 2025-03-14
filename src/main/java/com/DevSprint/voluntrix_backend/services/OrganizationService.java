@@ -3,39 +3,38 @@ package com.DevSprint.voluntrix_backend.services;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.entities.Organization;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
+import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class OrganizationService {
     private final OrganizationRepository organizationRepository;
+    private final EntityDTOConverter entityDTOConverter;
 
     @Autowired
-    public OrganizationService(OrganizationRepository organizationRepository) {
+    public OrganizationService(OrganizationRepository organizationRepository, EntityDTOConverter entityDTOConverter) {
         this.organizationRepository = organizationRepository;
+        this.entityDTOConverter = entityDTOConverter;
     }
 
     public List<OrganizationDTO> getAllOrganizations() {
-        return organizationRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return entityDTOConverter.toOrganizationDTOList(organizationRepository.findAll());
     }
 
     public Optional<OrganizationDTO> getOrganizationDetails(Long id) {
         return organizationRepository.findById(id)
-                .map(this::mapToDTO);
+                .map(entityDTOConverter::toOrganizationDTO);
     }
 
     public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) {
-        Organization organization = mapToEntity(organizationDTO);
+        Organization organization = entityDTOConverter.toOrganizationEntity(organizationDTO);
         Organization savedOrganization = organizationRepository.save(organization);
-        return mapToDTO(savedOrganization);
+        return entityDTOConverter.toOrganizationDTO(savedOrganization);
     }
-
 
     public Optional<OrganizationDTO> updateOrganization(Long id, OrganizationDTO updatedDTO) {
         return organizationRepository.findById(id).map(existingOrg -> {
@@ -46,36 +45,15 @@ public class OrganizationService {
             existingOrg.setIsVerified(updatedDTO.getIsVerified());
             existingOrg.setFollowerCount(updatedDTO.getFollowerCount());
             Organization updatedOrg = organizationRepository.save(existingOrg);
-            return mapToDTO(updatedOrg);
+            return entityDTOConverter.toOrganizationDTO(updatedOrg);
         });
     }
 
-    public boolean deleteOrganization(Long id){
-        if(organizationRepository.existsById(id)){
+    public boolean deleteOrganization(Long id) {
+        if (organizationRepository.existsById(id)) {
             organizationRepository.deleteById(id);
             return true;
         }
         return false;
     }
-
-    //Mapping methods
-    private OrganizationDTO mapToDTO(Organization org){
-        return new OrganizationDTO(
-                org.getId(), org.getName(), org.getEmail(), org.getPhone(),
-                org.getAccountNumber(), org.getIsVerified(), org.getFollowerCount()
-        );
-    }
-
-    private Organization mapToEntity(OrganizationDTO dto){
-        return new Organization(
-                dto.getId(), dto.getName(), dto.getEmail(), dto.getPhone(),
-                dto.getAccountNumber(), dto.getIsVerified(), dto.getFollowerCount()
-        );
-    }
 }
-
-
-
-
-
-
