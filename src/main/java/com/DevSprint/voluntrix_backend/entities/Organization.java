@@ -24,7 +24,14 @@ public class Organization {
     @Column(nullable = false)
     private String phone;
 
-//    public String getEmail() {
-//        return email;
-//    }
+    @Column(nullable = false)
+    private String accountNumber;
+
+    @Column(nullable = false)
+    private Boolean isVerified = false;
+
+    @Column(nullable = false)
+    private Integer followerCount = 0;
+
+
 }
