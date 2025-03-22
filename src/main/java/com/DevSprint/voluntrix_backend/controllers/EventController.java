@@ -72,7 +72,7 @@ public class EventController {
 
         try {
             var selectedEvent = eventService.getEventById(eventId);
-            return ResponseEntity.ok(selectedEvent);
+            return new ResponseEntity<EventDTO>(selectedEvent, HttpStatus.OK);
         } catch (EventNotFoundException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -84,7 +84,7 @@ public class EventController {
 
     @GetMapping
     public ResponseEntity<List<EventDTO>> getAllEvents() {
-        return ResponseEntity.ok(eventService.getAllEvents());
+        return new ResponseEntity<List<EventDTO>>(eventService.getAllEvents(), HttpStatus.OK);
     }
 
     @PatchMapping(value = "/{eventId}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -110,15 +110,14 @@ public class EventController {
     @GetMapping("/filter")
     public ResponseEntity<List<EventDTO>> getFilteredEvent(
             @RequestParam(value = "eventLocation", required = false) String eventLocation,
-            @RequestParam(value = "eventDate", required = false) 
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate eventDate,
+            @RequestParam(value = "eventDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate eventDate,
             @RequestParam(value = "eventType", required = false) EventType eventType) {
 
         if (eventLocation == null && eventDate == null && eventType == null) {
-            return ResponseEntity.ok(eventService.getAllEvents()); // Redirect to `getAllEvents()` if no filters are provided
+            return new ResponseEntity<List<EventDTO>>(eventService.getAllEvents(), HttpStatus.OK); // Redirect to `getAllEvents()` if no filters are provided
         }
 
         List<EventDTO> filteredEventList = eventService.getFilterEvent(eventLocation, eventDate, eventType);
-        return ResponseEntity.ok(filteredEventList);
+        return new ResponseEntity<List<EventDTO>>(filteredEventList, HttpStatus.OK);
     }
 }
