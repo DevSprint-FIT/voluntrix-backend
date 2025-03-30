@@ -27,6 +27,9 @@ public class Organization {
     @Column(nullable = false)
     private String name;
 
+    @Column(nullable = true)
+    private String institute;
+
     @Column(nullable = false, unique = true)
     private String email;
 

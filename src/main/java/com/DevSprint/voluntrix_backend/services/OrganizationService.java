@@ -39,6 +39,7 @@ public class OrganizationService {
     public Optional<OrganizationDTO> updateOrganization(Long id, OrganizationDTO updatedDTO) {
         return organizationRepository.findById(id).map(existingOrg -> {
             existingOrg.setName(updatedDTO.getName());
+            existingOrg.setInstitute(updatedDTO.getInstitute());
             existingOrg.setEmail(updatedDTO.getEmail());
             existingOrg.setPhone(updatedDTO.getPhone());
             existingOrg.setAccountNumber(updatedDTO.getAccountNumber());
