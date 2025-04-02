@@ -1,7 +1,7 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
 import com.DevSprint.voluntrix_backend.services.FollowedOrganizationService;
-import com.DevSprint.voluntrix_backend.dtos.FollowOrganizationRequest;
+import com.DevSprint.voluntrix_backend.dtos.FollowOrganizationDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ public class FollowedOrganizationController {
 
     
     @PostMapping("/")
-    public String followOrganization(@RequestBody FollowOrganizationRequest request) {
+    public String followOrganization(@RequestBody FollowOrganizationDTO request) {
         return followedOrganizationService.followOrganization(request.getVolunteerId(), request.getOrganizationId());
     }
 
