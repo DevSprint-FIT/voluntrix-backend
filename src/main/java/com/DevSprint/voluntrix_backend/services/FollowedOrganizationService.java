@@ -3,6 +3,8 @@ package com.DevSprint.voluntrix_backend.services;
 import com.DevSprint.voluntrix_backend.entities.FollowedOrganization;
 import com.DevSprint.voluntrix_backend.entities.Organization;
 import com.DevSprint.voluntrix_backend.repositories.FollowedOrganizationRepository;
+import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
+import com.DevSprint.voluntrix_backend.dtos.FollowOrganizationDTO;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,17 @@ public class FollowedOrganizationService {
     @Autowired
     private OrganizationRepository organizationRepository;
 
+    @Autowired
+    private EntityDTOConverter entityDTOConverter;
+
     // Follow an organization and update follow count
     @Transactional
     public String followOrganization(Long volunteerId, Long organizationId) {
-        FollowedOrganization followedOrganization = new FollowedOrganization(volunteerId, organizationId);
+        FollowedOrganization followedOrganization = new FollowedOrganization();
+        followedOrganization.setVolunteerId(volunteerId);
+        followedOrganization.setOrganizationId(organizationId);
+        followedOrganizationRepository.save(followedOrganization);
+
         followedOrganizationRepository.save(followedOrganization);
 
         // Update follower count in organization table
@@ -51,11 +60,11 @@ public class FollowedOrganizationService {
         return "Organization unfollowed successfully!";
     }
 
-    // Get all followed organizations for a volunteer
-    public List<Long> getFollowedOrganizations(Long volunteerId) {
+    // Get all followed organizations for a volunteer and map to DTO
+    public List<FollowOrganizationDTO> getFollowedOrganizations(Long volunteerId) {
         return followedOrganizationRepository.findByVolunteerId(volunteerId)
                 .stream()
-                .map(FollowedOrganization::getOrganizationId)
+                .map(entityDTOConverter::toFollowOrganizationDTO)
                 .collect(Collectors.toList());
     }
 }
