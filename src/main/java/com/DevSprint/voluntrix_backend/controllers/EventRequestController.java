@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/event-requests")
+@RequestMapping("/api/public/event-requests")
 public class EventRequestController {
 
     @Autowired
@@ -22,6 +22,7 @@ public class EventRequestController {
         if (pendingEvents.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(pendingEvents); // Returns HTTP 200 with the list of events.
+        return ResponseEntity.ok(pendingEvents); 
 
+}
 }
