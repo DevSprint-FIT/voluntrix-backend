@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/public/follow")
@@ -30,6 +31,9 @@ public class FollowedOrganizationController {
     
     @GetMapping("/{volunteerId}")
     public List<Long> getFollowedOrganizations(@PathVariable Long volunteerId) {
-        return followedOrganizationService.getFollowedOrganizations(volunteerId);
+       return followedOrganizationService.getFollowedOrganizations(volunteerId)
+                                      .stream()
+                                      .map(FollowOrganizationDTO::getOrganizationId) 
+                                      .collect(Collectors.toList());
     }
 }
