@@ -23,6 +23,7 @@ import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.services.EventService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -88,10 +89,9 @@ public class EventController {
     }
 
     @PatchMapping(value = "/{eventId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> updateEvent(@PathVariable Long eventId, @RequestBody EventDTO eventDTO) {
+    public ResponseEntity<Void> updateEvent(@PathVariable Long eventId,@Valid @RequestBody EventDTO eventDTO) {
 
         if (eventId == null || eventDTO == null) {
-            eventService.updateEvent(eventId, eventDTO);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
