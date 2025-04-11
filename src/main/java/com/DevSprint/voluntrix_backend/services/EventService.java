@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.enums.EventType;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
@@ -76,5 +77,9 @@ public class EventService {
         }
 
         return entityDTOConvert.toEventDTOList(eventRepository.findAll(spec));
+    }
+
+    public List<EventNameDTO> getAllEventNames() {
+        return eventRepository.findAllEventIdAndTitle();
     }
 }

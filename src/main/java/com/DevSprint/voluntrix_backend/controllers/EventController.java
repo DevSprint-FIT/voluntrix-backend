@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.enums.EventType;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.services.EventService;
@@ -119,5 +120,10 @@ public class EventController {
 
         List<EventDTO> filteredEventList = eventService.getFilterEvent(eventLocation, eventDate, eventType);
         return new ResponseEntity<List<EventDTO>>(filteredEventList, HttpStatus.OK);
+    }
+
+    @GetMapping("/names")
+    public ResponseEntity<List<EventNameDTO>> getAllEventNames() {
+        return new ResponseEntity<List<EventNameDTO>>(eventService.getAllEventNames(), HttpStatus.OK);
     }
 }
