@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
-import com.DevSprint.voluntrix_backend.enums.EventType;
+import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.services.EventService;
 
@@ -90,7 +90,7 @@ public class EventController {
     }
 
     @PatchMapping(value = "/{eventId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> updateEvent(@PathVariable Long eventId,@Valid @RequestBody EventDTO eventDTO) {
+    public ResponseEntity<Void> updateEvent(@PathVariable Long eventId, @Valid @RequestBody EventDTO eventDTO) {
 
         if (eventId == null || eventDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -111,15 +111,25 @@ public class EventController {
     @GetMapping("/filter")
     public ResponseEntity<List<EventDTO>> getFilteredEvent(
             @RequestParam(value = "eventLocation", required = false) String eventLocation,
-            @RequestParam(value = "eventDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate eventDate,
-            @RequestParam(value = "eventType", required = false) EventType eventType) {
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(value = "eventVisibility", required = false) EventVisibility eventVisibility,
+            @RequestParam(value = "categoryIds", required = false) List<Long> categoryIds) {
 
-        if (eventLocation == null && eventDate == null && eventType == null) {
+        if (eventLocation == null && startDate == null && endDate == null && eventVisibility == null && categoryIds == null) {
             return new ResponseEntity<List<EventDTO>>(eventService.getAllEvents(), HttpStatus.OK); // Redirect to `getAllEvents()` if no filters are provided
         }
 
-        List<EventDTO> filteredEventList = eventService.getFilterEvent(eventLocation, eventDate, eventType);
-        return new ResponseEntity<List<EventDTO>>(filteredEventList, HttpStatus.OK);
+        try {
+            List<EventDTO> filteredEventList = eventService.getFilterEvent(eventLocation, startDate, endDate, eventVisibility, categoryIds);
+            return new ResponseEntity<List<EventDTO>>(filteredEventList, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/names")
