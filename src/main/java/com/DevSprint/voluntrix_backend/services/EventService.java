@@ -12,7 +12,7 @@ import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
-import com.DevSprint.voluntrix_backend.enums.EventType;
+import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
@@ -77,11 +77,17 @@ public class EventService {
         eventRepository.save(selectedEvent);
     }
 
-    public List<EventDTO> getFilterEvent(String eventLocation, LocalDate eventDate, EventType eventType) {
+    public List<EventDTO> getFilterEvent(String eventLocation, LocalDate startDate, LocalDate endDate,
+            EventVisibility eventVisibility, List<Long> categoryIds) {
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Start date must be before or equal to end date.");
+        }
+
         Specification<EventEntity> spec = Specification.where(null);
 
-        if (eventType != null) {
-            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("eventType"), eventType));
+        if (eventVisibility != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("eventVisibility"),
+                    eventVisibility));
         }
 
         if (eventLocation != null) {
@@ -89,8 +95,30 @@ public class EventService {
                     "%" + eventLocation + "%"));
         }
 
-        if (eventDate != null) {
-            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("eventDate"), eventDate));
+        if (startDate != null && endDate != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("eventDate"), startDate,
+                    endDate));
+        } else if (startDate != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder
+                    .greaterThanOrEqualTo(root.get("eventDate"), startDate));
+        } else if (endDate != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"),
+                    endDate));
+        }
+
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+
+            for (Long id : categoryIds) {
+                categoryRepository.findById(id)
+                        .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + id));
+            }
+
+            spec = spec.and((root, query, criteriaBuilder) -> {
+                if (query != null) {
+                    query.distinct(true);
+                }
+                return root.join("categories").get("categoryId").in(categoryIds);
+            });
         }
 
         return entityDTOConvert.toEventDTOList(eventRepository.findAll(spec));
