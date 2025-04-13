@@ -13,4 +13,5 @@ public class EventNameDTO implements Serializable {
 
     private Long eventId;
     private String eventTitle;
+
 }

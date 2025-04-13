@@ -69,7 +69,8 @@ public class EventService {
         }
 
         if (eventLocation != null) {
-            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("eventLocation"), "%" + eventLocation + "%"));
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("eventLocation"),
+                    "%" + eventLocation + "%"));
         }
 
         if (eventDate != null) {
