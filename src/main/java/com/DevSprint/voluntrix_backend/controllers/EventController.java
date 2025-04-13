@@ -58,7 +58,7 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (EventNotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -77,7 +77,7 @@ public class EventController {
             return new ResponseEntity<EventDTO>(selectedEvent, HttpStatus.OK);
         } catch (EventNotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -101,7 +101,7 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (EventNotFoundException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
