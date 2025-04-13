@@ -1,13 +1,17 @@
 package com.DevSprint.voluntrix_backend.utils;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
+import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
+import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
+import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +21,7 @@ public class EntityDTOConvert {
 
     // Event Mapping
     private final ModelMapper modelMapper;
+    private final CategoryRepository categoryRepository;
 
     // EventEntity to EventDTO
     public EventDTO toEventDTO(EventEntity eventEntity) {
@@ -25,7 +30,15 @@ public class EntityDTOConvert {
 
     // EventDTO to EventEntity
     public EventEntity toEventEntity(EventDTO eventDTO) {
-        return modelMapper.map(eventDTO, EventEntity.class);
+        EventEntity eventEntity = modelMapper.map(eventDTO, EventEntity.class);
+        if (eventDTO.getCategories() != null) {
+            Set<CategoryEntity> categoryEntities = eventDTO.getCategories().stream()
+                    .map(dto -> categoryRepository.findById(dto.getCategoryId())
+                            .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategoryId())))
+                    .collect(Collectors.toSet());
+            eventEntity.setCategories(categoryEntities);
+        }
+        return eventEntity;
     }
 
     // List<EventEntity> to List<EventDTO>

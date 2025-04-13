@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 import com.DevSprint.voluntrix_backend.enums.EventStatus;
 import com.DevSprint.voluntrix_backend.enums.EventType;
@@ -19,6 +20,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @NoArgsConstructor
@@ -54,4 +58,8 @@ public class EventEntity {
 
     private Boolean sponsorshipEnabled;
     private Boolean donationEnabled;
+
+    @ManyToMany
+    @JoinTable(name = "event_category", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<CategoryEntity> categories;
 }

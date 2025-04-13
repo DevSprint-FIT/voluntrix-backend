@@ -7,6 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 import com.DevSprint.voluntrix_backend.enums.EventStatus;
 import com.DevSprint.voluntrix_backend.enums.EventType;
@@ -36,4 +37,6 @@ public class EventDTO implements Serializable {
 
     private Boolean sponsorshipEnabled;
     private Boolean donationEnabled;
+
+    private Set<CategoryDTO> categories;
 }

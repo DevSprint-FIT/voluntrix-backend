@@ -2,15 +2,20 @@ package com.DevSprint.voluntrix_backend.services;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
+import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.enums.EventType;
+import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
+import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
 import com.DevSprint.voluntrix_backend.utils.EntityDTOConvert;
 
@@ -24,9 +29,10 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EntityDTOConvert entityDTOConvert;
+    private final CategoryRepository categoryRepository;
 
     public void addEvent(EventDTO eventDTO) {
-        var eventEntity = entityDTOConvert.toEventEntity(eventDTO);
+        EventEntity eventEntity = entityDTOConvert.toEventEntity(eventDTO);
         eventRepository.save(eventEntity);
     }
 
@@ -36,8 +42,9 @@ public class EventService {
     }
 
     public EventDTO getEventById(Long eventId) {
-        eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found"));
-        return entityDTOConvert.toEventDTO(eventRepository.getReferenceById(eventId));
+        EventEntity eventEntity = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+        return entityDTOConvert.toEventDTO(eventEntity);
     }
 
     public List<EventDTO> getAllEvents() {
@@ -59,6 +66,15 @@ public class EventService {
         selectedEvent.setEventStatus(eventDTO.getEventStatus());
         selectedEvent.setSponsorshipEnabled(eventDTO.getSponsorshipEnabled());
         selectedEvent.setDonationEnabled(eventDTO.getDonationEnabled());
+
+        Set<CategoryEntity> categoryEntities = eventDTO.getCategories().stream()
+                .map(dto -> categoryRepository.findById(dto.getCategoryId())
+                        .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategoryId())))
+                .collect(Collectors.toSet());
+
+        selectedEvent.setCategories(categoryEntities);
+
+        eventRepository.save(selectedEvent);
     }
 
     public List<EventDTO> getFilterEvent(String eventLocation, LocalDate eventDate, EventType eventType) {
