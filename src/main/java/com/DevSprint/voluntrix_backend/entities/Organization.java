@@ -11,6 +11,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -36,7 +39,7 @@ public class Organization {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String accountNumber;
 
     @Column(nullable = false)
@@ -44,6 +47,10 @@ public class Organization {
 
     @Column(nullable = false)
     private Integer followerCount = 0;
+
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
 
 }
