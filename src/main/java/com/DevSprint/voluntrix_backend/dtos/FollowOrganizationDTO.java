@@ -7,7 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FollowOrganizationDTO {
-    private Long id;
     private Long volunteerId;
     private Long organizationId;
 
