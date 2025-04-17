@@ -13,24 +13,26 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@IdClass(FollowedOrganizationId.class)
 public class FollowedOrganization {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
+    @Id
     @Column(nullable = false)
     private Long volunteerId;
 
+    @Id
     @Column(nullable = false)
     private Long organizationId;
 
 
-    // Constructor with two arguments
+    /* Constructor with two arguments
     public FollowedOrganization(Long volunteerId, Long organizationId) {
         this.volunteerId = volunteerId;
         this.organizationId = organizationId;
     }
+
+     */
 
 
 
