@@ -10,7 +10,9 @@ public class EntityDTOConverter {
     // FollowedOrganization to FollowOrganizationDTO
     public FollowOrganizationDTO toFollowOrganizationDTO(FollowedOrganization followedOrganization) {
         var dto = new FollowOrganizationDTO();
-        dto.setId(followedOrganization.getId());
+        followedOrganization.getVolunteerId();
+        followedOrganization.getOrganizationId();
+
         dto.setVolunteerId(followedOrganization.getVolunteerId());
         dto.setOrganizationId(followedOrganization.getOrganizationId());
         return dto;
