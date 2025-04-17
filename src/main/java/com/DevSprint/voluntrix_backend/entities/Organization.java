@@ -48,9 +48,13 @@ public class Organization {
     @Column(nullable = false)
     private Integer followerCount = 0;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable =true, updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @Column(nullable = true)
+    private String imageUrl;
+
 
 
 }
