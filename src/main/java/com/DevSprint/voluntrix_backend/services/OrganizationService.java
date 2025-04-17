@@ -1,9 +1,11 @@
 package com.DevSprint.voluntrix_backend.services;
 
+import com.DevSprint.voluntrix_backend.dtos.OrganizationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.entities.Organization;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
+import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,36 +27,74 @@ public class OrganizationService {
         return entityDTOConverter.toOrganizationDTOList(organizationRepository.findAll());
     }
 
-    public Optional<OrganizationDTO> getOrganizationDetails(Long id) {
+    public OrganizationDTO getOrganizationDetails(Long id) {
         return organizationRepository.findById(id)
-                .map(entityDTOConverter::toOrganizationDTO);
+                .map(entityDTOConverter::toOrganizationDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Organization not found with id: " + id));
     }
 
-    public OrganizationDTO createOrganization(OrganizationDTO organizationDTO) {
-        Organization organization = entityDTOConverter.toOrganizationEntity(organizationDTO);
+    // Updated createOrganization method to use OrganizationCreateDTO
+    public OrganizationDTO createOrganization(OrganizationCreateDTO organizationCreateDTO) {
+        // Convert OrganizationCreateDTO to Organization entity
+        Organization organization = new Organization();
+        organization.setName(organizationCreateDTO.getName());
+        organization.setInstitute(organizationCreateDTO.getInstitute());
+        organization.setEmail(organizationCreateDTO.getEmail());
+        organization.setPhone(organizationCreateDTO.getPhone());
+        organization.setAccountNumber(organizationCreateDTO.getAccountNumber());
+        organization.setIsVerified(organizationCreateDTO.getIsVerified());
+        organization.setFollowerCount(organizationCreateDTO.getFollowerCount());
+
+        // Save organization and return DTO
         Organization savedOrganization = organizationRepository.save(organization);
         return entityDTOConverter.toOrganizationDTO(savedOrganization);
     }
 
-    public Optional<OrganizationDTO> updateOrganization(Long id, OrganizationDTO updatedDTO) {
-        return organizationRepository.findById(id).map(existingOrg -> {
-            existingOrg.setName(updatedDTO.getName());
-            existingOrg.setInstitute(updatedDTO.getInstitute());
-            existingOrg.setEmail(updatedDTO.getEmail());
-            existingOrg.setPhone(updatedDTO.getPhone());
-            existingOrg.setAccountNumber(updatedDTO.getAccountNumber());
-            existingOrg.setIsVerified(updatedDTO.getIsVerified());
-            existingOrg.setFollowerCount(updatedDTO.getFollowerCount());
-            Organization updatedOrg = organizationRepository.save(existingOrg);
-            return entityDTOConverter.toOrganizationDTO(updatedOrg);
-        });
+    public OrganizationDTO updateOrganization(Long id, OrganizationDTO organizationDTO) {
+        return organizationRepository.findById(id)
+                .map(existingOrg -> {
+                    if (organizationDTO.getName() != null) {
+                        existingOrg.setName(organizationDTO.getName());
+                    }
+
+                    if (organizationDTO.getInstitute() != null) {
+                        existingOrg.setInstitute(organizationDTO.getInstitute());
+                    }
+
+                    if (organizationDTO.getEmail() != null) {
+                        existingOrg.setEmail(organizationDTO.getEmail());
+                    }
+
+                    if (organizationDTO.getPhone() != null) {
+                        existingOrg.setPhone(organizationDTO.getPhone());
+                    }
+
+                    if (organizationDTO.getAccountNumber() != null) {
+                        existingOrg.setAccountNumber(organizationDTO.getAccountNumber());
+                    }
+
+                    if (organizationDTO.getIsVerified() != null) {
+                        existingOrg.setIsVerified(organizationDTO.getIsVerified());
+                    }
+
+                    if (organizationDTO.getFollowerCount() != null) {
+                        existingOrg.setFollowerCount(organizationDTO.getFollowerCount());
+                    }
+
+                    Organization updatedOrg = organizationRepository.save(existingOrg);
+                    return entityDTOConverter.toOrganizationDTO(updatedOrg);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Organization not found with id: " + id));
     }
 
-    public boolean deleteOrganization(Long id) {
-        if (organizationRepository.existsById(id)) {
-            organizationRepository.deleteById(id);
-            return true;
+
+
+
+
+    public void deleteOrganization(Long id) {
+        if (!organizationRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Organization not found with id: " + id);
         }
-        return false;
+        organizationRepository.deleteById(id);
     }
 }
