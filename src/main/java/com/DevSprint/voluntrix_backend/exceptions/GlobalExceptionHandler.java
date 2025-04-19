@@ -1,5 +1,5 @@
 package com.DevSprint.voluntrix_backend.exceptions;
-/*
+
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +37,5 @@ public class GlobalExceptionHandler {
     }
 }
 
- */
+
 
