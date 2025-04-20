@@ -5,8 +5,6 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,9 +15,7 @@ public class VolunteerDTO {
     private String lastName;
     private String email;
     private String institute;
-    private String availabilityStatus;
-    private List<String> interestAreas;
-    private List<String> preferredOrganizations;
+    private Boolean availabilityStatus;
     private Integer volunteerLevel; 
     private Integer rewardPoints;   
 }
