@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "followed_organizations")
@@ -25,14 +28,12 @@ public class FollowedOrganization {
     @Column(nullable = false)
     private Long organizationId;
 
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime followedAt;
 
-    /* Constructor with two arguments
-    public FollowedOrganization(Long volunteerId, Long organizationId) {
-        this.volunteerId = volunteerId;
-        this.organizationId = organizationId;
-    }
 
-     */
+
 
 
 
