@@ -65,7 +65,7 @@ public class OrganizationController {
     @PatchMapping("/{id}")
     public ResponseEntity<ApiResponse<OrganizationDTO>> updateOrganization(
             @PathVariable Long id,
-            @RequestBody OrganizationDTO organizationDTO) {  // Accepting the request body
+            @Valid @RequestBody OrganizationDTO organizationDTO) {  // Accepting the request body
         if (id == null) {
             return new ResponseEntity<>(new ApiResponse<>("Invalid ID", null), HttpStatus.BAD_REQUEST);
         }
