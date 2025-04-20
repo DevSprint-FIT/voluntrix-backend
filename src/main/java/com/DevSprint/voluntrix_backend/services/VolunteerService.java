@@ -45,13 +45,12 @@ public class VolunteerService {
             volunteer.setLastName(volunteerDTO.getLastName());
             volunteer.setEmail(volunteerDTO.getEmail());
             volunteer.setInstitute(volunteerDTO.getInstitute());
-            volunteer.setInterestAreas(volunteerDTO.getInterestAreas());
             volunteer.setAvailabilityStatus(volunteerDTO.getAvailabilityStatus());
-            volunteer.setPreferredOrganizations(volunteerDTO.getPreferredOrganizations());
 
             Volunteer updatedVolunteer = volunteerRepository.save(volunteer);
             return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
-        } else {
+        } 
+        else {
             throw new RuntimeException("Volunteer not found with ID: " + volunteerId);
         }
     }
