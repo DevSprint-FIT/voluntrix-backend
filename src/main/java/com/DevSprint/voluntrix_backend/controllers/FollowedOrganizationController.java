@@ -2,6 +2,7 @@ package com.DevSprint.voluntrix_backend.controllers;
 
 import com.DevSprint.voluntrix_backend.dtos.FollowOrganizationDTO;
 import com.DevSprint.voluntrix_backend.services.FollowedOrganizationService;
+import com.DevSprint.voluntrix_backend.dtos.MonthlyFollowCountDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -41,4 +42,18 @@ public class FollowedOrganizationController {
 
         return ResponseEntity.ok(organizationIds);
     }
+
+    //Monthly follower statistics
+    @GetMapping("/stats/{organizationId}")
+    public ResponseEntity<List<MonthlyFollowCountDTO>> getMonthlyFollowerStats(
+            @PathVariable Long organizationId,
+            @RequestParam int year){
+        List<MonthlyFollowCountDTO> stats = followedOrganizationService.getMonthlyFollowerStats(year, organizationId);
+        return ResponseEntity.ok(stats);
+    }
+
+
+
+
+
 }
