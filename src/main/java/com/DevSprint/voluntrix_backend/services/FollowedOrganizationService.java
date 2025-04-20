@@ -11,8 +11,13 @@ import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.DevSprint.voluntrix_backend.dtos.MonthlyFollowCountDTO;
 
+
+import java.time.Month;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -83,4 +88,18 @@ public class FollowedOrganizationService {
                 .map(entityDTOConverter::toFollowOrganizationDTO)
                 .collect(Collectors.toList());
     }
+
+    public List<MonthlyFollowCountDTO> getMonthlyFollowerStats(int year, Long organizationId) {
+        List<Object[]> rawStats = followedOrganizationRepository.countMonthlyFollowers(year, organizationId);
+
+        return rawStats.stream()
+                .map(obj -> {
+                    Integer monthNumber = (Integer) obj[0];
+                    Long count = (Long) obj[1];
+                    String monthName = Month.of(monthNumber).getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+                    return new MonthlyFollowCountDTO(monthName, count);
+                })
+                .collect(Collectors.toList());
+    }
+
 }
