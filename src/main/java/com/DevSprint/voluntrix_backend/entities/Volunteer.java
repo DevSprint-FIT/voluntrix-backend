@@ -1,7 +1,6 @@
 package com.DevSprint.voluntrix_backend.entities;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,8 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @Entity
 @Table(name = "volunteer")
@@ -38,14 +35,8 @@ public class Volunteer {
     @Column
     private String institute;
 
-    @ElementCollection
-    private List<String> interestAreas;
-
     @Column(nullable = false)
-    private String availabilityStatus;
-
-    @ElementCollection
-    private List<String> preferredOrganizations;
+    private Boolean availabilityStatus;
 
     @Column(nullable = false)
     private Integer volunteerLevel = 1; 
