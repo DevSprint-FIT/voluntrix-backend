@@ -40,17 +40,29 @@ public class VolunteerService {
         return volunteer.map(entityDTOConvert::toVolunteerDTO).orElse(null);
     }
 
-    public VolunteerDTO updateVolunteer(Long volunteerId, VolunteerDTO volunteerDTO) {
+    public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerDTO volunteerDTO) {
         Optional<Volunteer> existingVolunteer = volunteerRepository.findById(volunteerId);
-
+    
         if (existingVolunteer.isPresent()) {
             Volunteer volunteer = existingVolunteer.get();
-            volunteer.setFirstName(volunteerDTO.getFirstName());
-            volunteer.setLastName(volunteerDTO.getLastName());
-            volunteer.setEmail(volunteerDTO.getEmail());
-            volunteer.setInstitute(volunteerDTO.getInstitute());
-            volunteer.setAvailabilityStatus(volunteerDTO.getAvailabilityStatus());
-
+    
+            // Only update fields if they're not null
+            if (volunteerDTO.getFirstName() != null) {
+                volunteer.setFirstName(volunteerDTO.getFirstName());
+            }
+            if (volunteerDTO.getLastName() != null) {
+                volunteer.setLastName(volunteerDTO.getLastName());
+            }
+            if (volunteerDTO.getEmail() != null) {
+                volunteer.setEmail(volunteerDTO.getEmail());
+            }
+            if (volunteerDTO.getInstitute() != null) {
+                volunteer.setInstitute(volunteerDTO.getInstitute());
+            }
+            if (volunteerDTO.getAvailabilityStatus() != null) {
+                volunteer.setAvailabilityStatus(volunteerDTO.getAvailabilityStatus());
+            }
+    
             Volunteer updatedVolunteer = volunteerRepository.save(volunteer);
             return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
         } 
