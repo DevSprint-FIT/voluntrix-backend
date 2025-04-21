@@ -22,6 +22,10 @@ public class VolunteerService {
 
     public VolunteerDTO createVolunteer(VolunteerDTO volunteerDTO) {
         Volunteer volunteer = entityDTOConvert.toVolunteerEntity(volunteerDTO);
+
+        volunteer.setVolunteerLevel(1);
+        volunteer.setRewardPoints(0);
+
         Volunteer savedVolunteer = volunteerRepository.save(volunteer);
         return entityDTOConvert.toVolunteerDTO(savedVolunteer);
     }
