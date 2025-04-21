@@ -16,7 +16,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))  // Disable CSRF only for APIs
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/payment/**")) // Disable CSRF only for APIs
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -24,6 +24,7 @@ public class SecurityConfig {
                             "/v3/api-docs/**",
                             "/swagger-ui.html"
                         ).permitAll()
+                        .requestMatchers("/api/payment/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll() // Allow all requests under `/api/public/`
                         .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
                         .anyRequest().authenticated() // Require authentication for everything else
@@ -37,7 +38,7 @@ public class SecurityConfig {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "https://your-deployed-frontend.com")); // Allow local & production frontend
+        config.setAllowedOrigins(List.of("http://localhost:3000", "https://your-deployed-frontend.com", "https://0b30-2402-4000-2100-b33d-98c6-a11b-1098-48c4.ngrok-free.app")); // Allow local & production frontend
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // Needed if frontend sends credentials (e.g., tokens)
