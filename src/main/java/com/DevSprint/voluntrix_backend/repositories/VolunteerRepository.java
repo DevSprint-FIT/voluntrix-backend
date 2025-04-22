@@ -7,6 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface VolunteerRepository extends JpaRepository<Volunteer, Long> {
-    Optional<Volunteer> findByEmail(String email);
+    Optional<Volunteer> findByUsername(String username);
 }
 
