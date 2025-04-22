@@ -1,5 +1,7 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
+import com.DevSprint.voluntrix_backend.enums.TransactionType;
+
 import lombok.Data;
 
 @Data
@@ -18,4 +20,5 @@ public class PaymentRequestDto {
     private String userId;
     private String eventId;
     private boolean isAnonymous;
+    private TransactionType transactionType;
 }

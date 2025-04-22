@@ -2,11 +2,15 @@ package com.DevSprint.voluntrix_backend.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+
+import com.DevSprint.voluntrix_backend.enums.TransactionType;
 
 @Entity
 @Table(name = "transaction")
@@ -20,6 +24,7 @@ public class Payment {
     @Column(name = "payment_id")
     private String paymentId;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private String status;
 
@@ -55,4 +60,8 @@ public class Payment {
 
     @Column(name = "is_anonymous")
     private boolean isAnonymous;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transaction_type")
+    private TransactionType transactionType;
 }

@@ -87,6 +87,7 @@ public class PaymentService {
         payment.setUserType(dto.getUserType());
         payment.setUserId(dto.getUserId());
         payment.setAnonymous(dto.isAnonymous());
+        payment.setTransactionType(dto.getTransactionType());
 
         paymentRepository.save(payment);
 
