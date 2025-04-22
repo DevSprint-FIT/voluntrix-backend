@@ -42,6 +42,16 @@ public class VolunteerController {
         }
     }
 
+    @GetMapping("/username/{username}")
+    public ResponseEntity<VolunteerDTO> getVolunteerByUsername(@PathVariable String username) {
+        try {
+            VolunteerDTO volunteer = volunteerService.getVolunteerByUsername(username);
+            return ResponseEntity.ok(volunteer);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping
     public ResponseEntity<VolunteerDTO> createVolunteer(@RequestBody VolunteerDTO volunteerDTO) {
         VolunteerDTO createdVolunteer = volunteerService.createVolunteer(volunteerDTO);
