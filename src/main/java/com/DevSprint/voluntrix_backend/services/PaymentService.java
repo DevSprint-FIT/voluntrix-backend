@@ -8,6 +8,7 @@ import com.DevSprint.voluntrix_backend.dtos.PayHereNotificationDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentResponseDto;
 import com.DevSprint.voluntrix_backend.entities.Payment;
+import com.DevSprint.voluntrix_backend.enums.PaymentStatus;
 import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 
 import java.security.MessageDigest;
@@ -79,7 +80,7 @@ public class PaymentService {
         payment.setOrderId(dto.getOrderId());
         payment.setAmount(Double.parseDouble(dto.getAmount()));
         payment.setCurrency(dto.getCurrency());
-        payment.setStatus("PENDING");
+        payment.setStatus(PaymentStatus.PENDING);
         payment.setReceivedTimestamp(LocalDateTime.now());
         payment.setEmail(dto.isAnonymous() ? null : dto.getEmail());
         payment.setMethod("PENDING");
@@ -103,7 +104,7 @@ public class PaymentService {
         payment.setStatusCode(dto.getStatus_code());
         payment.setStatusMessage(dto.getStatus_message());
         payment.setMethod(dto.getMethod());
-        payment.setStatus("2".equals(dto.getStatus_code()) ? "SUCCESS" : "FAILED");
+        payment.setStatus("2".equals(dto.getStatus_code()) ? PaymentStatus.SUCCESS : PaymentStatus.FAILED);
 
         paymentRepository.save(payment);
     }

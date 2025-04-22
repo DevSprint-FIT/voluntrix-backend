@@ -10,6 +10,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+import com.DevSprint.voluntrix_backend.enums.PaymentStatus;
 import com.DevSprint.voluntrix_backend.enums.TransactionType;
 
 @Entity
@@ -26,7 +27,7 @@ public class Payment {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private String status;
+    private PaymentStatus status;
 
     @Column(name = "status_code")
     private String statusCode;
