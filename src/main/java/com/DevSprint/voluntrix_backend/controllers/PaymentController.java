@@ -26,8 +26,7 @@ public class PaymentController {
 
     @PostMapping("/start")
     public PaymentResponseDto startPayment(@RequestBody PaymentRequestDto paymentRequest) {
-        String hash = paymentService.generateHashForPayment(paymentRequest);
-        return new PaymentResponseDto(hash, paymentService.getMerchantId());
+        return paymentService.startPayment(paymentRequest);
     } 
 
     @PostMapping("/notify")

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "transaction")
 @Data
 public class Payment {
-    
+
     @Id
     @Column(name = "order_id")
     private String orderId;
@@ -22,10 +22,10 @@ public class Payment {
 
     @Column(name = "status")
     private String status;
-    
+
     @Column(name = "status_code")
     private String statusCode;
-    
+
     @Column(name = "status_message")
     private String statusMessage;
 
@@ -34,8 +34,25 @@ public class Payment {
 
     @Column(name = "currency")
     private String currency;
-    
+
+    @Column(name = "method")
+    private String method;
+
+    @Column(name = "email")
+    private String email;
+
     @Column(name = "received_timestamp")
     private LocalDateTime receivedTimestamp;
-}
 
+    @Column(name = "user_type")
+    private String userType;
+
+    @Column(name = "user_id")
+    private Long userId;
+
+    @Column(name = "event_id")
+    private Long eventId;
+
+    @Column(name = "is_anonymous")
+    private boolean isAnonymous;
+}

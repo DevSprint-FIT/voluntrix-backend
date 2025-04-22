@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.PayHereNotificationDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
+import com.DevSprint.voluntrix_backend.dtos.PaymentResponseDto;
 import com.DevSprint.voluntrix_backend.entities.Payment;
 import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 
@@ -32,10 +33,6 @@ public class PaymentService {
 
     private String md5(String input) {
         return generateHash(input);
-    }
-
-    public String getMerchantId() {
-        return merchantId;
     }
 
     public String generateHashForPayment(PaymentRequestDto paymentRequest) {
@@ -76,6 +73,23 @@ public class PaymentService {
         }
     }
 
+    // save initial transaction
+    public PaymentResponseDto startPayment(PaymentRequestDto dto) {
+        Payment payment = new Payment();
+        payment.setOrderId(dto.getOrderId());
+        payment.setAmount(Double.parseDouble(dto.getAmount()));
+        payment.setCurrency(dto.getCurrency());
+        payment.setStatus("PENDING");
+        payment.setReceivedTimestamp(LocalDateTime.now());
+        payment.setEmail(dto.isAnonymous() ? null : dto.getEmail());
+        payment.setMethod("PENDING");
+
+        paymentRepository.save(payment);
+
+        String hash = generateHashForPayment(dto);
+        return new PaymentResponseDto(hash, merchantId);
+    }
+
     public void saveTransaction(PayHereNotificationDto dto) {
         Payment payment = new Payment();
 
@@ -92,4 +106,5 @@ public class PaymentService {
 
         paymentRepository.save(payment);
     }
+    
 }
