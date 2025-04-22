@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class VolunteerDTO {
     private Long volunteerId;
+    private String username;
     private String firstName;
     private String lastName;
     private String email;
