@@ -1,9 +1,11 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
+import com.DevSprint.voluntrix_backend.dtos.PayHereNotificationDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentResponseDto;
 import com.DevSprint.voluntrix_backend.services.PaymentService;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,14 +31,30 @@ public class PaymentController {
     } 
 
     @PostMapping("/notify")
-    public String notifyPayment(@RequestParam Map<String, String> payload) {
-        boolean valid = paymentService.verifyPayment(payload);
-        if (valid) {
-            System.out.println("Paymnet Verified");
-        } else {
-            System.out.println("Payment is not verified");
+    public ResponseEntity<String> notifyPayment(@RequestParam Map<String, String> params) {
+        try{
+            boolean isValid = paymentService.verifyPayment(params);
+
+            if (!isValid) {
+                return ResponseEntity.badRequest().body("Payment verification failed.");
+            }
+
+            PayHereNotificationDto dto = new PayHereNotificationDto();
+            dto.setMerchant_id(params.get("merchant_id"));
+            dto.setOrder_id(params.get("order_id"));
+            dto.setPayment_id(params.get("payment_id"));
+            dto.setStatus_code(params.get("status_code"));
+            dto.setMd5sig(params.get("md5sig"));
+            dto.setStatus_message(params.get("status_message"));
+            dto.setPayhere_amount(params.get("payhere_amount"));
+            dto.setPayhere_currency(params.get("payhere_currency"));
+
+            paymentService.saveTransaction(dto);
+            return ResponseEntity.ok("Transaction saved succesfully.");
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return ResponseEntity.status(500).body("Internal server error.");
         }
-        return valid ? "OK" : "FAILED"; 
-    }
+    } 
 
 }

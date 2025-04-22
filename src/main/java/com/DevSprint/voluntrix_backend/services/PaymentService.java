@@ -1,22 +1,42 @@
 package com.DevSprint.voluntrix_backend.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.DevSprint.voluntrix_backend.dtos.PayHereNotificationDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
+import com.DevSprint.voluntrix_backend.entities.Payment;
+import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
 public class PaymentService {
+
+    private final PaymentRepository paymentRepository;
+
+    @Autowired
+    public PaymentService(PaymentRepository paymentRepository) {
+        this.paymentRepository = paymentRepository;
+    }
 
     @Value("${PAYHERE_MERCHANT_ID}")
     private String merchantId;
 
     @Value("${PAYHERE_MERCHANT_SECRET}")
     private String merchantSecret;
+
+    private String md5(String input) {
+        return generateHash(input);
+    }
+
+    public String getMerchantId() {
+        return merchantId;
+    }
 
     public String generateHashForPayment(PaymentRequestDto paymentRequest) {
         return generateHash(merchantId + 
@@ -39,7 +59,7 @@ public class PaymentService {
             merchantIdFromPayload + orderId + amount + currency + statusCode + md5(merchantSecret)
         );
 
-        return expectedMd5sig.equalsIgnoreCase(receivedMd5sig) && "2".equals(statusCode);
+        return expectedMd5sig.equalsIgnoreCase(receivedMd5sig);
     }
 
     private String generateHash(String data) {
@@ -56,11 +76,20 @@ public class PaymentService {
         }
     }
 
-    private String md5(String input) {
-        return generateHash(input);
-    }
+    public void saveTransaction(PayHereNotificationDto dto) {
+        Payment payment = new Payment();
 
-    public String getMerchantId() {
-        return merchantId;
+        payment.setOrderId(dto.getOrder_id());
+        payment.setPaymentId(dto.getPayment_id());
+        payment.setStatusCode(dto.getStatus_code());
+        payment.setStatusMessage(dto.getStatus_message());
+        payment.setAmount(Double.valueOf(dto.getPayhere_amount()));
+        payment.setCurrency(dto.getPayhere_currency());
+        payment.setReceivedTimestamp(LocalDateTime.now());
+
+        String status = "2".equals(dto.getStatus_code()) ? "SUCCESS" : "FAILED";
+        payment.setStatus(status);
+
+        paymentRepository.save(payment);
     }
 }
