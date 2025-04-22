@@ -9,7 +9,10 @@ import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentResponseDto;
 import com.DevSprint.voluntrix_backend.entities.Payment;
 import com.DevSprint.voluntrix_backend.enums.PaymentStatus;
+import com.DevSprint.voluntrix_backend.repositories.EventRepository;
 import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
+import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
+import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -20,10 +23,16 @@ import java.util.Map;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final EventRepository eventRepository;
+    private final SponsorRepository sponsorRepository;
+    private final VolunteerRepository volunteerRepository;
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository) {
+    public PaymentService(PaymentRepository paymentRepository, EventRepository eventRepository, SponsorRepository sponsorRepository, VolunteerRepository volunteerRepository) {
         this.paymentRepository = paymentRepository;
+        this.eventRepository = eventRepository;
+        this.sponsorRepository = sponsorRepository;
+        this.volunteerRepository = volunteerRepository;
     }
 
     @Value("${PAYHERE_MERCHANT_ID}")
@@ -83,12 +92,18 @@ public class PaymentService {
         payment.setStatus(PaymentStatus.PENDING);
         payment.setReceivedTimestamp(LocalDateTime.now());
         payment.setEmail(dto.isAnonymous() ? null : dto.getEmail());
-        payment.setMethod("PENDING");
-        payment.setEventId(dto.getEventId());
-        payment.setUserType(dto.getUserType());
-        payment.setUserId(dto.getUserId());
         payment.setAnonymous(dto.isAnonymous());
         payment.setTransactionType(dto.getTransactionType());
+
+        if (dto.getEventId() != null) {
+            eventRepository.findById(dto.getEventId()).ifPresent(payment::setEvent);
+        }
+
+        if ("VOLUNTEER".equalsIgnoreCase(dto.getUserType())) {
+            volunteerRepository.findById(dto.getVolunteerId()).ifPresent(payment::setVolunteer);
+        } else if ("SPONSOR".equalsIgnoreCase(dto.getUserType())) {
+            sponsorRepository.findById(dto.getSponsorId()).ifPresent(payment::setSponsor);
+        }
 
         paymentRepository.save(payment);
 

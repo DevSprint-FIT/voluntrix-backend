@@ -5,8 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -51,14 +52,17 @@ public class Payment {
     @Column(name = "received_timestamp")
     private LocalDateTime receivedTimestamp;
 
-    @Column(name = "user_type")
-    private String userType;
+    @ManyToOne
+    @JoinColumn(name = "sponsor_id")
+    private Sponsor sponsor;
 
-    @Column(name = "user_id")
-    private String userId;
+    @ManyToOne
+    @JoinColumn(name = "volunteer_id")
+    private Volunteer volunteer;
 
-    @Column(name = "event_id")
-    private String eventId;
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
 
     @Column(name = "is_anonymous")
     private boolean isAnonymous;

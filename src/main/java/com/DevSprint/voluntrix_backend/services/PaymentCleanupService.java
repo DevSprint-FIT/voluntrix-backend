@@ -23,7 +23,7 @@ public class PaymentCleanupService {
         this.paymentRepository = paymentRepository;
     }
 
-    @Scheduled(fixedRate = 1 * 60 * 1000)
+    @Scheduled(fixedRate = 5 * 60 * 1000)
     @Transactional
     public void cleanUpExpiredPayments() {
         LocalDateTime expirationThreshhold = LocalDateTime.now().minusMinutes(15);

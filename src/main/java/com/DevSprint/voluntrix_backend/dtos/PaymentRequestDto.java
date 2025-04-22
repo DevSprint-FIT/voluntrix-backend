@@ -16,9 +16,10 @@ public class PaymentRequestDto {
     private String address;
     private String city;
     private String country;
+    private Long volunteerId;
+    private Long sponsorId;
+    private Long eventId;
     private String userType;
-    private String userId;
-    private String eventId;
     private boolean isAnonymous;
     private TransactionType transactionType;
 }
