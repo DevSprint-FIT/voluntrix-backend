@@ -42,7 +42,7 @@ public class VolunteerController {
         }
     }
 
-    @GetMapping("/username/{username}")
+    @GetMapping("/{username}")
     public ResponseEntity<VolunteerDTO> getVolunteerByUsername(@PathVariable String username) {
         try {
             VolunteerDTO volunteer = volunteerService.getVolunteerByUsername(username);
