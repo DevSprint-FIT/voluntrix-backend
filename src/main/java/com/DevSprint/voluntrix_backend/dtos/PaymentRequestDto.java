@@ -15,7 +15,7 @@ public class PaymentRequestDto {
     private String city;
     private String country;
     private String userType;
-    private Long userId;
-    private Long eventId;
+    private String userId;
+    private String eventId;
     private boolean isAnonymous;
 }

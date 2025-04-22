@@ -48,10 +48,10 @@ public class Payment {
     private String userType;
 
     @Column(name = "user_id")
-    private Long userId;
+    private String userId;
 
     @Column(name = "event_id")
-    private Long eventId;
+    private String eventId;
 
     @Column(name = "is_anonymous")
     private boolean isAnonymous;

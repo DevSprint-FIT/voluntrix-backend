@@ -83,6 +83,10 @@ public class PaymentService {
         payment.setReceivedTimestamp(LocalDateTime.now());
         payment.setEmail(dto.isAnonymous() ? null : dto.getEmail());
         payment.setMethod("PENDING");
+        payment.setEventId(dto.getEventId());
+        payment.setUserType(dto.getUserType());
+        payment.setUserId(dto.getUserId());
+        payment.setAnonymous(dto.isAnonymous());
 
         paymentRepository.save(payment);
 
@@ -91,18 +95,14 @@ public class PaymentService {
     }
 
     public void saveTransaction(PayHereNotificationDto dto) {
-        Payment payment = new Payment();
+        Payment payment = paymentRepository.findById(dto.getOrder_id())
+            .orElseThrow(() -> new RuntimeException("Payment not found"));
 
-        payment.setOrderId(dto.getOrder_id());
         payment.setPaymentId(dto.getPayment_id());
         payment.setStatusCode(dto.getStatus_code());
         payment.setStatusMessage(dto.getStatus_message());
-        payment.setAmount(Double.valueOf(dto.getPayhere_amount()));
-        payment.setCurrency(dto.getPayhere_currency());
-        payment.setReceivedTimestamp(LocalDateTime.now());
-
-        String status = "2".equals(dto.getStatus_code()) ? "SUCCESS" : "FAILED";
-        payment.setStatus(status);
+        payment.setMethod(dto.getMethod());
+        payment.setStatus("2".equals(dto.getStatus_code()) ? "SUCCESS" : "FAILED");
 
         paymentRepository.save(payment);
     }

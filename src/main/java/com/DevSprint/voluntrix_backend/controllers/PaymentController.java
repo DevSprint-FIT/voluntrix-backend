@@ -47,6 +47,7 @@ public class PaymentController {
             dto.setStatus_message(params.get("status_message"));
             dto.setPayhere_amount(params.get("payhere_amount"));
             dto.setPayhere_currency(params.get("payhere_currency"));
+            dto.setMethod(params.get("method"));
 
             paymentService.saveTransaction(dto);
             return ResponseEntity.ok("Transaction saved succesfully.");
