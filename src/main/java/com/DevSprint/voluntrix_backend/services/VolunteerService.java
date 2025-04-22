@@ -40,6 +40,12 @@ public class VolunteerService {
         return volunteer.map(entityDTOConvert::toVolunteerDTO).orElse(null);
     }
 
+    public VolunteerDTO getVolunteerByUsername(String username) {
+        Optional<Volunteer> volunteer = volunteerRepository.findByUsername(username);
+        return volunteer.map(entityDTOConvert::toVolunteerDTO)
+                        .orElseThrow(() -> new RuntimeException("Volunteer not found with username: " + username));
+    }
+
     public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerDTO volunteerDTO) {
         Optional<Volunteer> existingVolunteer = volunteerRepository.findById(volunteerId);
     
