@@ -32,7 +32,7 @@ public class VolunteerController {
         return ResponseEntity.ok(volunteers);
     }
 
-    @GetMapping("/{volunteerId}")
+    @GetMapping("/id/{volunteerId}")
     public ResponseEntity<VolunteerDTO> getVolunteerById(@PathVariable Long volunteerId) {
         VolunteerDTO volunteer = volunteerService.getVolunteerById(volunteerId);
         if (volunteer != null) {
@@ -42,12 +42,12 @@ public class VolunteerController {
         }
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/username/{username}")
     public ResponseEntity<VolunteerDTO> getVolunteerByUsername(@PathVariable String username) {
-        try {
-            VolunteerDTO volunteer = volunteerService.getVolunteerByUsername(username);
+        VolunteerDTO volunteer = volunteerService.getVolunteerByUsername(username);
+        if (volunteer != null) {
             return ResponseEntity.ok(volunteer);
-        } catch (RuntimeException e) {
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
