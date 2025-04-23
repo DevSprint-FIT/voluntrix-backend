@@ -52,7 +52,6 @@ public class VolunteerService {
         if (existingVolunteer.isPresent()) {
             Volunteer volunteer = existingVolunteer.get();
     
-            // Only update fields if they're not null
             if (volunteerDTO.getFirstName() != null) {
                 volunteer.setFirstName(volunteerDTO.getFirstName());
             }
@@ -67,6 +66,11 @@ public class VolunteerService {
             }
             if (volunteerDTO.getIsAvailable() != null) { 
                 volunteer.setIsAvailable(volunteerDTO.getIsAvailable()); 
+            }
+            if (volunteerDTO.getIsEventHost() != null) { 
+                if (!volunteer.getIsEventHost() && volunteerDTO.getIsEventHost()) {
+                    volunteer.setIsEventHost(true);
+                }
             }
     
             Volunteer updatedVolunteer = volunteerRepository.save(volunteer);
