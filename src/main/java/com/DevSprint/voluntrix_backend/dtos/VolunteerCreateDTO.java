@@ -9,15 +9,12 @@ import lombok.AllArgsConstructor;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class VolunteerDTO {
-    private Long volunteerId;
+public class VolunteerCreateDTO {
     private String username;
     private String firstName;
     private String lastName;
     private String email;
     private String institute;
     private Boolean isAvailable;
-    private Integer volunteerLevel; 
-    private Integer rewardPoints; 
-    private Boolean isEventHost;  
+    private Boolean isEventHost;
 }
