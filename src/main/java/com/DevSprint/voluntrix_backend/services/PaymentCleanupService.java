@@ -2,7 +2,7 @@ package com.DevSprint.voluntrix_backend.services;
 
 import com.DevSprint.voluntrix_backend.enums.PaymentStatus;
 import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
-import com.DevSprint.voluntrix_backend.entities.Payment;
+import com.DevSprint.voluntrix_backend.entities.PaymentEntity;
 
 import jakarta.transaction.Transactional;
 
@@ -27,11 +27,11 @@ public class PaymentCleanupService {
     @Transactional
     public void cleanUpExpiredPayments() {
         LocalDateTime expirationThreshhold = LocalDateTime.now().minusMinutes(15);
-        List<Payment> oldPendingPayments = paymentRepository.findByStatusAndReceivedTimestampBefore(
+        List<PaymentEntity> oldPendingPayments = paymentRepository.findByStatusAndReceivedTimestampBefore(
             PaymentStatus.PENDING, expirationThreshhold
         );
 
-        for (Payment payment : oldPendingPayments) {
+        for (PaymentEntity payment : oldPendingPayments) {
             payment.setStatus(PaymentStatus.EXPIRED);
         }
 

@@ -24,7 +24,7 @@ import com.DevSprint.voluntrix_backend.enums.TransactionType;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Payment {
+public class PaymentEntity {
 
     @Id
     @Column(name = "order_id")
@@ -60,15 +60,15 @@ public class Payment {
 
     @ManyToOne
     @JoinColumn(name = "sponsor_id")
-    private Sponsor sponsor;
+    private SponsorEntity sponsor;
 
     @ManyToOne
     @JoinColumn(name = "volunteer_id")
-    private Volunteer volunteer;
+    private VolunteerEntity volunteer;
 
     @ManyToOne
     @JoinColumn(name = "event_id")
-    private Event event;
+    private EventEntity event;
 
     @Column(name = "is_anonymous")
     private boolean isAnonymous;
