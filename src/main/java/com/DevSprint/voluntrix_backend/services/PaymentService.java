@@ -7,10 +7,11 @@ import org.springframework.stereotype.Service;
 import com.DevSprint.voluntrix_backend.dtos.PayHereNotificationDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentResponseDto;
-import com.DevSprint.voluntrix_backend.entities.Event;
-import com.DevSprint.voluntrix_backend.entities.Payment;
-import com.DevSprint.voluntrix_backend.entities.Sponsor;
-import com.DevSprint.voluntrix_backend.entities.Volunteer;
+import com.DevSprint.voluntrix_backend.dtos.PaymentStatusResponseDto;
+import com.DevSprint.voluntrix_backend.entities.EventEntity;
+import com.DevSprint.voluntrix_backend.entities.PaymentEntity;
+import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
+import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.enums.PaymentStatus;
 import com.DevSprint.voluntrix_backend.enums.TransactionType;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
@@ -90,21 +91,21 @@ public class PaymentService {
     // save initial transaction
     public PaymentResponseDto createPendingPayment(PaymentRequestDto dto) {
         // Validate sponsor
-        Sponsor sponsor = null;
+        SponsorEntity sponsor = null;
         if (dto.getSponsorId() != null) {
             sponsor = sponsorRepository.findById(dto.getSponsorId())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid sponsor ID"));
         }
         
         // Validate volunteer
-        Volunteer volunteer = null;
+        VolunteerEntity volunteer = null;
         if (dto.getVolunteerId() != null) {
             volunteer = volunteerRepository.findById(dto.getVolunteerId())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid volunteer ID"));
         }
 
         // Validat event
-        Event event = null;
+        EventEntity event = null;
         if (dto.getEventId() != null){
             event = eventRepository.findById(dto.getEventId())
                     .orElseThrow(() -> new IllegalArgumentException("Invalid event ID"));  
@@ -115,7 +116,7 @@ public class PaymentService {
             throw new IllegalArgumentException("Only sponsors can make sponsorships");
         }
 
-        Payment payment = new Payment();
+        PaymentEntity payment = new PaymentEntity();
         payment.setOrderId(dto.getOrderId());
         payment.setAmount(Double.parseDouble(dto.getAmount()));
         payment.setCurrency(dto.getCurrency());
@@ -135,7 +136,7 @@ public class PaymentService {
     }
 
     public void saveTransaction(PayHereNotificationDto dto) {
-        Payment payment = paymentRepository.findById(dto.getOrder_id())
+        PaymentEntity payment = paymentRepository.findById(dto.getOrder_id())
             .orElseThrow(() -> new RuntimeException("Payment not found"));
 
         payment.setPaymentId(dto.getPayment_id());
@@ -145,6 +146,13 @@ public class PaymentService {
         payment.setStatus("2".equals(dto.getStatus_code()) ? PaymentStatus.SUCCESS : PaymentStatus.FAILED);
 
         paymentRepository.save(payment);
+    }
+
+    public PaymentStatusResponseDto getPaymentStatusByOrderId(String orderId) {
+        PaymentEntity payment = paymentRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Payment not found for orderId: " + orderId));
+
+        return new PaymentStatusResponseDto(orderId, payment.getStatus());
     }
     
 }
