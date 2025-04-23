@@ -10,13 +10,13 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolunteerDTO {
-    private Long volunteerId;
+    //private Long volunteerId;
     private String username;
     private String firstName;
     private String lastName;
     private String email;
     private String institute;
-    private Boolean availabilityStatus;
-    private Integer volunteerLevel; 
-    private Integer rewardPoints;   
+    private Boolean isAvailable;
+    // private Integer volunteerLevel; 
+    // private Integer rewardPoints;   
 }

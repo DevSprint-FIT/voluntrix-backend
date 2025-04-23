@@ -65,8 +65,8 @@ public class VolunteerService {
             if (volunteerDTO.getInstitute() != null) {
                 volunteer.setInstitute(volunteerDTO.getInstitute());
             }
-            if (volunteerDTO.getAvailabilityStatus() != null) {
-                volunteer.setAvailabilityStatus(volunteerDTO.getAvailabilityStatus());
+            if (volunteerDTO.getIsAvailable() != null) { 
+                volunteer.setIsAvailable(volunteerDTO.getIsAvailable()); 
             }
     
             Volunteer updatedVolunteer = volunteerRepository.save(volunteer);
