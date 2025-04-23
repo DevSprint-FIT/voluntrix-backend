@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.DevSprint.voluntrix_backend.dtos.analytics.MonthlyDonationData;
 import com.DevSprint.voluntrix_backend.dtos.analytics.MonthlyDonationDto;
 import com.DevSprint.voluntrix_backend.services.VolunteerPaymentAnalyticsService;
 
@@ -27,8 +26,13 @@ public class VolunteerPaymentAnalyticsController {
 
     @GetMapping("/{volunteerId}/donations/monthly")
     public ResponseEntity<List<MonthlyDonationDto>> getMonthlyDonationsByYear(@PathVariable Long volunteerId, @RequestParam int year) {
-        List<MonthlyDonationDto> monthlyDonation = volunteerPaymentAnalyticsService.getMonthlyDonationsByYear(volunteerId, year);
+        List<MonthlyDonationDto> monthlyDonation = volunteerPaymentAnalyticsService.getMonthlyDonations(volunteerId, year);
         return ResponseEntity.ok(monthlyDonation);
     }
-
+    
+    @GetMapping("/{volunteerId}/donations/total")
+    public Double getTotalDonationsByVolunteer(@PathVariable Long volunteerId) {
+        Double totalDonation = volunteerPaymentAnalyticsService.getAllTimeTotalDonation(volunteerId);
+        return totalDonation != null ? totalDonation : 0;
+    } 
 }

@@ -20,12 +20,16 @@ public class VolunteerPaymentAnalyticsService {
         this.paymentRepository = paymentRepository;
     }
 
-    public List<MonthlyDonationDto> getMonthlyDonationsByYear(Long volunteerId, int year) {
-        List<MonthlyDonationData> rawData = paymentRepository.findMonthlyDonationByVolunteerAndYear(volunteerId, year);
+    public List<MonthlyDonationDto> getMonthlyDonations(Long volunteerId, int year) {
+        List<MonthlyDonationData> rawData = paymentRepository.findMonthlyDonationsByVolunteerAndYear(volunteerId, year);
 
         return rawData.stream()
             .map(data -> new MonthlyDonationDto(data.getMonth(), data.getTotal()))
             .collect(Collectors.toList());
+    }
+
+    public Double getAllTimeTotalDonation(Long volunteerId) {
+        return paymentRepository.sumTotalDonationsByVolunteer(volunteerId);
     }
 
 

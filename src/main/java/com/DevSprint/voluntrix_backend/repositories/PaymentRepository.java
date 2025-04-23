@@ -24,5 +24,11 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, String>{
             "FROM PaymentEntity p WHERE p.volunteer.id = :volunteerId " + 
             "AND p.transactionType = 'DONATION' AND p.status = 'SUCCESS' " + 
             "GROUP BY MONTH(p.receivedTimestamp) ORDER BY MONTH(p.receivedTimestamp)")
-    List<MonthlyDonationData> findMonthlyDonationByVolunteerAndYear(@Param("volunteerId") Long volunteerId, @Param("year") int year);
+    List<MonthlyDonationData> findMonthlyDonationsByVolunteerAndYear(@Param("volunteerId") Long volunteerId, @Param("year") int year);
+
+    @Query(
+        "SELECT SUM(p.amount) as totalDonations " +
+        "FROM PaymentEntity p WHERE p.volunteer.id = :volunteerId " + 
+        "AND p.transactionType = 'DONATION' AND p.status = 'SUCCESS'")
+    Double sumTotalDonationsByVolunteer(@Param("volunteerId") Long volunteerId);
 }
