@@ -32,17 +32,7 @@ public class VolunteerController {
         return ResponseEntity.ok(volunteers);
     }
 
-    @GetMapping("/id/{volunteerId}")
-    public ResponseEntity<VolunteerDTO> getVolunteerById(@PathVariable Long volunteerId) {
-        VolunteerDTO volunteer = volunteerService.getVolunteerById(volunteerId);
-        if (volunteer != null) {
-            return ResponseEntity.ok(volunteer);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping("/username/{username}")
+    @GetMapping("/{username}")
     public ResponseEntity<VolunteerDTO> getVolunteerByUsername(@PathVariable String username) {
         VolunteerDTO volunteer = volunteerService.getVolunteerByUsername(username);
         if (volunteer != null) {
@@ -72,9 +62,9 @@ public class VolunteerController {
     public ResponseEntity<Void> deleteVolunteer(@PathVariable Long volunteerId) {
         boolean isDeleted = volunteerService.deleteVolunteer(volunteerId);
         if (isDeleted) {
-            return ResponseEntity.noContent().build();  // 204 status code for successful delete
+            return ResponseEntity.noContent().build();  
         } else {
-            return ResponseEntity.notFound().build();  // 404 status code if volunteer not found
+            return ResponseEntity.notFound().build();  
         }
     }
 }
