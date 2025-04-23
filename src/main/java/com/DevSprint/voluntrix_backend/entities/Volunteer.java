@@ -39,11 +39,14 @@ public class Volunteer {
     private String institute;
 
     @Column(nullable = false)
-    private Boolean isAvailable;
+    private Boolean isAvailable = false;
 
     @Column(nullable = false)
     private Integer volunteerLevel = 1; 
 
     @Column(nullable = false)
     private Integer rewardPoints = 0; 
+
+    @Column(nullable = false)
+    private Boolean isEventHost = false;
 }

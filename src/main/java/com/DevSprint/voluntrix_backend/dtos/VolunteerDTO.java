@@ -18,5 +18,6 @@ public class VolunteerDTO {
     private String institute;
     private Boolean isAvailable;
     // private Integer volunteerLevel; 
-    // private Integer rewardPoints;   
+    // private Integer rewardPoints; 
+    private Boolean isEventHost;  
 }
