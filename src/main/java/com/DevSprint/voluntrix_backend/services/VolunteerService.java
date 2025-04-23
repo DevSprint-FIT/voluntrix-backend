@@ -1,6 +1,8 @@
 package com.DevSprint.voluntrix_backend.services;
 
 import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerCreateDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerUpdateDTO;
 import com.DevSprint.voluntrix_backend.entities.Volunteer;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.EntityDTOConvert;
@@ -20,11 +22,8 @@ public class VolunteerService {
         this.entityDTOConvert = entityDTOConvert;
     }
 
-    public VolunteerDTO createVolunteer(VolunteerDTO volunteerDTO) {
-        Volunteer volunteer = entityDTOConvert.toVolunteerEntity(volunteerDTO);
-
-        volunteer.setVolunteerLevel(1);
-        volunteer.setRewardPoints(0);
+    public VolunteerDTO createVolunteer(VolunteerCreateDTO volunteerCreateDTO) {
+        Volunteer volunteer = entityDTOConvert.toVolunteerEntity(volunteerCreateDTO);
 
         Volunteer savedVolunteer = volunteerRepository.save(volunteer);
         return entityDTOConvert.toVolunteerDTO(savedVolunteer);
@@ -35,48 +34,42 @@ public class VolunteerService {
         return entityDTOConvert.toVolunteerDTOList(volunteers);
     }
 
-    public VolunteerDTO getVolunteerById(Long volunteerId) {
-        Optional<Volunteer> volunteer = volunteerRepository.findById(volunteerId);
-        return volunteer.map(entityDTOConvert::toVolunteerDTO).orElse(null);
-    }
-
     public VolunteerDTO getVolunteerByUsername(String username) {
         Optional<Volunteer> volunteer = volunteerRepository.findByUsername(username);
         return volunteer.map(entityDTOConvert::toVolunteerDTO)
                         .orElseThrow(() -> new RuntimeException("Volunteer not found with username: " + username));
     }
 
-    public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerDTO volunteerDTO) {
+    public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerUpdateDTO volunteerUpdateDTO) {
         Optional<Volunteer> existingVolunteer = volunteerRepository.findById(volunteerId);
-    
+
         if (existingVolunteer.isPresent()) {
             Volunteer volunteer = existingVolunteer.get();
-    
-            if (volunteerDTO.getFirstName() != null) {
-                volunteer.setFirstName(volunteerDTO.getFirstName());
+
+            if (volunteerUpdateDTO.getFirstName() != null) {
+                volunteer.setFirstName(volunteerUpdateDTO.getFirstName());
             }
-            if (volunteerDTO.getLastName() != null) {
-                volunteer.setLastName(volunteerDTO.getLastName());
+            if (volunteerUpdateDTO.getLastName() != null) {
+                volunteer.setLastName(volunteerUpdateDTO.getLastName());
             }
-            if (volunteerDTO.getEmail() != null) {
-                volunteer.setEmail(volunteerDTO.getEmail());
+            if (volunteerUpdateDTO.getEmail() != null) {
+                volunteer.setEmail(volunteerUpdateDTO.getEmail());
             }
-            if (volunteerDTO.getInstitute() != null) {
-                volunteer.setInstitute(volunteerDTO.getInstitute());
+            if (volunteerUpdateDTO.getInstitute() != null) {
+                volunteer.setInstitute(volunteerUpdateDTO.getInstitute());
             }
-            if (volunteerDTO.getIsAvailable() != null) { 
-                volunteer.setIsAvailable(volunteerDTO.getIsAvailable()); 
+            if (volunteerUpdateDTO.getIsAvailable() != null) {
+                volunteer.setIsAvailable(volunteerUpdateDTO.getIsAvailable());
             }
-            if (volunteerDTO.getIsEventHost() != null) { 
-                if (!volunteer.getIsEventHost() && volunteerDTO.getIsEventHost()) {
+            if (volunteerUpdateDTO.getIsEventHost() != null) {
+                if (!volunteer.getIsEventHost() && volunteerUpdateDTO.getIsEventHost()) {
                     volunteer.setIsEventHost(true);
                 }
             }
-    
+
             Volunteer updatedVolunteer = volunteerRepository.save(volunteer);
             return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
-        } 
-        else {
+        } else {
             throw new RuntimeException("Volunteer not found with ID: " + volunteerId);
         }
     }
