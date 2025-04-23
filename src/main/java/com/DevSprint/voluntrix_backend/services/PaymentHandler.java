@@ -1,5 +1,7 @@
 package com.DevSprint.voluntrix_backend.services;
 
+import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,15 +17,20 @@ public class PaymentHandler {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Autowired
+    private Environment env;
+
     public String sendPaymentRequest() {
         String url = "https://sandbox.payhere.lk/pay/checkout";
 
         // Merchant and order details
-        String merchantId = "1229737";
+        String merchantId = env.getProperty("MERCHANT_ID");
         String orderId = "ORD12345";
         String amount = "1000.00";
         String currency = "LKR";
-        String secret = "MTYxMTQ5NTMzOTE3Nzk1MTY5MTQxNTA0ODcxNzU0ODYyNjY0MzQw"; // Replace with your actual secret
+        String secret = env.getProperty("SECRET_KEY"); 
+
+        
 
         // Generate hash
         String hashString = merchantId + orderId + amount + currency + md5(secret);
