@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 
+@Validated
 @RestController
 @RequestMapping("/api/payment")
-@Validated
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -30,6 +30,7 @@ public class PaymentController {
 
     @PostMapping("/start")
     public ResponseEntity<PaymentResponseDto> startPayment(@RequestBody @Valid PaymentRequestDto paymentRequest) {
+        System.out.println(paymentRequest);
         return ResponseEntity.ok(paymentService.createPendingPayment(paymentRequest));
     } 
 

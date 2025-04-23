@@ -1,0 +1,60 @@
+package com.DevSprint.voluntrix_backend.validation;
+
+import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
+import com.DevSprint.voluntrix_backend.enums.UserType;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+
+public class PaymentRequestValidator implements ConstraintValidator<ValidPaymentRequest, PaymentRequestDto> {
+
+    @Override
+    public boolean isValid(PaymentRequestDto dto, ConstraintValidatorContext context) {
+        System.out.println("✅ Custom validator triggered for: " + dto.getOrderId()); // <-- Should print
+        boolean valid = true;
+
+        // Disable default message
+        context.disableDefaultConstraintViolation();
+
+        // Validate userType related logic
+        if (dto.getUserType() == UserType.SPONSOR) {
+            System.out.println("I am here to check sponsor type");
+            if (dto.getSponsorId() == null) {
+                context.buildConstraintViolationWithTemplate("Sponsor ID is required for SPONSOR userType")
+                        .addPropertyNode("sponsorId").addConstraintViolation();
+                valid = false;
+            }
+            if (dto.getVolunteerId() != null) {
+                context.buildConstraintViolationWithTemplate("VOLUNTEER ID must not be provided for SPONSOR")
+                        .addPropertyNode("volunteerId").addConstraintViolation();
+                valid = false;
+            }
+        } else if (dto.getUserType() == UserType.VOLUNTEER) {
+            System.out.println("I am here to check volunteer type");
+
+            if (dto.getVolunteerId() == null) {
+                context.buildConstraintViolationWithTemplate("Volunteer ID is required for VOLUNTEER userType")
+                        .addPropertyNode("volunteerId").addConstraintViolation();
+                valid = false;
+            }
+            if (dto.getSponsorId() != null) {
+                context.buildConstraintViolationWithTemplate("SPONSOR ID must not be provided for VOLUNTEER")
+                        .addPropertyNode("sponsorId").addConstraintViolation();
+                valid = false;
+            }
+        }
+
+        // Ensure eventId is present for donation/sponsorship
+        if (dto.getTransactionType() != null) {
+            System.out.println("Transaction type is there");
+            if (dto.getEventId() == null) { // Fixed condition to check if eventId is NULL
+                System.out.println("++++++++++++++++++Yes event Id NULL");
+                context.buildConstraintViolationWithTemplate("Event ID is required for donation or sponsorship")
+                        .addPropertyNode("eventId").addConstraintViolation();
+                valid = false;
+            }
+        }
+
+        return valid;
+    }
+}
