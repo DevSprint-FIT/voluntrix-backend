@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
 
 import lombok.Data;
 
@@ -18,8 +17,7 @@ public class PaymentRequestDto {
     private String orderId;
 
     @NotNull(message = "Amount is required")
-    @Positive(message = "Amount must be a positive number")
-    private Double amount;
+    private String amount;
 
     @NotBlank(message = "Currency is required")
     @Pattern(regexp = "^[A-Z]{3}$", message = "Currency must be a valid 3-letter ISO currency code")
@@ -29,7 +27,7 @@ public class PaymentRequestDto {
     private String lastName;
 
     @NotBlank
-    @Email(message = "Email must be valid format")
+    @Email(regexp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}", message = "Email must be valid format")
     private String email;
 
     private String phone;
@@ -72,5 +70,13 @@ public class PaymentRequestDto {
             return eventId != null;
         }
         return true;
+    }
+
+    @AssertTrue(message = "Only one of volunteerId or sponsorId should be provided")
+    private boolean isOnlyOneUserProvided() {
+        if (volunteerId != null && sponsorId != null) {
+            return false;
+        }
+            return true;
     }
 }

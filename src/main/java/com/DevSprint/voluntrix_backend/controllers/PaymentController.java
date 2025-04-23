@@ -5,7 +5,10 @@ import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentResponseDto;
 import com.DevSprint.voluntrix_backend.services.PaymentService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/payment")
+@Validated
 public class PaymentController {
 
     private final PaymentService paymentService;
@@ -25,8 +29,8 @@ public class PaymentController {
     }
 
     @PostMapping("/start")
-    public PaymentResponseDto startPayment(@RequestBody PaymentRequestDto paymentRequest) {
-        return paymentService.startPayment(paymentRequest);
+    public ResponseEntity<PaymentResponseDto> startPayment(@RequestBody @Valid PaymentRequestDto paymentRequest) {
+        return ResponseEntity.ok(paymentService.createPendingPayment(paymentRequest));
     } 
 
     @PostMapping("/notify")

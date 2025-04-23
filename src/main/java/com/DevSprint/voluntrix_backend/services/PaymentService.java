@@ -7,8 +7,12 @@ import org.springframework.stereotype.Service;
 import com.DevSprint.voluntrix_backend.dtos.PayHereNotificationDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentResponseDto;
+import com.DevSprint.voluntrix_backend.entities.Event;
 import com.DevSprint.voluntrix_backend.entities.Payment;
+import com.DevSprint.voluntrix_backend.entities.Sponsor;
+import com.DevSprint.voluntrix_backend.entities.Volunteer;
 import com.DevSprint.voluntrix_backend.enums.PaymentStatus;
+import com.DevSprint.voluntrix_backend.enums.TransactionType;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
 import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
@@ -84,26 +88,45 @@ public class PaymentService {
     }
 
     // save initial transaction
-    public PaymentResponseDto startPayment(PaymentRequestDto dto) {
+    public PaymentResponseDto createPendingPayment(PaymentRequestDto dto) {
+        // Validate sponsor
+        Sponsor sponsor = null;
+        if (dto.getSponsorId() != null) {
+            sponsor = sponsorRepository.findById(dto.getSponsorId())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid sponsor ID"));
+        }
+        
+        // Validate volunteer
+        Volunteer volunteer = null;
+        if (dto.getVolunteerId() != null) {
+            volunteer = volunteerRepository.findById(dto.getVolunteerId())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid volunteer ID"));
+        }
+
+        // Validat event
+        Event event = null;
+        if (dto.getEventId() != null){
+            event = eventRepository.findById(dto.getEventId())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid event ID"));  
+        }
+
+        // Business rule: only sponsors can make sponsorships
+        if (dto.getTransactionType() == TransactionType.SPONSORSHIP && sponsor == null) {
+            throw new IllegalArgumentException("Only sponsors can make sponsorships");
+        }
+
         Payment payment = new Payment();
         payment.setOrderId(dto.getOrderId());
         payment.setAmount(Double.parseDouble(dto.getAmount()));
         payment.setCurrency(dto.getCurrency());
         payment.setStatus(PaymentStatus.PENDING);
         payment.setReceivedTimestamp(LocalDateTime.now());
-        payment.setEmail(dto.isAnonymous() ? null : dto.getEmail());
+        payment.setEmail(dto.getEmail());
         payment.setAnonymous(dto.isAnonymous());
         payment.setTransactionType(dto.getTransactionType());
-
-        if (dto.getEventId() != null) {
-            eventRepository.findById(dto.getEventId()).ifPresent(payment::setEvent);
-        }
-
-        if ("VOLUNTEER".equalsIgnoreCase(dto.getUserType())) {
-            volunteerRepository.findById(dto.getVolunteerId()).ifPresent(payment::setVolunteer);
-        } else if ("SPONSOR".equalsIgnoreCase(dto.getUserType())) {
-            sponsorRepository.findById(dto.getSponsorId()).ifPresent(payment::setSponsor);
-        }
+        payment.setSponsor(sponsor);
+        payment.setEvent(event);
+        payment.setVolunteer(volunteer);
 
         paymentRepository.save(payment);
 
