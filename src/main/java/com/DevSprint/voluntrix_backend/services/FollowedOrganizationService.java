@@ -90,6 +90,10 @@ public class FollowedOrganizationService {
     }
 
     public List<MonthlyFollowCountDTO> getMonthlyFollowerStats(int year, Long organizationId) {
+        // Validate organization exists
+        Organization organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with ID: " + organizationId));
+
         List<Object[]> rawStats = followedOrganizationRepository.countMonthlyFollowers(year, organizationId);
 
         return rawStats.stream()
