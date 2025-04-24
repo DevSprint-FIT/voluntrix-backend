@@ -1,4 +1,4 @@
-package com.DevSprint.voluntrix_backend.dtos.analytics;
+package com.DevSprint.voluntrix_backend.analytics.dto;
 
 import lombok.Data;
 

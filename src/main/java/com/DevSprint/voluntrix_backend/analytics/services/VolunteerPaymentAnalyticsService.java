@@ -1,4 +1,4 @@
-package com.DevSprint.voluntrix_backend.services;
+package com.DevSprint.voluntrix_backend.analytics.services;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.DevSprint.voluntrix_backend.dtos.analytics.MonthlyDonationData;
-import com.DevSprint.voluntrix_backend.dtos.analytics.MonthlyDonationDto;
+import com.DevSprint.voluntrix_backend.analytics.dto.MonthlyDonationData;
+import com.DevSprint.voluntrix_backend.analytics.dto.MonthlyDonationDto;
 import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 
 @Service

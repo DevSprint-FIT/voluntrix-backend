@@ -24,6 +24,7 @@ public class SecurityConfig {
                             "/v3/api-docs/**",
                             "/swagger-ui.html"
                         ).permitAll()
+                        .requestMatchers("/api/analytics/**").permitAll()
                         .requestMatchers("/api/payment/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll() // Allow all requests under `/api/public/`
                         .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
@@ -38,7 +39,7 @@ public class SecurityConfig {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "https://your-deployed-frontend.com", "https://f208-2402-4000-2100-b33d-c966-5bdb-a715-692c.ngrok-free.app")); // Allow local & production frontend
+        config.setAllowedOrigins(List.of("http://localhost:3000", "https://your-deployed-frontend.com", "https://658c-2402-4000-2380-c540-2185-aef0-137c-8566.ngrok-free.app")); // Allow local & production frontend
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // Needed if frontend sends credentials (e.g., tokens)

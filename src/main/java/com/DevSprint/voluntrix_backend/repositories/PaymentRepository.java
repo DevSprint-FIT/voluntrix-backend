@@ -1,6 +1,6 @@
 package com.DevSprint.voluntrix_backend.repositories;
 
-import com.DevSprint.voluntrix_backend.dtos.analytics.MonthlyDonationData;
+import com.DevSprint.voluntrix_backend.analytics.dto.MonthlyDonationData;
 import com.DevSprint.voluntrix_backend.entities.PaymentEntity;
 import com.DevSprint.voluntrix_backend.enums.PaymentStatus;
 
