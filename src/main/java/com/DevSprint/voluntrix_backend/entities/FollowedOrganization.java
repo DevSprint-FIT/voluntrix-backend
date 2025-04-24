@@ -32,6 +32,15 @@ public class FollowedOrganization {
     @CreationTimestamp
     private LocalDateTime followedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "volunteerId", insertable = false, updatable = false)
+    private Volunteer volunteer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organizationId", insertable = false, updatable = false)
+    private Organization organization;
+
+
 
 
 
