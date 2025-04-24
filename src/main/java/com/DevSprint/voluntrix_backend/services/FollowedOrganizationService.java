@@ -5,6 +5,7 @@ import com.DevSprint.voluntrix_backend.entities.Organization;
 import com.DevSprint.voluntrix_backend.exceptions.OrganizationNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerAlreadyFollowsOrganizationException;
 import com.DevSprint.voluntrix_backend.repositories.FollowedOrganizationRepository;
+import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
 import com.DevSprint.voluntrix_backend.dtos.FollowOrganizationDTO;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
@@ -32,6 +33,10 @@ public class FollowedOrganizationService {
 
     @Autowired
     private EntityDTOConverter entityDTOConverter;
+
+    @Autowired
+    private VolunteerRepository volunteerRepository;
+
 
     // Follow an organization and update follow count
     @Transactional
@@ -82,12 +87,17 @@ public class FollowedOrganizationService {
     }
 
     // Get all followed organizations for a volunteer and map to DTO
-    public List<FollowOrganizationDTO> getFollowedOrganizations(Long volunteerId) {
+    public List<String> getFollowedOrganizations(Long volunteerId) {
         return followedOrganizationRepository.findByVolunteerId(volunteerId)
                 .stream()
-                .map(entityDTOConverter::toFollowOrganizationDTO)
+                .map(f -> {
+                    Organization org = organizationRepository.findById(f.getOrganizationId()).orElse(null);
+                    return org != null ? org.getName() : null;
+                })
+                .filter(name -> name != null)
                 .collect(Collectors.toList());
     }
+
 
     public List<MonthlyFollowCountDTO> getMonthlyFollowerStats(int year, Long organizationId) {
         // Validate organization exists
