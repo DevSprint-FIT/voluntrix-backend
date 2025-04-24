@@ -34,14 +34,11 @@ public class FollowedOrganizationController {
 
 
     @GetMapping("/{volunteerId}")
-    public ResponseEntity<List<Long>> getFollowedOrganizations(@PathVariable Long volunteerId) {
-        List<Long> organizationIds = followedOrganizationService.getFollowedOrganizations(volunteerId)
-                .stream()
-                .map(FollowOrganizationDTO::getOrganizationId)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(organizationIds);
+    public ResponseEntity<List<String>> getFollowedOrganizations(@PathVariable Long volunteerId) {
+        List<String> organizationNames = followedOrganizationService.getFollowedOrganizations(volunteerId);
+        return ResponseEntity.ok(organizationNames);
     }
+
 
     //Monthly follower statistics
     @GetMapping("/stats/{organizationId}")
