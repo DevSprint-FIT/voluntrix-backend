@@ -43,4 +43,17 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, String>{
         AND YEAR(p.receivedTimestamp) = YEAR(CURRENT_DATE)
     """)
     Double sumDonationsForOrganizationThisMonth(@Param("organizationId") Long organizationId);
+
+    @Query("""
+        SELECT MONTH(p.receivedTimestamp) AS month, SUM(p.amount) AS total
+        FROM PaymentEntity p
+        WHERE p.event.organization.id = :organizationId
+        AND p.transactionType = 'DONATION'
+        AND p.status = 'SUCCESS'
+        AND YEAR(p.receivedTimestamp) = :year
+        GROUP BY MONTH(p.receivedTimestamp)
+        ORDER BY MONTH(p.receivedTimestamp)
+    """)
+    List<MonthlyDonationData> getMonthlyDonationsForOrganizationAndYear(@Param("organizationId") Long organizationId,@Param("year") int year);
+
 }
