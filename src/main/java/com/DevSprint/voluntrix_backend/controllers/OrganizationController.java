@@ -82,10 +82,6 @@ public class OrganizationController {
     }
 
 
-
-
-
-
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteOrganization(@PathVariable Long id) {
         try {

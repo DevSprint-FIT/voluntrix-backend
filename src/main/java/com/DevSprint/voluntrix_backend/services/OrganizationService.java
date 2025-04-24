@@ -45,7 +45,7 @@ public class OrganizationService {
         organization.setIsVerified(organizationCreateDTO.getIsVerified());
         organization.setFollowerCount(organizationCreateDTO.getFollowerCount());
 
-        // Save organization and return DTO
+
         Organization savedOrganization = organizationRepository.save(organization);
         return entityDTOConverter.toOrganizationDTO(savedOrganization);
     }
