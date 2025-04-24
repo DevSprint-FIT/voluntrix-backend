@@ -3,6 +3,7 @@ package com.DevSprint.voluntrix_backend.services;
 import com.DevSprint.voluntrix_backend.entities.FollowedOrganization;
 import com.DevSprint.voluntrix_backend.entities.Organization;
 import com.DevSprint.voluntrix_backend.exceptions.OrganizationNotFoundException;
+import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerAlreadyFollowsOrganizationException;
 import com.DevSprint.voluntrix_backend.repositories.FollowedOrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
@@ -41,6 +42,11 @@ public class FollowedOrganizationService {
     // Follow an organization and update follow count
     @Transactional
     public String followOrganization(Long volunteerId, Long organizationId) {
+
+        if (!volunteerRepository.existsById(volunteerId)) {
+            throw new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId);
+        }
+
         Organization organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with ID: " + organizationId));
 
@@ -65,6 +71,11 @@ public class FollowedOrganizationService {
     // Unfollow an organization and update follower count
     @Transactional
     public String unfollowOrganization(Long volunteerId, Long organizationId) {
+
+        if (!volunteerRepository.existsById(volunteerId)) {
+            throw new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId);
+        }
+
         Organization organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with ID: " + organizationId));
 
@@ -88,6 +99,10 @@ public class FollowedOrganizationService {
 
     // Get all followed organizations for a volunteer and map to DTO
     public List<String> getFollowedOrganizations(Long volunteerId) {
+        if (!volunteerRepository.existsById(volunteerId)) {
+            throw new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId);
+        }
+
         return followedOrganizationRepository.findByVolunteerId(volunteerId)
                 .stream()
                 .map(f -> {
