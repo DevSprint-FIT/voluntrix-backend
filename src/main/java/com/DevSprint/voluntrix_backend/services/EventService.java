@@ -29,5 +29,17 @@ public class EventService {
         return converter.toEventDTOList(activeEvents);
     }
 
+    public long getActiveEventCount(Long organizationId){
+        return eventRepository.countByOrganizationIdAndEventStatus(organizationId, EventStatus.ACTIVE);
+    }
+
+    public long getPendingEventCount(Long organizationId) {
+        return eventRepository.countByOrganizationIdAndEventStatus(organizationId, EventStatus.PENDING);
+    }
+
+    public long getCompletedEventCount(Long organizationId) {
+        return eventRepository.countByOrganizationIdAndEventStatus(organizationId, EventStatus.COMPLETE);
+    }
+
 
 }
