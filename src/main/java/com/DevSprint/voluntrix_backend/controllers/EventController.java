@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
 
 @RestController
 @RequestMapping("/api/public/events")
@@ -26,6 +29,16 @@ public class EventController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(activeEvents);
+    }
+
+    @GetMapping("/status-count/{organizationId}")
+    public ResponseEntity<Map<String, Long>> getEventStatusCount(@PathVariable Long organizationId) {
+        Map<String, Long> statusCounts = new HashMap<>();
+        statusCounts.put("active", eventService.getActiveEventCount(organizationId));
+        statusCounts.put("pending", eventService.getPendingEventCount(organizationId));
+        statusCounts.put("completed", eventService.getCompletedEventCount(organizationId));
+
+        return ResponseEntity.ok(statusCounts);
     }
 
 
