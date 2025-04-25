@@ -31,6 +31,17 @@ public class EventController {
         return ResponseEntity.ok(activeEvents);
     }
 
+    @GetMapping("/completed/{organizationId}")
+    public ResponseEntity<List<EventDTO>> getCompletedEvents(@PathVariable Long organizationId){
+        List<EventDTO> completedEvents = eventService.getCompletedEventsByOrganization(organizationId);
+
+        if(completedEvents.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(completedEvents);
+    }
+
+
     @GetMapping("/status-count/{organizationId}")
     public ResponseEntity<Map<String, Long>> getEventStatusCount(@PathVariable Long organizationId) {
         Map<String, Long> statusCounts = new HashMap<>();
