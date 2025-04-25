@@ -1,6 +1,5 @@
 package com.DevSprint.voluntrix_backend.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -12,16 +11,15 @@ import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.PaymentEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
-import com.DevSprint.voluntrix_backend.enums.PaymentStatus;
 import com.DevSprint.voluntrix_backend.enums.TransactionType;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
 import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
+import com.DevSprint.voluntrix_backend.utils.PaymentMapper;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDateTime;
 import java.util.Map;
 
 @Service
@@ -31,13 +29,14 @@ public class PaymentService {
     private final EventRepository eventRepository;
     private final SponsorRepository sponsorRepository;
     private final VolunteerRepository volunteerRepository;
+    private final PaymentMapper paymentMapper;
 
-    @Autowired
-    public PaymentService(PaymentRepository paymentRepository, EventRepository eventRepository, SponsorRepository sponsorRepository, VolunteerRepository volunteerRepository) {
+    public PaymentService(PaymentRepository paymentRepository, EventRepository eventRepository, SponsorRepository sponsorRepository, VolunteerRepository volunteerRepository, PaymentMapper paymentMapper) {
         this.paymentRepository = paymentRepository;
         this.eventRepository = eventRepository;
         this.sponsorRepository = sponsorRepository;
         this.volunteerRepository = volunteerRepository;
+        this.paymentMapper = paymentMapper;
     }
 
     @Value("${PAYHERE_MERCHANT_ID}")
@@ -116,19 +115,8 @@ public class PaymentService {
             throw new IllegalArgumentException("Only sponsors can make sponsorships");
         }
 
-        PaymentEntity payment = new PaymentEntity();
-        payment.setOrderId(dto.getOrderId());
-        payment.setAmount(Double.parseDouble(dto.getAmount()));
-        payment.setCurrency(dto.getCurrency());
-        payment.setStatus(PaymentStatus.PENDING);
-        payment.setReceivedTimestamp(LocalDateTime.now());
-        payment.setEmail(dto.getEmail());
-        payment.setAnonymous(dto.isAnonymous());
-        payment.setTransactionType(dto.getTransactionType());
-        payment.setSponsor(sponsor);
-        payment.setEvent(event);
+        PaymentEntity payment = paymentMapper.toEntity(dto, sponsor, volunteer, event);
         payment.setVolunteer(volunteer);
-
         paymentRepository.save(payment);
 
         String hash = generateHashForPayment(dto);
@@ -139,12 +127,7 @@ public class PaymentService {
         PaymentEntity payment = paymentRepository.findById(dto.getOrder_id())
             .orElseThrow(() -> new RuntimeException("Payment not found"));
 
-        payment.setPaymentId(dto.getPayment_id());
-        payment.setStatusCode(dto.getStatus_code());
-        payment.setStatusMessage(dto.getStatus_message());
-        payment.setMethod(dto.getMethod());
-        payment.setStatus("2".equals(dto.getStatus_code()) ? PaymentStatus.SUCCESS : PaymentStatus.FAILED);
-
+        paymentMapper.updateEntityFromNotification(payment, dto);
         paymentRepository.save(payment);
     }
 
