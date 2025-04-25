@@ -12,7 +12,11 @@ public class EventEntityDTOConverter {
 
     // Convert EventEntity to EventRequestDTO
     public EventRequestDTO toEventRequestDTO(EventEntity event) {
-        return new EventRequestDTO(event.getEventTitle());
+        return new EventRequestDTO(
+                event.getEventTitle(),
+                event.getEventDate(),
+                event.getEventStatus()
+        );
     }
 
     // Convert a List of EventEntity to List of EventRequestDTO
