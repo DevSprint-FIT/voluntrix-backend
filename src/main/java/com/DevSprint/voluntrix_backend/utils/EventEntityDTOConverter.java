@@ -1,8 +1,10 @@
 package com.DevSprint.voluntrix_backend.utils;
 
+import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import org.springframework.stereotype.Component;
 import com.DevSprint.voluntrix_backend.dtos.EventRequestDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,5 +26,23 @@ public class EventEntityDTOConverter {
         return events.stream()
                      .map(this::toEventRequestDTO)
                      .collect(Collectors.toList());
+    }
+
+    // Convert EventEntity to EventDTO
+    public EventDTO toEventDTO(EventEntity eventEntity) {
+        EventDTO eventDTO = new EventDTO();
+        eventDTO.setEventTitle(eventEntity.getEventTitle());
+        eventDTO.setEventDate(eventEntity.getEventDate());
+        eventDTO.setEventLocation(eventEntity.getEventLocation());
+        eventDTO.setEventStatus(eventEntity.getEventStatus()); // Use Enum directly
+        return eventDTO;
+    }
+
+
+    // Convert a List of EventEntity to List of EventDTO
+    public List<EventDTO> toEventDTOList(List<EventEntity> eventEntities) {
+        return eventEntities.stream()
+                .map(this::toEventDTO)  // Convert each EventEntity to EventDTO
+                .collect(Collectors.toList());
     }
 }
