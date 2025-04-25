@@ -1,11 +1,11 @@
-package com.DevSprint.voluntrix_backend.analytics.services;
+package com.DevSprint.voluntrix_backend.services;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.DevSprint.voluntrix_backend.analytics.dto.MonthlyDonationData;
+import com.DevSprint.voluntrix_backend.dtos.MonthlyDonationData;
 import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 
 @Service

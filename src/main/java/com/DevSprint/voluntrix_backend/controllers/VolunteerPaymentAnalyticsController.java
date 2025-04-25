@@ -1,4 +1,4 @@
-package com.DevSprint.voluntrix_backend.analytics.controllers;
+package com.DevSprint.voluntrix_backend.controllers;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.DevSprint.voluntrix_backend.analytics.dto.MonthlyDonationDto;
-import com.DevSprint.voluntrix_backend.analytics.services.VolunteerPaymentAnalyticsService;
+import com.DevSprint.voluntrix_backend.dtos.MonthlyDonationDto;
+import com.DevSprint.voluntrix_backend.services.VolunteerPaymentAnalyticsService;
 
 @RestController
 @RequestMapping("/api/analytics/volunteer")

@@ -1,4 +1,4 @@
-package com.DevSprint.voluntrix_backend.analytics.controllers;
+package com.DevSprint.voluntrix_backend.controllers;
 
 import java.util.List;
 
@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.DevSprint.voluntrix_backend.analytics.dto.MonthlyDonationData;
-import com.DevSprint.voluntrix_backend.analytics.services.OrganizationPaymentAnalyticsService;
+import com.DevSprint.voluntrix_backend.dtos.MonthlyDonationData;
+import com.DevSprint.voluntrix_backend.services.OrganizationPaymentAnalyticsService;
 
 @RestController
 @RequestMapping("/api/analytics/organizations")
-public class OrganizationAnalyticsController {
+public class OrganizationPaymentAnalyticsController {
 
     private final OrganizationPaymentAnalyticsService organizationPaymentAnalyticsService;
 
     @Autowired
-    public OrganizationAnalyticsController(OrganizationPaymentAnalyticsService organizationPaymentAnalyticsService) {
+    public OrganizationPaymentAnalyticsController(OrganizationPaymentAnalyticsService organizationPaymentAnalyticsService) {
         this.organizationPaymentAnalyticsService = organizationPaymentAnalyticsService;
     }
 
