@@ -29,6 +29,15 @@ public class EventService {
         return converter.toEventDTOList(activeEvents);
     }
 
+    public List<EventDTO> getCompletedEventsByOrganization(Long organizationId) {
+        List<EventEntity> completedEvents = eventRepository.findByOrganizationIdAndEventStatus(
+                organizationId,
+                EventStatus.COMPLETE
+        );
+        return converter.toEventDTOList(completedEvents);
+    }
+
+
     public long getActiveEventCount(Long organizationId){
         return eventRepository.countByOrganizationIdAndEventStatus(organizationId, EventStatus.ACTIVE);
     }
