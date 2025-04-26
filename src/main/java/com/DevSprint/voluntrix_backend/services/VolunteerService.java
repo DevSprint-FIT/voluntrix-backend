@@ -24,8 +24,22 @@ public class VolunteerService {
     }
 
     public VolunteerDTO createVolunteer(VolunteerCreateDTO volunteerCreateDTO) {
+        // Check for existing username
+        if (volunteerRepository.findByUsername(volunteerCreateDTO.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+    
+        // Check for existing email
+        if (volunteerRepository.findByEmail(volunteerCreateDTO.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+    
+        // Check for existing phone number
+        if (volunteerRepository.findByPhoneNumber(volunteerCreateDTO.getPhoneNumber()).isPresent()) {
+            throw new IllegalArgumentException("Phone number already exists");
+        }
+    
         VolunteerEntity volunteer = entityDTOConvert.toVolunteerEntity(volunteerCreateDTO);
-
         VolunteerEntity savedVolunteer = volunteerRepository.save(volunteer);
         return entityDTOConvert.toVolunteerDTO(savedVolunteer);
     }
