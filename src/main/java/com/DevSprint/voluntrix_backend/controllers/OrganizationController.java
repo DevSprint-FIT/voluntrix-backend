@@ -39,6 +39,19 @@ public class OrganizationController {
         }
     }
 
+    @GetMapping("/by-username/{username}")
+    public ResponseEntity<ApiResponse<OrganizationDTO>> getByUsername(@PathVariable String username) {
+        try {
+            OrganizationDTO organization = organizationService.getOrganizationByUsername(username);
+            return ResponseEntity.ok(new ApiResponse<>("Organization retrieved successfully", organization));
+        } catch (ResourceNotFoundException ex) {
+            return new ResponseEntity<>(new ApiResponse<>(ex.getMessage(), null), HttpStatus.NOT_FOUND);
+        } catch (Exception ex) {
+            return new ResponseEntity<>(new ApiResponse<>("An unexpected error occurred", null), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
     @GetMapping
     public ResponseEntity<ApiResponse<List<OrganizationDTO>>> getAllOrganizations() {
         try {
