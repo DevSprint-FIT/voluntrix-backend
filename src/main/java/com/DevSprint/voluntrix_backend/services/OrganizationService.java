@@ -33,11 +33,19 @@ public class OrganizationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Organization not found with id: " + id));
     }
 
+    public OrganizationDTO getOrganizationByUsername(String username) {
+        return organizationRepository.findByUsername(username)
+                .map(entityDTOConverter::toOrganizationDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Organization not found with username: " + username));
+    }
+
+
     // Updated createOrganization method to use OrganizationCreateDTO
     public OrganizationDTO createOrganization(OrganizationCreateDTO organizationCreateDTO) {
         // Convert OrganizationCreateDTO to Organization entity
         Organization organization = new Organization();
         organization.setName(organizationCreateDTO.getName());
+        organization.setUsername(organizationCreateDTO.getUsername());
         organization.setInstitute(organizationCreateDTO.getInstitute());
         organization.setEmail(organizationCreateDTO.getEmail());
         organization.setPhone(organizationCreateDTO.getPhone());
