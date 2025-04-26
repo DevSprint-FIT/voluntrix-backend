@@ -3,6 +3,9 @@ package com.DevSprint.voluntrix_backend.dtos;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
 import lombok.AllArgsConstructor;
 
 @Getter
@@ -20,4 +23,7 @@ public class VolunteerDTO {
     private Integer volunteerLevel; 
     private Integer rewardPoints; 
     private Boolean isEventHost;  
+    private LocalDate joinedDate;
+    private String about;
+    private String phoneNumber;
 }

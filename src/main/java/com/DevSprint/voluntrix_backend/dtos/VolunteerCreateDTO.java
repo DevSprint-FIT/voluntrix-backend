@@ -17,4 +17,6 @@ public class VolunteerCreateDTO {
     private String institute;
     private Boolean isAvailable;
     private Boolean isEventHost;
+    private String about;
+    private String phoneNumber;
 }
