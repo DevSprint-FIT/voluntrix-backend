@@ -66,6 +66,9 @@ public class VolunteerService {
                     volunteer.setIsEventHost(true);
                 }
             }
+            if (volunteerUpdateDTO.getAbout() != null) {
+                volunteer.setAbout(volunteerUpdateDTO.getAbout());
+            }
 
             VolunteerEntity updatedVolunteer = volunteerRepository.save(volunteer);
             return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
