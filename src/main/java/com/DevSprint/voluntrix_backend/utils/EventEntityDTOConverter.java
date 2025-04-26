@@ -15,6 +15,7 @@ public class EventEntityDTOConverter {
     // Convert EventEntity to EventRequestDTO
     public EventRequestDTO toEventRequestDTO(EventEntity event) {
         return new EventRequestDTO(
+                event.getEventId(),
                 event.getEventTitle(),
                 event.getEventDate(),
                 event.getEventStatus()
@@ -31,6 +32,7 @@ public class EventEntityDTOConverter {
     // Convert EventEntity to EventDTO
     public EventDTO toEventDTO(EventEntity eventEntity) {
         EventDTO eventDTO = new EventDTO();
+        eventDTO.setEventId(eventEntity.getEventId());
         eventDTO.setEventTitle(eventEntity.getEventTitle());
         eventDTO.setEventDate(eventEntity.getEventDate());
         eventDTO.setEventLocation(eventEntity.getEventLocation());

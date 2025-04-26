@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventRequestDTO {
+    private Long eventId;
     private String eventTitle;
     private LocalDate eventDate;
     private EventStatus eventStatus;
