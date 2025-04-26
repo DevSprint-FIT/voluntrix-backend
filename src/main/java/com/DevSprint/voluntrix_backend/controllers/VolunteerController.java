@@ -37,12 +37,9 @@ public class VolunteerController {
 
     @GetMapping("/{username}")
     public ResponseEntity<VolunteerDTO> getVolunteerByUsername(@PathVariable String username) {
+        // Fetch volunteer by username or throw exception if not found
         VolunteerDTO volunteer = volunteerService.getVolunteerByUsername(username);
-        if (volunteer != null) {
-            return ResponseEntity.ok(volunteer);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(volunteer);
     }
 
     @PostMapping
@@ -53,12 +50,9 @@ public class VolunteerController {
 
     @PatchMapping("/{volunteerId}")
     public ResponseEntity<VolunteerDTO> updateVolunteer(@PathVariable Long volunteerId, @Valid @RequestBody VolunteerUpdateDTO volunteerUpdateDTO) {
+        // Update volunteer details by ID or throw exception if not found
         VolunteerDTO updatedVolunteer = volunteerService.patchVolunteer(volunteerId, volunteerUpdateDTO);
-        if (updatedVolunteer != null) {
-            return ResponseEntity.ok(updatedVolunteer);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(updatedVolunteer); 
     }
 
     @DeleteMapping("/{volunteerId}")
