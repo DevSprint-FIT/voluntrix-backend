@@ -19,22 +19,27 @@ public class EntityDTOConvert {
 
     private final ModelMapper modelMapper;
 
+    // Converts a VolunteerEntity to a VolunteerDTO  
     public VolunteerDTO toVolunteerDTO(VolunteerEntity volunteer) {
         return modelMapper.map(volunteer, VolunteerDTO.class);
     }
 
+    // Converts a VolunteerDTO to a VolunteerEntity
     public VolunteerEntity toVolunteerEntity(VolunteerDTO volunteerDTO) {
         return modelMapper.map(volunteerDTO, VolunteerEntity.class);
     }
 
+    // Converts a VolunteerCreateDTO to a VolunteerEntity
     public VolunteerEntity toVolunteerEntity(VolunteerCreateDTO volunteerCreateDTO) {
         return modelMapper.map(volunteerCreateDTO, VolunteerEntity.class);
     }
 
+    // Converts a VolunteerUpdateDTO to a VolunteerEntity
     public VolunteerEntity toVolunteerEntity(VolunteerUpdateDTO volunteerUpdateDTO) {
         return modelMapper.map(volunteerUpdateDTO, VolunteerEntity.class);
     }
 
+    // Converts a list of VolunteerEntity to a list of VolunteerDTO
     public List<VolunteerDTO> toVolunteerDTOList(List<VolunteerEntity> volunteers) {
         return volunteers.stream()
                 .map(entity -> modelMapper.map(entity, VolunteerDTO.class))
