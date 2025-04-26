@@ -2,6 +2,7 @@ package com.DevSprint.voluntrix_backend.Entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
 
 @Entity
 @Data
@@ -17,4 +18,7 @@ public class Donor {
     private String email;
 
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "donor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Donation> donations;
 }
