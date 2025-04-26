@@ -55,6 +55,10 @@ public class Organization {
     @Column(nullable = true)
     private String imageUrl;
 
+    @Column(unique = true, nullable = false)
+    private String username;
+
+
 
 
 }
