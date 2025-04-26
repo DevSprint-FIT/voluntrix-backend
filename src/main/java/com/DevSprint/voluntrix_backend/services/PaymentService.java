@@ -12,6 +12,7 @@ import com.DevSprint.voluntrix_backend.entities.PaymentEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.enums.TransactionType;
+import com.DevSprint.voluntrix_backend.exceptions.PaymentNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
 import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
@@ -125,7 +126,7 @@ public class PaymentService {
 
     public void saveTransaction(PayHereNotificationDto dto) {
         PaymentEntity payment = paymentRepository.findById(dto.getOrder_id())
-            .orElseThrow(() -> new RuntimeException("Payment not found"));
+            .orElseThrow(() -> new PaymentNotFoundException("Payment not found for order ID: " + dto.getOrder_id()));
 
         paymentMapper.updateEntityFromNotification(payment, dto);
         paymentRepository.save(payment);
@@ -133,7 +134,7 @@ public class PaymentService {
 
     public PaymentStatusResponseDto getPaymentStatusByOrderId(String orderId) {
         PaymentEntity payment = paymentRepository.findByOrderId(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("Payment not found for orderId: " + orderId));
+            .orElseThrow(() -> new PaymentNotFoundException("Payment not found for order ID: " + orderId));
 
         return new PaymentStatusResponseDto(orderId, payment.getStatus());
     }

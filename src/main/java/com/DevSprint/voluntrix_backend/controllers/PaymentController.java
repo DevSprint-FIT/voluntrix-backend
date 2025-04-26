@@ -4,6 +4,7 @@ import com.DevSprint.voluntrix_backend.dtos.PayHereNotificationDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentResponseDto;
 import com.DevSprint.voluntrix_backend.dtos.PaymentStatusResponseDto;
+import com.DevSprint.voluntrix_backend.exceptions.PaymentVerificationException;
 import com.DevSprint.voluntrix_backend.services.PaymentService;
 import com.DevSprint.voluntrix_backend.utils.PaymentMapper;
 
@@ -41,20 +42,16 @@ public class PaymentController {
 
     @PostMapping("/notify")
     public ResponseEntity<String> notifyPayment(@RequestParam Map<String, String> params) {
-        try{
-            boolean isValid = paymentService.verifyPayment(params);
+        boolean isValid = paymentService.verifyPayment(params);
 
-            if (!isValid) {
-                return ResponseEntity.badRequest().body("Payment verification failed.");
-            }
-
-            PayHereNotificationDto dto = paymentMapper.toNotificationDto(params);
-            paymentService.saveTransaction(dto);
-            
-            return ResponseEntity.ok("Transaction saved succesfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Internal server error.");
+        if (!isValid) {
+            throw new PaymentVerificationException("Payment signature verification failed");
         }
+
+        PayHereNotificationDto dto = paymentMapper.toNotificationDto(params);
+        paymentService.saveTransaction(dto);
+        
+        return ResponseEntity.ok("Transaction saved succesfully.");
     } 
 
     @GetMapping("/status/{orderId}")
@@ -62,5 +59,4 @@ public class PaymentController {
         PaymentStatusResponseDto statusDto = paymentService.getPaymentStatusByOrderId(orderId);
         return ResponseEntity.ok(statusDto);
     }
-
 }
