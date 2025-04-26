@@ -17,6 +17,7 @@ public class EntityDTOConverter {
 
         organizationDTO.setId(organization.getId());
         organizationDTO.setName(organization.getName());
+        organizationDTO.setUsername(organization.getUsername());
         organizationDTO.setInstitute(organization.getInstitute());
         organizationDTO.setEmail(organization.getEmail());
         organizationDTO.setPhone(organization.getPhone());
@@ -33,6 +34,7 @@ public class EntityDTOConverter {
 
         organization.setId(organizationDTO.getId());
         organization.setName(organizationDTO.getName());
+        organization.setUsername(organizationDTO.getUsername());
         organization.setInstitute(organizationDTO.getInstitute());
         organization.setEmail(organizationDTO.getEmail());
         organization.setPhone(organizationDTO.getPhone());
