@@ -4,6 +4,7 @@ import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerUpdateDTO;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
+import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.EntityDTOConvert;
 import org.springframework.stereotype.Service;
@@ -37,44 +38,38 @@ public class VolunteerService {
     public VolunteerDTO getVolunteerByUsername(String username) {
         Optional<VolunteerEntity> volunteer = volunteerRepository.findByUsername(username);
         return volunteer.map(entityDTOConvert::toVolunteerDTO)
-                        .orElseThrow(() -> new RuntimeException("Volunteer not found with username: " + username));
+            .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with username: " + username));
     }
 
     public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerUpdateDTO volunteerUpdateDTO) {
-        Optional<VolunteerEntity> existingVolunteer = volunteerRepository.findById(volunteerId);
-
-        if (existingVolunteer.isPresent()) {
-            VolunteerEntity volunteer = existingVolunteer.get();
-
-            if (volunteerUpdateDTO.getFirstName() != null) {
-                volunteer.setFirstName(volunteerUpdateDTO.getFirstName());
-            }
-            if (volunteerUpdateDTO.getLastName() != null) {
-                volunteer.setLastName(volunteerUpdateDTO.getLastName());
-            }
-            if (volunteerUpdateDTO.getEmail() != null) {
-                volunteer.setEmail(volunteerUpdateDTO.getEmail());
-            }
-            if (volunteerUpdateDTO.getInstitute() != null) {
-                volunteer.setInstitute(volunteerUpdateDTO.getInstitute());
-            }
-            if (volunteerUpdateDTO.getIsAvailable() != null) {
-                volunteer.setIsAvailable(volunteerUpdateDTO.getIsAvailable());
-            }
-            if (volunteerUpdateDTO.getIsEventHost() != null) {
-                if (!volunteer.getIsEventHost() && volunteerUpdateDTO.getIsEventHost()) {
-                    volunteer.setIsEventHost(true);
-                }
-            }
-            if (volunteerUpdateDTO.getAbout() != null) {
-                volunteer.setAbout(volunteerUpdateDTO.getAbout());
-            }
-
-            VolunteerEntity updatedVolunteer = volunteerRepository.save(volunteer);
-            return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
-        } else {
-            throw new RuntimeException("Volunteer not found with ID: " + volunteerId);
+        VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
+            .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
+    
+        // Update only the fields provided in the DTO
+        if (volunteerUpdateDTO.getFirstName() != null) {
+            volunteer.setFirstName(volunteerUpdateDTO.getFirstName());
         }
+        if (volunteerUpdateDTO.getLastName() != null) {
+            volunteer.setLastName(volunteerUpdateDTO.getLastName());
+        }
+        if (volunteerUpdateDTO.getEmail() != null) {
+            volunteer.setEmail(volunteerUpdateDTO.getEmail());
+        }
+        if (volunteerUpdateDTO.getInstitute() != null) {
+            volunteer.setInstitute(volunteerUpdateDTO.getInstitute());
+        }
+        if (volunteerUpdateDTO.getIsAvailable() != null) {
+            volunteer.setIsAvailable(volunteerUpdateDTO.getIsAvailable());
+        }
+        if (volunteerUpdateDTO.getIsEventHost() != null && !volunteer.getIsEventHost() && volunteerUpdateDTO.getIsEventHost()) {
+            volunteer.setIsEventHost(true); // Promote to host if not already
+        }
+        if (volunteerUpdateDTO.getAbout() != null) {
+            volunteer.setAbout(volunteerUpdateDTO.getAbout());
+        }
+    
+        VolunteerEntity updatedVolunteer = volunteerRepository.save(volunteer);
+        return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
     }
 
     public boolean deleteVolunteer(Long volunteerId) {
