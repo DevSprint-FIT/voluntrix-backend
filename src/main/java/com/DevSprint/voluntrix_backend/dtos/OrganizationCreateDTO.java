@@ -17,6 +17,9 @@ public class OrganizationCreateDTO {
     @NotBlank(message = "Name is required")
     private String name;
 
+    @NotBlank(message = "Username is required")
+    private String username;
+
     private String institute;
 
     @NotBlank(message = "Email is required")
