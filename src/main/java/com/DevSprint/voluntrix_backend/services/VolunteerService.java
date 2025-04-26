@@ -3,7 +3,7 @@ package com.DevSprint.voluntrix_backend.services;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerUpdateDTO;
-import com.DevSprint.voluntrix_backend.entities.Volunteer;
+import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.EntityDTOConvert;
 import org.springframework.stereotype.Service;
@@ -23,28 +23,28 @@ public class VolunteerService {
     }
 
     public VolunteerDTO createVolunteer(VolunteerCreateDTO volunteerCreateDTO) {
-        Volunteer volunteer = entityDTOConvert.toVolunteerEntity(volunteerCreateDTO);
+        VolunteerEntity volunteer = entityDTOConvert.toVolunteerEntity(volunteerCreateDTO);
 
-        Volunteer savedVolunteer = volunteerRepository.save(volunteer);
+        VolunteerEntity savedVolunteer = volunteerRepository.save(volunteer);
         return entityDTOConvert.toVolunteerDTO(savedVolunteer);
     }
 
     public List<VolunteerDTO> getAllVolunteers() {
-        List<Volunteer> volunteers = volunteerRepository.findAll();
+        List<VolunteerEntity> volunteers = volunteerRepository.findAll();
         return entityDTOConvert.toVolunteerDTOList(volunteers);
     }
 
     public VolunteerDTO getVolunteerByUsername(String username) {
-        Optional<Volunteer> volunteer = volunteerRepository.findByUsername(username);
+        Optional<VolunteerEntity> volunteer = volunteerRepository.findByUsername(username);
         return volunteer.map(entityDTOConvert::toVolunteerDTO)
                         .orElseThrow(() -> new RuntimeException("Volunteer not found with username: " + username));
     }
 
     public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerUpdateDTO volunteerUpdateDTO) {
-        Optional<Volunteer> existingVolunteer = volunteerRepository.findById(volunteerId);
+        Optional<VolunteerEntity> existingVolunteer = volunteerRepository.findById(volunteerId);
 
         if (existingVolunteer.isPresent()) {
-            Volunteer volunteer = existingVolunteer.get();
+            VolunteerEntity volunteer = existingVolunteer.get();
 
             if (volunteerUpdateDTO.getFirstName() != null) {
                 volunteer.setFirstName(volunteerUpdateDTO.getFirstName());
@@ -67,7 +67,7 @@ public class VolunteerService {
                 }
             }
 
-            Volunteer updatedVolunteer = volunteerRepository.save(volunteer);
+            VolunteerEntity updatedVolunteer = volunteerRepository.save(volunteer);
             return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
         } else {
             throw new RuntimeException("Volunteer not found with ID: " + volunteerId);

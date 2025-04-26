@@ -17,7 +17,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Volunteer {
+public class VolunteerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

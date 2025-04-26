@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerUpdateDTO;
-import com.DevSprint.voluntrix_backend.entities.Volunteer;
+import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,23 +19,23 @@ public class EntityDTOConvert {
 
     private final ModelMapper modelMapper;
 
-    public VolunteerDTO toVolunteerDTO(Volunteer volunteer) {
+    public VolunteerDTO toVolunteerDTO(VolunteerEntity volunteer) {
         return modelMapper.map(volunteer, VolunteerDTO.class);
     }
 
-    public Volunteer toVolunteerEntity(VolunteerDTO volunteerDTO) {
-        return modelMapper.map(volunteerDTO, Volunteer.class);
+    public VolunteerEntity toVolunteerEntity(VolunteerDTO volunteerDTO) {
+        return modelMapper.map(volunteerDTO, VolunteerEntity.class);
     }
 
-    public Volunteer toVolunteerEntity(VolunteerCreateDTO volunteerCreateDTO) {
-        return modelMapper.map(volunteerCreateDTO, Volunteer.class);
+    public VolunteerEntity toVolunteerEntity(VolunteerCreateDTO volunteerCreateDTO) {
+        return modelMapper.map(volunteerCreateDTO, VolunteerEntity.class);
     }
 
-    public Volunteer toVolunteerEntity(VolunteerUpdateDTO volunteerUpdateDTO) {
-        return modelMapper.map(volunteerUpdateDTO, Volunteer.class);
+    public VolunteerEntity toVolunteerEntity(VolunteerUpdateDTO volunteerUpdateDTO) {
+        return modelMapper.map(volunteerUpdateDTO, VolunteerEntity.class);
     }
 
-    public List<VolunteerDTO> toVolunteerDTOList(List<Volunteer> volunteers) {
+    public List<VolunteerDTO> toVolunteerDTOList(List<VolunteerEntity> volunteers) {
         return volunteers.stream()
                 .map(entity -> modelMapper.map(entity, VolunteerDTO.class))
                 .collect(Collectors.toList());
