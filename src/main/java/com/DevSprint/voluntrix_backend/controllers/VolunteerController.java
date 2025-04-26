@@ -37,7 +37,7 @@ public class VolunteerController {
 
     @GetMapping("/{username}")
     public ResponseEntity<VolunteerDTO> getVolunteerByUsername(@PathVariable String username) {
-        // Fetch volunteer by username or throw exception if not found
+        // Fetches a volunteer by username. Throws VolunteerNotFoundException if not found.
         VolunteerDTO volunteer = volunteerService.getVolunteerByUsername(username);
         return ResponseEntity.ok(volunteer);
     }
@@ -50,18 +50,15 @@ public class VolunteerController {
 
     @PatchMapping("/{volunteerId}")
     public ResponseEntity<VolunteerDTO> updateVolunteer(@PathVariable Long volunteerId, @Valid @RequestBody VolunteerUpdateDTO volunteerUpdateDTO) {
-        // Update volunteer details by ID or throw exception if not found
+        // Updates volunteer details by ID. Throws VolunteerNotFoundException if not found.
         VolunteerDTO updatedVolunteer = volunteerService.patchVolunteer(volunteerId, volunteerUpdateDTO);
         return ResponseEntity.ok(updatedVolunteer); 
     }
 
     @DeleteMapping("/{volunteerId}")
     public ResponseEntity<Void> deleteVolunteer(@PathVariable Long volunteerId) {
-        boolean isDeleted = volunteerService.deleteVolunteer(volunteerId);
-        if (isDeleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        // Deletes a volunteer by ID. Throws VolunteerNotFoundException if not found.
+        volunteerService.deleteVolunteer(volunteerId);
+        return ResponseEntity.noContent().build(); 
     }
 }

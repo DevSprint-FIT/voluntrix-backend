@@ -72,12 +72,10 @@ public class VolunteerService {
         return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
     }
 
-    public boolean deleteVolunteer(Long volunteerId) {
-        if (volunteerRepository.existsById(volunteerId)) {
-            volunteerRepository.deleteById(volunteerId);
-            return true;
-        } else {
-            return false;
+    public void deleteVolunteer(Long volunteerId) {
+        if (!volunteerRepository.existsById(volunteerId)) {
+            throw new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId);
         }
+        volunteerRepository.deleteById(volunteerId);
     }
 }
