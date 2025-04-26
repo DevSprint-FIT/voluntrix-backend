@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import jakarta.validation.Valid; 
 
 import java.util.List;
 
@@ -45,13 +46,13 @@ public class VolunteerController {
     }
 
     @PostMapping
-    public ResponseEntity<VolunteerDTO> createVolunteer(@RequestBody VolunteerCreateDTO volunteerCreateDTO) {
+    public ResponseEntity<VolunteerDTO> createVolunteer(@Valid @RequestBody VolunteerCreateDTO volunteerCreateDTO) {
         VolunteerDTO createdVolunteer = volunteerService.createVolunteer(volunteerCreateDTO);
         return ResponseEntity.status(201).body(createdVolunteer);
     }
 
     @PatchMapping("/{volunteerId}")
-    public ResponseEntity<VolunteerDTO> updateVolunteer(@PathVariable Long volunteerId, @RequestBody VolunteerUpdateDTO volunteerUpdateDTO) {
+    public ResponseEntity<VolunteerDTO> updateVolunteer(@PathVariable Long volunteerId, @Valid @RequestBody VolunteerUpdateDTO volunteerUpdateDTO) {
         VolunteerDTO updatedVolunteer = volunteerService.patchVolunteer(volunteerId, volunteerUpdateDTO);
         if (updatedVolunteer != null) {
             return ResponseEntity.ok(updatedVolunteer);
