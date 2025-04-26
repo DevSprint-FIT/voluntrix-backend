@@ -6,10 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "volunteer")
@@ -49,4 +51,18 @@ public class VolunteerEntity {
 
     @Column(nullable = false)
     private Boolean isEventHost = false;
+
+    @Column(nullable = false)
+    private LocalDate joinedDate;
+
+    @Column
+    private String about;
+
+    @Column(nullable = false, unique = true, length = 15)
+    private String phoneNumber;
+
+    @PrePersist
+    protected void onCreate() {
+        this.joinedDate = LocalDate.now();
+    }
 }
