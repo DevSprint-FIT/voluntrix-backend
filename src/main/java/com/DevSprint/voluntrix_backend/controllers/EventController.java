@@ -116,12 +116,15 @@ public class EventController {
             @RequestParam(value = "eventVisibility", required = false) EventVisibility eventVisibility,
             @RequestParam(value = "categoryIds", required = false) List<Long> categoryIds) {
 
-        if (eventLocation == null && startDate == null && endDate == null && eventVisibility == null && categoryIds == null) {
-            return new ResponseEntity<List<EventDTO>>(eventService.getAllEvents(), HttpStatus.OK); // Redirect to `getAllEvents()` if no filters are provided
+        if (eventLocation == null && startDate == null && endDate == null && eventVisibility == null
+                && categoryIds == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
         }
 
         try {
-            List<EventDTO> filteredEventList = eventService.getFilterEvent(eventLocation, startDate, endDate, eventVisibility, categoryIds);
+            List<EventDTO> filteredEventList = eventService.getFilterEvent(eventLocation, startDate, endDate,
+                    eventVisibility, categoryIds);
             return new ResponseEntity<List<EventDTO>>(filteredEventList, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
