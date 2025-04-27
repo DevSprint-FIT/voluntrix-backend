@@ -34,4 +34,12 @@ public class OrganizationCreateDTO {
     private Boolean isVerified;
 
     private Integer followerCount;
+
+    private String description;
+
+    private String website;
+
+    private String bankName;
+
+
 }

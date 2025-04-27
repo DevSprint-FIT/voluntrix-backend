@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,4 +22,11 @@ public class OrganizationDTO {
     private String accountNumber;
     private Boolean isVerified;
     private Integer followerCount;
+    private LocalDateTime joinedDate;
+    private String description;
+    private String website;
+    private String bankName;
+    private String imageUrl;
+
+
 }

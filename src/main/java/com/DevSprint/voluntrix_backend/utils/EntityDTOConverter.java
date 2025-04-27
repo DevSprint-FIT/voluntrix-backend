@@ -24,6 +24,13 @@ public class EntityDTOConverter {
         organizationDTO.setAccountNumber(organization.getAccountNumber());
         organizationDTO.setIsVerified(organization.getIsVerified());
         organizationDTO.setFollowerCount(organization.getFollowerCount());
+        organizationDTO.setJoinedDate(organization.getCreatedAt());
+        organizationDTO.setDescription(organization.getDescription());
+        organizationDTO.setWebsite(organization.getWebsite());
+        organizationDTO.setBankName(organization.getBankName());
+        organization.setWebsite(organizationDTO.getWebsite());
+        organization.setBankName(organizationDTO.getBankName());
+        organizationDTO.setImageUrl(organization.getImageUrl());
 
         return organizationDTO;
     }
@@ -41,6 +48,9 @@ public class EntityDTOConverter {
         organization.setAccountNumber(organizationDTO.getAccountNumber());
         organization.setIsVerified(organizationDTO.getIsVerified());
         organization.setFollowerCount(organizationDTO.getFollowerCount());
+        organization.setCreatedAt(organizationDTO.getJoinedDate());
+        organization.setDescription(organizationDTO.getDescription());
+        organization.setImageUrl(organizationDTO.getImageUrl());
 
         return organization;
     }

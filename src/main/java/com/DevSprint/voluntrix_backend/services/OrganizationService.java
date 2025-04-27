@@ -52,6 +52,9 @@ public class OrganizationService {
         organization.setAccountNumber(organizationCreateDTO.getAccountNumber());
         organization.setIsVerified(organizationCreateDTO.getIsVerified());
         organization.setFollowerCount(organizationCreateDTO.getFollowerCount());
+        organization.setDescription(organizationCreateDTO.getDescription());
+        organization.setWebsite(organizationCreateDTO.getWebsite());
+        organization.setBankName(organizationCreateDTO.getBankName());
 
 
         Organization savedOrganization = organizationRepository.save(organization);
@@ -88,6 +91,19 @@ public class OrganizationService {
                     if (organizationDTO.getFollowerCount() != null) {
                         existingOrg.setFollowerCount(organizationDTO.getFollowerCount());
                     }
+
+                    if (organizationDTO.getWebsite() != null) {
+                        existingOrg.setWebsite(organizationDTO.getWebsite());
+                    }
+
+                    if (organizationDTO.getBankName() != null) {
+                        existingOrg.setBankName(organizationDTO.getBankName());
+                    }
+
+                    if(organizationDTO.getDescription() != null) {
+                        existingOrg.setDescription(organizationDTO.getDescription());
+                    }
+
 
                     Organization updatedOrg = organizationRepository.save(existingOrg);
                     return entityDTOConverter.toOrganizationDTO(updatedOrg);
