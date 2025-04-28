@@ -10,4 +10,5 @@ import java.util.List;
 public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
     List<TaskEntity> findByAssignee_VolunteerId(Long assigneeId);
     List<TaskEntity> findByEvent_EventId(Long eventId);
+    List<TaskEntity> findByAssignee_Username(String username);
 }
