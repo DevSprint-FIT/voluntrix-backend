@@ -32,6 +32,8 @@ public class EventService {
     private final CategoryRepository categoryRepository;
 
     public void addEvent(EventDTO eventDTO) {
+        eventDTO.setVolunteerCount(0);
+
         EventEntity eventEntity = entityDTOConvert.toEventEntity(eventDTO);
         eventRepository.save(eventEntity);
     }
@@ -62,6 +64,7 @@ public class EventService {
         selectedEvent.setEventEndDate(eventDTO.getEventEndDate());
         selectedEvent.setEventTime(eventDTO.getEventTime());
         selectedEvent.setEventImageUrl(eventDTO.getEventImageUrl());
+        selectedEvent.setVolunteerCount(eventDTO.getVolunteerCount());
         selectedEvent.setEventType(eventDTO.getEventType());
         selectedEvent.setEventVisibility(eventDTO.getEventVisibility());
         selectedEvent.setEventStatus(eventDTO.getEventStatus());
