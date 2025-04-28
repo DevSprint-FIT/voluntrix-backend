@@ -48,6 +48,7 @@ public class EventEntity {
     private LocalTime eventTime;
 
     private String eventImageUrl;
+    private Integer volunteerCount;
 
     @Enumerated(EnumType.STRING)
     private EventType eventType; // ONLINE or ONSITE

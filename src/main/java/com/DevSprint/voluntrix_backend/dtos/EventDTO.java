@@ -32,6 +32,7 @@ public class EventDTO implements Serializable {
     private LocalTime eventTime;
 
     private String eventImageUrl;
+    private Integer volunteerCount;
 
     private EventType eventType; // ONLINE or ONSITE
     private EventVisibility eventVisibility; // PRIVATE or PUBLIC
