@@ -24,9 +24,13 @@ public class TaskDTO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedDate;
     
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dueDate;
+    
     private TaskStatus taskStatus; // TO_DO, IN_PROGRESS, DONE
     private String resourceUrl;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime taskSubmittedDate;
 
     private Long assigneeId;
