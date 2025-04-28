@@ -1,7 +1,7 @@
 package com.DevSprint.voluntrix_backend.enums;
 
 public enum TaskStatus {
-    TODO,
+    TO_DO,
     IN_PROGRESS,
     DONE
 }
