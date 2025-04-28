@@ -50,7 +50,7 @@ public class TaskEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TaskStatus taskStatus;
+    private TaskStatus taskStatus; // TO_DO, IN_PROGRESS, DONE
 
     @Column
     private String resourceUrl;
