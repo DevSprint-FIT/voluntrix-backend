@@ -1,6 +1,10 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
 import com.DevSprint.voluntrix_backend.enums.TaskStatus;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Future;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -13,9 +17,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskCreateDTO {
+    @NotBlank(message = "Task description must not be blank")
     private String description;
+
+    @NotNull(message = "Due date is required")
+    @Future(message = "Due date must be in the future")
     private LocalDateTime dueDate;
-    private TaskStatus taskStatus; // TO_DO, IN_PROGRESS, DONE    
-    private Long assigneeId;       
+
+    @NotNull(message = "Task status is required")
+    private TaskStatus taskStatus; // TO_DO, IN_PROGRESS, DONE
+
+    private Long assigneeId;
+
+    @NotNull(message = "Event ID is required")
     private Long eventId;          
 }
