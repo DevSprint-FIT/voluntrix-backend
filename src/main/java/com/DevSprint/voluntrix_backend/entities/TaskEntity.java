@@ -35,7 +35,7 @@ public class TaskEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long taskId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String description;
 
     @CreationTimestamp
@@ -52,7 +52,7 @@ public class TaskEntity {
     @Column(nullable = false)
     private TaskStatus taskStatus; // TO_DO, IN_PROGRESS, DONE
 
-    @Column
+    @Column(length = 1000)
     private String resourceUrl;
 
     @Column
