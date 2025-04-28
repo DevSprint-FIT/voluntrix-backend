@@ -19,9 +19,22 @@ public class TaskDTOConvert {
 
     private final ModelMapper modelMapper;
 
-    // Converts a TaskEntity to a TaskDTO
+    // Converts a TaskEntity to a TaskDTO 
     public TaskDTO toTaskDTO(TaskEntity task) {
-        return modelMapper.map(task, TaskDTO.class);
+        TaskDTO dto = modelMapper.map(task, TaskDTO.class);
+
+        // Manually map nested fields
+        if (task.getAssignee() != null) {
+            dto.setAssigneeId(task.getAssignee().getVolunteerId());
+            dto.setAssigneeUsername(task.getAssignee().getUsername());
+        }
+
+        if (task.getEvent() != null) {
+            dto.setEventId(task.getEvent().getEventId());
+            dto.setEventTitle(task.getEvent().getEventTitle());
+        }
+
+        return dto;
     }
 
     // Converts a TaskDTO to a TaskEntity
@@ -39,10 +52,10 @@ public class TaskDTOConvert {
         return modelMapper.map(taskUpdateDTO, TaskEntity.class);
     }
 
-    // Converts a list of TaskEntity to a list of TaskDTO
+    // Converts a list of TaskEntity to a list of TaskDTO (uses manual mapping)
     public List<TaskDTO> toTaskDTOList(List<TaskEntity> tasks) {
         return tasks.stream()
-                .map(entity -> modelMapper.map(entity, TaskDTO.class))
+                .map(this::toTaskDTO)
                 .collect(Collectors.toList());
     }
 }
