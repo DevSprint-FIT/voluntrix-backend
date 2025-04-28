@@ -127,4 +127,8 @@ public class EventService {
     public List<EventNameDTO> getAllEventNames() {
         return eventRepository.findAllEventIdAndTitle();
     }
+
+    public List<EventDTO> searchEvents(String query) {
+        return entityDTOConvert.toEventDTOList(eventRepository.findByEventTitleContainingIgnoreCase(query));
+    }
 }

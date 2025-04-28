@@ -17,4 +17,6 @@ public interface EventRepository extends JpaRepository<EventEntity, Long>, JpaSp
     @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.EventNameDTO(e.eventId, e.eventTitle) FROM EventEntity e")
     List<EventNameDTO> findAllEventIdAndTitle();
 
+    List<EventEntity> findByEventTitleContainingIgnoreCase(String eventTitle);
+
 }

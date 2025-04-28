@@ -139,4 +139,9 @@ public class EventController {
     public ResponseEntity<List<EventNameDTO>> getAllEventNames() {
         return new ResponseEntity<List<EventNameDTO>>(eventService.getAllEventNames(), HttpStatus.OK);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<EventDTO>> searchEvents(@RequestParam String query) {
+        return new ResponseEntity<List<EventDTO>>(eventService.searchEvents(query), HttpStatus.OK);
+    }
 }
