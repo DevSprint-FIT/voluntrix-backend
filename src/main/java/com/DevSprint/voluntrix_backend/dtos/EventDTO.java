@@ -25,7 +25,9 @@ public class EventDTO implements Serializable {
     private String eventLocation;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate eventDate;
+    private LocalDate eventStartDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate eventEndDate;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime eventTime;
 

@@ -42,6 +42,10 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        if (eventDTO.getEventStartDate().isAfter(eventDTO.getEventEndDate())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         eventService.addEvent(eventDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -119,7 +123,6 @@ public class EventController {
         if (eventLocation == null && startDate == null && endDate == null && eventVisibility == null
                 && categoryIds == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
         }
 
         try {

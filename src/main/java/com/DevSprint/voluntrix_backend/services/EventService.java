@@ -58,7 +58,8 @@ public class EventService {
         selectedEvent.setEventTitle(eventDTO.getEventTitle());
         selectedEvent.setEventDescription(eventDTO.getEventDescription());
         selectedEvent.setEventLocation(eventDTO.getEventLocation());
-        selectedEvent.setEventDate(eventDTO.getEventDate());
+        selectedEvent.setEventStartDate(eventDTO.getEventStartDate());
+        selectedEvent.setEventEndDate(eventDTO.getEventEndDate());
         selectedEvent.setEventTime(eventDTO.getEventTime());
         selectedEvent.setEventImageUrl(eventDTO.getEventImageUrl());
         selectedEvent.setEventType(eventDTO.getEventType());
@@ -96,14 +97,16 @@ public class EventService {
         }
 
         if (startDate != null && endDate != null) {
-            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("eventDate"), startDate,
-                    endDate));
+            spec = spec.and(
+                    (root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("eventStartDate"), startDate,
+                            endDate));
         } else if (startDate != null) {
             spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder
-                    .greaterThanOrEqualTo(root.get("eventDate"), startDate));
+                    .greaterThanOrEqualTo(root.get("eventStartDate"), startDate));
         } else if (endDate != null) {
-            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("eventDate"),
-                    endDate));
+            spec = spec
+                    .and((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("eventStartDate"),
+                            endDate));
         }
 
         if (categoryIds != null && !categoryIds.isEmpty()) {
