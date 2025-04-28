@@ -1,6 +1,8 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
 import com.DevSprint.voluntrix_backend.enums.TaskStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -15,8 +17,13 @@ import java.time.LocalDateTime;
 public class TaskDTO {
     private Long taskId;
     private String description;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime createdDate;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime updatedDate;
+    
     private LocalDateTime dueDate;
     private TaskStatus taskStatus; // TO_DO, IN_PROGRESS, DONE
     private String resourceUrl;
