@@ -61,11 +61,19 @@ public class TaskService {
     }
 
     public List<TaskDTO> getTasksByEventId(Long eventId) {
-        return taskDTOConvert.toTaskDTOList(taskRepository.findByEvent_EventId(eventId));
+        List<TaskEntity> tasks = taskRepository.findByEvent_EventId(eventId);
+        if (tasks.isEmpty()) {
+            throw new TaskNotFoundException("No tasks found for event ID: " + eventId);
+        }
+        return taskDTOConvert.toTaskDTOList(tasks);
     }
-
+    
     public List<TaskDTO> getTasksByVolunteerUsername(String username) {
-        return taskDTOConvert.toTaskDTOList(taskRepository.findByAssignee_Username(username));
+        List<TaskEntity> tasks = taskRepository.findByAssignee_Username(username);
+        if (tasks.isEmpty()) {
+            throw new TaskNotFoundException("No tasks found for volunteer with username: " + username);
+        }
+        return taskDTOConvert.toTaskDTOList(tasks);
     }
 
     public TaskDTO patchTask(Long taskId, TaskUpdateDTO taskUpdateDTO) {
