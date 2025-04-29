@@ -3,12 +3,16 @@ package com.DevSprint.voluntrix_backend.services;
 import com.DevSprint.voluntrix_backend.dtos.TaskCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.TaskDTO;
 import com.DevSprint.voluntrix_backend.dtos.TaskUpdateDTO;
+import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.TaskEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
+import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.TaskNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.TaskRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
+import com.DevSprint.voluntrix_backend.repositories.EventRepository;
+
 import com.DevSprint.voluntrix_backend.utils.TaskDTOConvert;
 import org.springframework.stereotype.Service;
 
@@ -20,19 +24,35 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final VolunteerRepository volunteerRepository;
+    private final EventRepository eventRepository;
     private final TaskDTOConvert taskDTOConvert;
 
-    public TaskService(TaskRepository taskRepository, VolunteerRepository volunteerRepository, TaskDTOConvert taskDTOConvert) {
+    public TaskService(TaskRepository taskRepository, VolunteerRepository volunteerRepository, EventRepository eventRepository, TaskDTOConvert taskDTOConvert) {
         this.taskRepository = taskRepository;
         this.taskDTOConvert = taskDTOConvert;
         this.volunteerRepository = volunteerRepository;
+        this.eventRepository = eventRepository;
     }
 
     public TaskDTO createTask(TaskCreateDTO taskCreateDTO) {
         TaskEntity task = taskDTOConvert.toTaskEntity(taskCreateDTO);
+
+        // Set the related Event entity
+        EventEntity event = eventRepository.findById(taskCreateDTO.getEventId())
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with ID: " + taskCreateDTO.getEventId()));
+        task.setEvent(event);
+
+        // Set the related Volunteer (assignee) entity if present
+        if (taskCreateDTO.getAssigneeId() != null) {
+            VolunteerEntity assignee = volunteerRepository.findById(taskCreateDTO.getAssigneeId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Volunteer not found with ID: " + taskCreateDTO.getAssigneeId()));
+            task.setAssignee(assignee);
+        }
+
         TaskEntity savedTask = taskRepository.save(task);
         return taskDTOConvert.toTaskDTO(savedTask);
     }
+
 
     public TaskDTO getTaskById(Long taskId) {
         Optional<TaskEntity> task = taskRepository.findById(taskId);
