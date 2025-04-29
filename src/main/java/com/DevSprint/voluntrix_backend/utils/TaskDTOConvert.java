@@ -44,7 +44,11 @@ public class TaskDTOConvert {
 
     // Converts a TaskCreateDTO to a TaskEntity
     public TaskEntity toTaskEntity(TaskCreateDTO taskCreateDTO) {
-        return modelMapper.map(taskCreateDTO, TaskEntity.class);
+        TaskEntity task = new TaskEntity();
+        task.setDescription(taskCreateDTO.getDescription());
+        task.setDueDate(taskCreateDTO.getDueDate());
+        task.setTaskStatus(taskCreateDTO.getTaskStatus());
+        return task;
     }
 
     // Converts a TaskUpdateDTO to a TaskEntity
