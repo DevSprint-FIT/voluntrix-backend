@@ -1,6 +1,7 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
 import com.DevSprint.voluntrix_backend.enums.TaskStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,7 @@ public class TaskCreateDTO {
 
     @NotNull(message = "Due date is required")
     @Future(message = "Due date must be in the future")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dueDate;
 
     @NotNull(message = "Task status is required")
