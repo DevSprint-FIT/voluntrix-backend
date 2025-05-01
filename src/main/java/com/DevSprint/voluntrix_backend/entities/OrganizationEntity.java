@@ -52,7 +52,7 @@ public class OrganizationEntity {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(nullable = true)
+    @Column(nullable = true , columnDefinition = "TEXT")
     private String imageUrl;
 
 

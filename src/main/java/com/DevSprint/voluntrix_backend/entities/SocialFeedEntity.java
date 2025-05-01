@@ -25,6 +25,9 @@ public class SocialFeedEntity {
     @JoinColumn(name = "organization_id", nullable = false)
     private OrganizationEntity organization;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
+
     private String content;
     private String mediaUrl;
 
