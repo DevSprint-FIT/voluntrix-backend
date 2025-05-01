@@ -1,5 +1,6 @@
 package com.DevSprint.voluntrix_backend.utils;
 
+import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationDTO;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
@@ -30,16 +31,21 @@ public class VolunteerEventParticipationDTOConvert {
     }
 
     // Converts a VolunteerEventParticipationDTO to a VolunteerEventParticipationEntity
-    public VolunteerEventParticipationEntity toParticipationEntity(
-            VolunteerEventParticipationDTO participationDTO,
-            VolunteerEntity volunteer,
-            EventEntity event
-    ) {
+    public VolunteerEventParticipationEntity toParticipationEntity(VolunteerEventParticipationDTO participationDTO, VolunteerEntity volunteer, EventEntity event) {
         VolunteerEventParticipationEntity participationEntity = new VolunteerEventParticipationEntity();
         participationEntity.setParticipationId(participationDTO.getParticipationId());
         participationEntity.setVolunteer(volunteer);
         participationEntity.setEvent(event);
         participationEntity.setAreaOfContribution(participationDTO.getAreaOfContribution());
+        return participationEntity;
+    }
+
+    // Converts a VolunteerEventParticipationCreateDTO to a VolunteerEventParticipationEntity
+    public VolunteerEventParticipationEntity toParticipationEntity(VolunteerEventParticipationCreateDTO createDTO, VolunteerEntity volunteer, EventEntity event) {
+        VolunteerEventParticipationEntity participationEntity = new VolunteerEventParticipationEntity();
+        participationEntity.setVolunteer(volunteer);
+        participationEntity.setEvent(event);
+        participationEntity.setAreaOfContribution(createDTO.getAreaOfContribution());
         return participationEntity;
     }
 }
