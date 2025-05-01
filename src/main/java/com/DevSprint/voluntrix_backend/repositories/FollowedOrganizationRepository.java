@@ -13,7 +13,7 @@ public interface FollowedOrganizationRepository extends JpaRepository<FollowedOr
     void deleteByVolunteerIdAndOrganizationId(Long volunteerId, Long organizationId);
 
 
-    @Query("SELECT MONTH(f.followedAt), COUNT(f) FROM FollowedOrganization f " +
+    @Query("SELECT MONTH(f.followedAt), COUNT(f) FROM FollowedOrganizationEntity f " +
             "WHERE YEAR(f.followedAt) = :year AND f.organizationId = :orgId " +
             "GROUP BY MONTH(f.followedAt) ORDER BY MONTH(f.followedAt)")
     List<Object[]> countMonthlyFollowers(@Param("year") int year, @Param("orgId") Long orgId);
