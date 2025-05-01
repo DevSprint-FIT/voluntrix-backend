@@ -6,13 +6,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
-import com.DevSprint.voluntrix_backend.entities.Organization;
+import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 
 @Component
 public class EntityDTOConverter {
 
     // Organization to OrganizationDTO
-    public OrganizationDTO toOrganizationDTO(Organization organization) {
+    public OrganizationDTO toOrganizationDTO(OrganizationEntity organization) {
         var organizationDTO = new OrganizationDTO();
 
         organizationDTO.setId(organization.getId());
@@ -36,8 +36,8 @@ public class EntityDTOConverter {
     }
 
     // OrganizationDTO to Organization
-    public Organization toOrganizationEntity(OrganizationDTO organizationDTO) {
-        var organization = new Organization();
+    public OrganizationEntity toOrganizationEntity(OrganizationDTO organizationDTO) {
+        var organization = new OrganizationEntity();
 
         organization.setId(organizationDTO.getId());
         organization.setName(organizationDTO.getName());
@@ -56,7 +56,7 @@ public class EntityDTOConverter {
     }
 
     // List<Organization> to List<OrganizationDTO>
-    public List<OrganizationDTO> toOrganizationDTOList(List<Organization> organizationList) {
+    public List<OrganizationDTO> toOrganizationDTOList(List<OrganizationEntity> organizationList) {
         return organizationList.stream()
                 .map(this::toOrganizationDTO)
                 .collect(Collectors.toList());

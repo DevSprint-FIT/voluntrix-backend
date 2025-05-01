@@ -2,7 +2,7 @@ package com.DevSprint.voluntrix_backend.services;
 
 import com.DevSprint.voluntrix_backend.dtos.OrganizationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
-import com.DevSprint.voluntrix_backend.entities.Organization;
+import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
 import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class OrganizationService {
@@ -43,7 +42,7 @@ public class OrganizationService {
     // Updated createOrganization method to use OrganizationCreateDTO
     public OrganizationDTO createOrganization(OrganizationCreateDTO organizationCreateDTO) {
         // Convert OrganizationCreateDTO to Organization entity
-        Organization organization = new Organization();
+        OrganizationEntity organization = new OrganizationEntity();
         organization.setName(organizationCreateDTO.getName());
         organization.setUsername(organizationCreateDTO.getUsername());
         organization.setInstitute(organizationCreateDTO.getInstitute());
@@ -57,7 +56,7 @@ public class OrganizationService {
         organization.setBankName(organizationCreateDTO.getBankName());
 
 
-        Organization savedOrganization = organizationRepository.save(organization);
+        OrganizationEntity savedOrganization = organizationRepository.save(organization);
         return entityDTOConverter.toOrganizationDTO(savedOrganization);
     }
 
@@ -105,7 +104,7 @@ public class OrganizationService {
                     }
 
 
-                    Organization updatedOrg = organizationRepository.save(existingOrg);
+                    OrganizationEntity updatedOrg = organizationRepository.save(existingOrg);
                     return entityDTOConverter.toOrganizationDTO(updatedOrg);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Organization not found with id: " + id));
