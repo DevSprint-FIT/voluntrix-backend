@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
-@RequestMapping("/api/public/v1/health-check")
+@RequestMapping("/api/public/health-check")
 @SecurityRequirement(name = "bearerAuth")
 public class HealthCheckController {
     @GetMapping
