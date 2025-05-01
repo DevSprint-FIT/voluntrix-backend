@@ -19,10 +19,7 @@ public class VolunteerEventParticipationService {
     private final VolunteerEventParticipationDTOConvert participationDTOConvert;
 
     // Create a new volunteer event participation record
-    public VolunteerEventParticipationDTO createParticipation(
-            VolunteerEventParticipationDTO participationDTO,
-            VolunteerEntity volunteer,
-            EventEntity event) {
+    public VolunteerEventParticipationDTO createParticipation(VolunteerEventParticipationDTO participationDTO, VolunteerEntity volunteer, EventEntity event) {
         
         VolunteerEventParticipationEntity participationEntity = participationDTOConvert.toParticipationEntity(participationDTO, volunteer, event);
         VolunteerEventParticipationEntity savedEntity = participationRepository.save(participationEntity);
@@ -49,15 +46,14 @@ public class VolunteerEventParticipationService {
     }
 
     // Delete a specific participation record for a given volunteer and event
-    public boolean deleteParticipationByVolunteerAndEvent(Long volunteerId, Long eventId) {
+    public void deleteParticipationByVolunteerAndEvent(Long volunteerId, Long eventId) {
         VolunteerEventParticipationEntity participationEntity =
                 participationRepository.findByVolunteer_VolunteerIdAndEvent_EventId(volunteerId, eventId);
     
         if (participationEntity != null) {
             participationRepository.delete(participationEntity);
-            return true;
+        } else {
+            throw new IllegalArgumentException("Participation record not found for Volunteer ID: " + volunteerId + " and Event ID: " + eventId);
         }
-    
-        return false;
     } 
 }
