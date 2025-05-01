@@ -145,6 +145,12 @@ public class EventController {
 
     @GetMapping("/search")
     public ResponseEntity<List<EventDTO>> searchEvents(@RequestParam String query) {
-        return new ResponseEntity<List<EventDTO>>(eventService.searchEvents(query), HttpStatus.OK);
+        List<EventDTO> results = eventService.searchEvents(query);
+
+        if (results == null || results.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<List<EventDTO>>(results, HttpStatus.OK);
     }
 }
