@@ -49,6 +49,11 @@ public class EventService {
         return entityDTOConvert.toEventDTO(eventEntity);
     }
 
+    public EventEntity getEventEntityById(Long eventId) {
+        return eventRepository.findById(eventId)
+            .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
+    }    
+
     public List<EventDTO> getAllEvents() {
         return entityDTOConvert.toEventDTOList(eventRepository.findAll());
     }
