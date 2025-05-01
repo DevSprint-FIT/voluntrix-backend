@@ -21,7 +21,7 @@ public class EntityDTOConverter {
         organizationDTO.setInstitute(organization.getInstitute());
         organizationDTO.setEmail(organization.getEmail());
         organizationDTO.setPhone(organization.getPhone());
-        organizationDTO.setAccountNumber(organization.getAccountNumber());
+        organizationDTO.setAccountNumber(AESUtil.decrypt(organization.getAccountNumber()));
         organizationDTO.setIsVerified(organization.getIsVerified());
         organizationDTO.setFollowerCount(organization.getFollowerCount());
         organizationDTO.setJoinedDate(organization.getCreatedAt());

@@ -4,6 +4,7 @@ import com.DevSprint.voluntrix_backend.dtos.OrganizationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
+import com.DevSprint.voluntrix_backend.utils.AESUtil;
 import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
 import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class OrganizationService {
         organization.setInstitute(organizationCreateDTO.getInstitute());
         organization.setEmail(organizationCreateDTO.getEmail());
         organization.setPhone(organizationCreateDTO.getPhone());
-        organization.setAccountNumber(organizationCreateDTO.getAccountNumber());
+        organization.setAccountNumber(AESUtil.encrypt(organizationCreateDTO.getAccountNumber()));
         organization.setIsVerified(organizationCreateDTO.getIsVerified());
         organization.setFollowerCount(organizationCreateDTO.getFollowerCount());
         organization.setDescription(organizationCreateDTO.getDescription());
@@ -81,6 +82,7 @@ public class OrganizationService {
 
                     if (organizationDTO.getAccountNumber() != null) {
                         existingOrg.setAccountNumber(organizationDTO.getAccountNumber());
+
                     }
 
                     if (organizationDTO.getIsVerified() != null) {
