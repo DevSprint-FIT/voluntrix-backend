@@ -1,6 +1,7 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationCreateDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.services.EventService;
@@ -35,11 +36,11 @@ public class VolunteerEventParticipationController {
     }
 
     @PostMapping
-    public ResponseEntity<VolunteerEventParticipationDTO> createParticipation(@RequestBody VolunteerEventParticipationDTO dto) {
-        VolunteerEntity volunteer = volunteerService.getVolunteerById(dto.getVolunteerId());
-        EventEntity event = eventService.getEventEntityById(dto.getEventId());
+    public ResponseEntity<VolunteerEventParticipationDTO> createParticipation(@RequestBody VolunteerEventParticipationCreateDTO createDTO) {
+        VolunteerEntity volunteer = volunteerService.getVolunteerById(createDTO.getVolunteerId());
+        EventEntity event = eventService.getEventEntityById(createDTO.getEventId());
 
-        VolunteerEventParticipationDTO created = participationService.createParticipation(dto, volunteer, event);
+        VolunteerEventParticipationDTO created = participationService.createParticipation(createDTO, volunteer, event);
         return ResponseEntity.status(201).body(created);
     }
 
