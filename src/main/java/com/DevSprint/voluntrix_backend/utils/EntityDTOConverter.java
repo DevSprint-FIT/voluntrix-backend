@@ -1,14 +1,14 @@
 package com.DevSprint.voluntrix_backend.utils;
 
 import com.DevSprint.voluntrix_backend.dtos.FollowOrganizationDTO;
-import com.DevSprint.voluntrix_backend.entities.FollowedOrganization;
+import com.DevSprint.voluntrix_backend.entities.FollowedOrganizationEntity;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EntityDTOConverter {
 
     // FollowedOrganization to FollowOrganizationDTO
-    public FollowOrganizationDTO toFollowOrganizationDTO(FollowedOrganization followedOrganization) {
+    public FollowOrganizationDTO toFollowOrganizationDTO(FollowedOrganizationEntity followedOrganization) {
         var dto = new FollowOrganizationDTO();
         followedOrganization.getVolunteerId();
         followedOrganization.getOrganizationId();
@@ -19,8 +19,8 @@ public class EntityDTOConverter {
     }
 
     // FollowOrganizationDTO to FollowedOrganization
-    public FollowedOrganization toFollowedOrganizationEntity(FollowOrganizationDTO dto) {
-        var entity = new FollowedOrganization();
+    public FollowedOrganizationEntity toFollowedOrganizationEntity(FollowOrganizationDTO dto) {
+        var entity = new FollowedOrganizationEntity();
         entity.setVolunteerId(dto.getVolunteerId());
         entity.setOrganizationId(dto.getOrganizationId());
         return entity;

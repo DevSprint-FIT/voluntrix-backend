@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(FollowedOrganizationId.class)
-public class FollowedOrganization {
+@IdClass(FollowedOrganizationIdEntity.class)
+public class FollowedOrganizationEntity {
 
 
     @Id
@@ -34,11 +34,11 @@ public class FollowedOrganization {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "volunteerId", insertable = false, updatable = false)
-    private Volunteer volunteer;
+    private VolunteerEntity volunteer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organizationId", insertable = false, updatable = false)
-    private Organization organization;
+    private OrganizationEntity organization;
 
 
 

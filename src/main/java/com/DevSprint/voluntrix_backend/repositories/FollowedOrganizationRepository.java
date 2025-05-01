@@ -1,15 +1,15 @@
 package com.DevSprint.voluntrix_backend.repositories;
 
-import com.DevSprint.voluntrix_backend.entities.FollowedOrganization;
-import com.DevSprint.voluntrix_backend.entities.FollowedOrganizationId;
+import com.DevSprint.voluntrix_backend.entities.FollowedOrganizationEntity;
+import com.DevSprint.voluntrix_backend.entities.FollowedOrganizationIdEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface FollowedOrganizationRepository extends JpaRepository<FollowedOrganization, FollowedOrganizationId> {
-    List<FollowedOrganization> findByVolunteerId(Long volunteerId);
+public interface FollowedOrganizationRepository extends JpaRepository<FollowedOrganizationEntity, FollowedOrganizationIdEntity> {
+    List<FollowedOrganizationEntity> findByVolunteerId(Long volunteerId);
     void deleteByVolunteerIdAndOrganizationId(Long volunteerId, Long organizationId);
 
 

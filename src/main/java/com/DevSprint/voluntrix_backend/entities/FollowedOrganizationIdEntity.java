@@ -4,14 +4,14 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class FollowedOrganizationId implements Serializable {
+public class FollowedOrganizationIdEntity implements Serializable {
 
     private Long volunteerId;
     private Long organizationId;
 
-    public FollowedOrganizationId() {}
+    public FollowedOrganizationIdEntity() {}
 
-    public FollowedOrganizationId(Long volunteerId, Long organizationId) {
+    public FollowedOrganizationIdEntity(Long volunteerId, Long organizationId) {
         this.volunteerId = volunteerId;
         this.organizationId = organizationId;
     }

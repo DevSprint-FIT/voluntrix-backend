@@ -1,14 +1,13 @@
 package com.DevSprint.voluntrix_backend.services;
 
-import com.DevSprint.voluntrix_backend.entities.FollowedOrganization;
-import com.DevSprint.voluntrix_backend.entities.Organization;
+import com.DevSprint.voluntrix_backend.entities.FollowedOrganizationEntity;
+import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.exceptions.OrganizationNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerAlreadyFollowsOrganizationException;
 import com.DevSprint.voluntrix_backend.repositories.FollowedOrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
-import com.DevSprint.voluntrix_backend.dtos.FollowOrganizationDTO;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,7 +46,7 @@ public class FollowedOrganizationService {
             throw new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId);
         }
 
-        Organization organization = organizationRepository.findById(organizationId)
+        OrganizationEntity organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with ID: " + organizationId));
 
         boolean alreadyFollowing = followedOrganizationRepository.findByVolunteerId(volunteerId).stream()
@@ -57,7 +56,7 @@ public class FollowedOrganizationService {
             throw new VolunteerAlreadyFollowsOrganizationException("Volunteer already follows this organization.");
         }
 
-        FollowedOrganization followedOrganization = new FollowedOrganization();
+        FollowedOrganizationEntity followedOrganization = new FollowedOrganizationEntity();
         followedOrganization.setVolunteerId(volunteerId);
         followedOrganization.setOrganizationId(organizationId);
         followedOrganizationRepository.save(followedOrganization);
@@ -76,10 +75,10 @@ public class FollowedOrganizationService {
             throw new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId);
         }
 
-        Organization organization = organizationRepository.findById(organizationId)
+        OrganizationEntity organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with ID: " + organizationId));
 
-        Optional<FollowedOrganization> followOptional = followedOrganizationRepository.findByVolunteerId(volunteerId).stream()
+        Optional<FollowedOrganizationEntity> followOptional = followedOrganizationRepository.findByVolunteerId(volunteerId).stream()
                 .filter(f -> f.getOrganizationId().equals(organizationId))
                 .findFirst();
 
@@ -106,7 +105,7 @@ public class FollowedOrganizationService {
         return followedOrganizationRepository.findByVolunteerId(volunteerId)
                 .stream()
                 .map(f -> {
-                    Organization org = organizationRepository.findById(f.getOrganizationId()).orElse(null);
+                    OrganizationEntity org = organizationRepository.findById(f.getOrganizationId()).orElse(null);
                     return org != null ? org.getName() : null;
                 })
                 .filter(name -> name != null)
@@ -116,7 +115,7 @@ public class FollowedOrganizationService {
 
     public List<MonthlyFollowCountDTO> getMonthlyFollowerStats(int year, Long organizationId) {
         // Validate organization exists
-        Organization organization = organizationRepository.findById(organizationId)
+        OrganizationEntity organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with ID: " + organizationId));
 
         List<Object[]> rawStats = followedOrganizationRepository.countMonthlyFollowers(year, organizationId);
