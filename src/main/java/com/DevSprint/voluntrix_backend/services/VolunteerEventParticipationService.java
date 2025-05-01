@@ -1,6 +1,7 @@
 package com.DevSprint.voluntrix_backend.services;
 
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationCreateDTO;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEventParticipationEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
@@ -22,14 +23,14 @@ public class VolunteerEventParticipationService {
     }
 
     // Create a new volunteer event participation record
-    public VolunteerEventParticipationDTO createParticipation(VolunteerEventParticipationDTO participationDTO, VolunteerEntity volunteer, EventEntity event) {
+    public VolunteerEventParticipationDTO createParticipation(VolunteerEventParticipationCreateDTO createDTO, VolunteerEntity volunteer, EventEntity event) {
         
         if (volunteer == null) {
-            throw new IllegalArgumentException("Volunteer not found for ID: " + participationDTO.getVolunteerId());
+            throw new IllegalArgumentException("Volunteer not found for ID: " + createDTO.getVolunteerId());
         }
     
         if (event == null) {
-            throw new IllegalArgumentException("Event not found for ID: " + participationDTO.getEventId());
+            throw new IllegalArgumentException("Event not found for ID: " + createDTO.getEventId());
         }
 
         // Prevent duplicate participation of a volunteer in the same event
@@ -39,7 +40,7 @@ public class VolunteerEventParticipationService {
             throw new IllegalArgumentException("Volunteer is already participating in this event.");
         }
 
-        VolunteerEventParticipationEntity participationEntity = participationDTOConvert.toParticipationEntity(participationDTO, volunteer, event);
+        VolunteerEventParticipationEntity participationEntity = participationDTOConvert.toParticipationEntity(createDTO, volunteer, event);
         VolunteerEventParticipationEntity savedEntity = participationRepository.save(participationEntity);
         
         return participationDTOConvert.toParticipationDTO(savedEntity);
