@@ -55,6 +55,11 @@ public class VolunteerService {
             .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with username: " + username));
     }
 
+    public VolunteerEntity getVolunteerById(Long volunteerId) {
+        return volunteerRepository.findById(volunteerId)
+            .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
+    }    
+
     public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerUpdateDTO volunteerUpdateDTO) {
         VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
             .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
