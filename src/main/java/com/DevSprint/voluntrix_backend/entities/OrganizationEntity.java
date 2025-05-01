@@ -11,6 +11,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,7 +21,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "organization")
-public class Organization {
+public class OrganizationEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +39,7 @@ public class Organization {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String accountNumber;
 
     @Column(nullable = false)
@@ -44,6 +47,29 @@ public class Organization {
 
     @Column(nullable = false)
     private Integer followerCount = 0;
+
+    @Column(nullable =true, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @Column(nullable = true, columnDefinition = "TEXT")
+    private String imageUrl;
+
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = true)
+    private String description;
+
+    @Column(nullable = true)
+    private String website;
+
+    @Column(nullable = true)
+    private String bankName;
+
+
+
+
 
 
 }

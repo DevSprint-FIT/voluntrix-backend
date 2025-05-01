@@ -3,6 +3,7 @@ package com.DevSprint.voluntrix_backend.services;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.enums.EventStatus;
+import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
 import com.DevSprint.voluntrix_backend.utils.EventEntityDTOConverter;
 
@@ -25,6 +26,9 @@ public class OrganizationEventService {
     // Get events filtered by status
     public List<EventDTO> getEventsByOrganizationAndStatus(Long organizationId, EventStatus status) {
         List<EventEntity> events = eventRepository.findByOrganizationIdAndEventStatus(organizationId, status);
+        if (events.isEmpty()){
+            throw new ResourceNotFoundException("No events found for organization ID: " + organizationId + " and status: " + status);
+        }
         return converter.toEventDTOList(events);
     }
 

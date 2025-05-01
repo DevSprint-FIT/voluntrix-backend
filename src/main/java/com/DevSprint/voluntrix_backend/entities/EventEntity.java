@@ -23,7 +23,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.ManyToOne;  // <-- Import for @ManyToOne
 import jakarta.persistence.JoinColumn; // <-- Import for @JoinColumn
 
-import com.DevSprint.voluntrix_backend.entities.Organization;  // <-- Added import for Organization
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -63,5 +62,5 @@ public class EventEntity {
         // Foreign Key Reference to Organization Table
     @ManyToOne
     @JoinColumn(name = "organization_id", nullable = true)
-    private Organization organization;
+    private OrganizationEntity organization;
 }
