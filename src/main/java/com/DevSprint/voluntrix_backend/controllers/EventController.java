@@ -28,7 +28,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/public/v1/events")
+@RequestMapping("/api/public/events")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class EventController {
