@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @SpringBootApplication
-@EnableJpaRepositories // optimize performence
+@EnableJpaRepositories // optimize performance
 @EnableWebMvc
 @EnableTransactionManagement
 public class VoluntrixBackendApplication {
