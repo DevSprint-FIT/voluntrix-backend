@@ -1,6 +1,6 @@
 package com.DevSprint.voluntrix_backend.services;
 
-import com.DevSprint.voluntrix_backend.dtos.SponsorDTO;
+import com.DevSprint.voluntrix_backend.dtos.SponsorRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorResponseDTO;
 import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
 import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
@@ -34,13 +34,13 @@ public class SponsorService {
         return modelMapper.map(sponsor, SponsorResponseDTO.class);
     }
 
-    public SponsorResponseDTO createSponsor(SponsorDTO sponsorDTO) {
+    public SponsorResponseDTO createSponsor(SponsorRequestDTO sponsorDTO) {
         SponsorEntity sponsor = modelMapper.map(sponsorDTO, SponsorEntity.class);
         SponsorEntity savedSponsor = sponsorRepository.save(sponsor);
         return modelMapper.map(savedSponsor, SponsorResponseDTO.class);
     }
 
-    public SponsorResponseDTO updateSponsor(Long id, SponsorDTO sponsorDTO) {
+    public SponsorResponseDTO updateSponsor(Long id, SponsorRequestDTO sponsorDTO) {
         SponsorEntity existingSponsor = sponsorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sponsor with ID " + id + " not found"));
 
