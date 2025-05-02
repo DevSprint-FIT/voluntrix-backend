@@ -22,12 +22,12 @@ public class SponsorController {
         return sponsorService.getAllSponsors();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<SponsorResponseDTO> getSponsorById(@PathVariable Long id) {
-        return sponsorService.getSponsorById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+@GetMapping("/{id}")
+public ResponseEntity<SponsorResponseDTO> getSponsorById(@PathVariable Long id) {
+    SponsorResponseDTO sponsor = sponsorService.getSponsorById(id);
+    return ResponseEntity.ok(sponsor);
+}
+
 
     @PostMapping
     public SponsorResponseDTO createSponsor(@RequestBody SponsorDTO sponsorDTO) {

@@ -15,4 +15,8 @@ public class SponsorResponseDTO {
     private String name;
     private String email;
     private String website;
+    public Object map(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'map'");
+    }
 }

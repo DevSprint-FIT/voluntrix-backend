@@ -7,6 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class SponsorDTO {
+    private Long id;
     private String company;
     private boolean isVerified;
     private String jobTitle;
