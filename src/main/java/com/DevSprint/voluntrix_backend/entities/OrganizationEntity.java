@@ -52,9 +52,19 @@ public class OrganizationEntity {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(nullable = true , columnDefinition = "TEXT")
+    @Column(nullable = true, columnDefinition = "TEXT")
     private String imageUrl;
 
+    @Column(unique = true, nullable = false)
+    private String username;
 
+    @Column(nullable = true)
+    private String description;
+
+    @Column(nullable = true)
+    private String website;
+
+    @Column(nullable = true)
+    private String bankName;
 
 }

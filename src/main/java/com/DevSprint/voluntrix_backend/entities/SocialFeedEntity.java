@@ -25,10 +25,10 @@ public class SocialFeedEntity {
     @JoinColumn(name = "organization_id", nullable = false)
     private OrganizationEntity organization;
 
-    @Lob
     @Column(columnDefinition = "TEXT")
-
     private String content;
+
+    @Column(columnDefinition = "TEXT")
     private String mediaUrl;
 
     @Enumerated(EnumType.STRING)
