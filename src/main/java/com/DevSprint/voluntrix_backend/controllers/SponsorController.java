@@ -1,6 +1,7 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
-import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
+import com.DevSprint.voluntrix_backend.dtos.SponsorDTO;
+import com.DevSprint.voluntrix_backend.dtos.SponsorResponseDTO;
 import com.DevSprint.voluntrix_backend.services.SponsorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,25 +18,25 @@ public class SponsorController {
     private SponsorService sponsorService;
 
     @GetMapping
-    public List<SponsorEntity> getAllSponsors() {
+    public List<SponsorResponseDTO> getAllSponsors() {
         return sponsorService.getAllSponsors();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SponsorEntity> getSponsorById(@PathVariable Long id) {
+    public ResponseEntity<SponsorResponseDTO> getSponsorById(@PathVariable Long id) {
         return sponsorService.getSponsorById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public SponsorEntity createSponsor(@RequestBody SponsorEntity sponsor) {
-        return sponsorService.createSponsor(sponsor);
+    public SponsorResponseDTO createSponsor(@RequestBody SponsorDTO sponsorDTO) {
+        return sponsorService.createSponsor(sponsorDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SponsorEntity> updateSponsor(@PathVariable Long id, @RequestBody SponsorEntity sponsor) {
-        SponsorEntity updated = sponsorService.updateSponsor(id, sponsor);
+    public ResponseEntity<SponsorResponseDTO> updateSponsor(@PathVariable Long id, @RequestBody SponsorDTO sponsorDTO) {
+        SponsorResponseDTO updated = sponsorService.updateSponsor(id, sponsorDTO);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
