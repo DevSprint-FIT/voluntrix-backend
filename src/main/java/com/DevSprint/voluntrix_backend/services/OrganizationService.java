@@ -112,10 +112,6 @@ public class OrganizationService {
                 .orElseThrow(() -> new ResourceNotFoundException("Organization not found with id: " + id));
     }
 
-
-
-
-
     public void deleteOrganization(Long id) {
         if (!organizationRepository.existsById(id)) {
             throw new ResourceNotFoundException("Organization not found with id: " + id);
