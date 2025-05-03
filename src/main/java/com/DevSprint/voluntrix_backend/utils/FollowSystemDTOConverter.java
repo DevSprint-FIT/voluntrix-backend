@@ -5,7 +5,7 @@ import com.DevSprint.voluntrix_backend.entities.FollowedOrganizationEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EntityDTOConverter {
+public class FollowSystemDTOConverter {
 
     // FollowedOrganization to FollowOrganizationDTO
     public FollowOrganizationDTO toFollowOrganizationDTO(FollowedOrganizationEntity followedOrganization) {

@@ -7,7 +7,7 @@ import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerAlreadyFollowsOrganizationException;
 import com.DevSprint.voluntrix_backend.repositories.FollowedOrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
-import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
+import com.DevSprint.voluntrix_backend.utils.FollowSystemDTOConverter;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +32,7 @@ public class FollowedOrganizationService {
     private OrganizationRepository organizationRepository;
 
     @Autowired
-    private EntityDTOConverter entityDTOConverter;
+    private FollowSystemDTOConverter entityDTOConverter;
 
     @Autowired
     private VolunteerRepository volunteerRepository;
