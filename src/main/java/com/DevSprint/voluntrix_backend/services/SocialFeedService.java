@@ -42,6 +42,7 @@ public class SocialFeedService {
         post.setMediaType(socialFeedRequestDTO.getMediaType());
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
+        post.setMediaSizeInBytes(socialFeedRequestDTO.getMediaSizeInBytes());
 
         SocialFeedEntity savedPost = socialFeedRepository.save(post);
         return entityDTOConverter.toSocialFeedResponseDTO(savedPost);

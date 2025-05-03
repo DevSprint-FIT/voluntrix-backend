@@ -44,6 +44,8 @@ public class SocialFeedEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    private Long mediaSizeInBytes;
+
 
 
 }
