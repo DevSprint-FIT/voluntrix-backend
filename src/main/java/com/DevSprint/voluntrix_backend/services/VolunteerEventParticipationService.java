@@ -7,20 +7,19 @@ import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerEventParticipationRepository;
 import com.DevSprint.voluntrix_backend.utils.VolunteerEventParticipationDTOConvert;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class VolunteerEventParticipationService {
 
     private final VolunteerEventParticipationRepository participationRepository;
     private final VolunteerEventParticipationDTOConvert participationDTOConvert;
-
-    public VolunteerEventParticipationService(VolunteerEventParticipationRepository participationRepository, VolunteerEventParticipationDTOConvert participationDTOConvert) {
-        this.participationRepository = participationRepository;
-        this.participationDTOConvert = participationDTOConvert;
-    }
 
     // Create a new volunteer event participation record
     public VolunteerEventParticipationDTO createParticipation(VolunteerEventParticipationCreateDTO createDTO, VolunteerEntity volunteer, EventEntity event) {

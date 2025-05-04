@@ -8,6 +8,7 @@ import com.DevSprint.voluntrix_backend.services.EventService;
 import com.DevSprint.voluntrix_backend.services.VolunteerService;
 import com.DevSprint.voluntrix_backend.services.VolunteerEventParticipationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/public/participations")
 @SecurityRequirement(name = "bearerAuth")
@@ -28,12 +30,6 @@ public class VolunteerEventParticipationController {
     private final VolunteerEventParticipationService participationService;
     private final VolunteerService volunteerService;
     private final EventService eventService;
-
-    public VolunteerEventParticipationController(VolunteerEventParticipationService participationService, VolunteerService volunteerService, EventService eventService) {
-        this.participationService = participationService;
-        this.volunteerService = volunteerService;
-        this.eventService = eventService;
-    }
 
     @PostMapping
     public ResponseEntity<VolunteerEventParticipationDTO> createParticipation(@RequestBody VolunteerEventParticipationCreateDTO createDTO) {
