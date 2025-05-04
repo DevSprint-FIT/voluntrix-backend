@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,7 +24,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @NoArgsConstructor
@@ -51,9 +49,7 @@ public class EventEntity {
     private LocalTime eventTime;
 
     private String eventImageUrl;
-
-    @Builder.Default
-    private Integer volunteerCount = 0;
+    private Integer volunteerCount;
 
     @Enumerated(EnumType.STRING)
     private EventType eventType; // ONLINE or ONSITE
@@ -70,15 +66,9 @@ public class EventEntity {
     @ManyToMany
     @JoinTable(name = "event_category", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<CategoryEntity> categories;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "event_host_id", nullable = false)
-    private VolunteerEntity eventHost;
-
-    @OneToMany(mappedBy = "event")
-    private Set<EventApplicationEntity> applications;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  
+    // Foreign Key Reference to Organization Table
+    @ManyToOne
     @JoinColumn(name = "organization_id", nullable = true)
     private OrganizationEntity organization;
 }

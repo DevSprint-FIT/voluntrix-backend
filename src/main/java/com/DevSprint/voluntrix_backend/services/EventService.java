@@ -8,49 +8,33 @@ import java.util.stream.Collectors;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
-import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
-import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
-import com.DevSprint.voluntrix_backend.exceptions.OrganizationNotFoundException;
-import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
-import com.DevSprint.voluntrix_backend.exceptions.BadRequestException;
 import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
-import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
-import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.EventDTOConverter;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class EventService {
 
     private final EventRepository eventRepository;
     private final EventDTOConverter entityDTOConvert;
     private final CategoryRepository categoryRepository;
-    private final VolunteerRepository volunteerRepository;
-    private final OrganizationRepository organizationRepository;
 
-    public void addEvent(EventCreateDTO eventCreateDTO) {
-        VolunteerEntity eventHost = volunteerRepository.findById(eventCreateDTO.getEventHostId())
-                .orElseThrow(() -> new VolunteerNotFoundException(
-                        "Event Host not found: " + eventCreateDTO.getEventHostId()));
+    public void addEvent(EventDTO eventDTO) {
+        eventDTO.setVolunteerCount(0);
 
-        if (!Boolean.TRUE.equals(eventHost.getIsEventHost())) {
-            throw new BadRequestException("Volunteer is not an event host");
-        }
-
-        EventEntity eventEntity = entityDTOConvert.toEventEntity(eventCreateDTO, eventHost);
+        EventEntity eventEntity = entityDTOConvert.toEventEntity(eventDTO);
         eventRepository.save(eventEntity);
     }
 
@@ -78,71 +62,27 @@ public class EventService {
         var selectedEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
-        if (eventDTO.getEventTitle() != null) {
-            selectedEvent.setEventTitle(eventDTO.getEventTitle());
-        }
-        if (eventDTO.getEventDescription() != null) {
-            selectedEvent.setEventDescription(eventDTO.getEventDescription());
-        }
-        if (eventDTO.getEventLocation() != null) {
-            selectedEvent.setEventLocation(eventDTO.getEventLocation());
-        }
-        if (eventDTO.getEventStartDate() != null) {
-            selectedEvent.setEventStartDate(eventDTO.getEventStartDate());
-        }
-        if (eventDTO.getEventEndDate() != null) {
-            selectedEvent.setEventEndDate(eventDTO.getEventEndDate());
-        }
-        if (eventDTO.getEventTime() != null) {
-            selectedEvent.setEventTime(eventDTO.getEventTime());
-        }
-        if (eventDTO.getEventImageUrl() != null) {
-            selectedEvent.setEventImageUrl(eventDTO.getEventImageUrl());
-        }
-        if (eventDTO.getVolunteerCount() != null) {
-            selectedEvent.setVolunteerCount(eventDTO.getVolunteerCount());
-        }
-        if (eventDTO.getEventType() != null) {
-            selectedEvent.setEventType(eventDTO.getEventType());
-        }
-        if (eventDTO.getEventVisibility() != null) {
-            selectedEvent.setEventVisibility(eventDTO.getEventVisibility());
-        }
-        if (eventDTO.getEventStatus() != null) {
-            selectedEvent.setEventStatus(eventDTO.getEventStatus());
-        }
-        if (eventDTO.getSponsorshipEnabled() != null) {
-            selectedEvent.setSponsorshipEnabled(eventDTO.getSponsorshipEnabled());
-        }
-        if (eventDTO.getDonationEnabled() != null) {
-            selectedEvent.setDonationEnabled(eventDTO.getDonationEnabled());
-        }
-        if (eventDTO.getCategories() != null) {
-            Set<CategoryEntity> categoryEntities = eventDTO.getCategories().stream()
-                    .map(dto -> categoryRepository.findById(dto.getCategoryId())
-                            .orElseThrow(
-                                    () -> new CategoryNotFoundException("Category not found: " + dto.getCategoryId())))
-                    .collect(Collectors.toSet());
+        selectedEvent.setEventTitle(eventDTO.getEventTitle());
+        selectedEvent.setEventDescription(eventDTO.getEventDescription());
+        selectedEvent.setEventLocation(eventDTO.getEventLocation());
+        selectedEvent.setEventStartDate(eventDTO.getEventStartDate());
+        selectedEvent.setEventEndDate(eventDTO.getEventEndDate());
+        selectedEvent.setEventTime(eventDTO.getEventTime());
+        selectedEvent.setEventImageUrl(eventDTO.getEventImageUrl());
+        selectedEvent.setVolunteerCount(eventDTO.getVolunteerCount());
+        selectedEvent.setEventType(eventDTO.getEventType());
+        selectedEvent.setEventVisibility(eventDTO.getEventVisibility());
+        selectedEvent.setEventStatus(eventDTO.getEventStatus());
+        selectedEvent.setSponsorshipEnabled(eventDTO.getSponsorshipEnabled());
+        selectedEvent.setDonationEnabled(eventDTO.getDonationEnabled());
 
-            selectedEvent.setCategories(categoryEntities);
-        }
-        if (eventDTO.getEventHostId() != null) {
-            VolunteerEntity eventHost = volunteerRepository.findById(eventDTO.getEventHostId())
-                    .orElseThrow(() -> new VolunteerNotFoundException(
-                            "Event Host not found: " + eventDTO.getEventHostId()));
+        Set<CategoryEntity> categoryEntities = eventDTO.getCategories().stream()
+                .map(dto -> categoryRepository.findById(dto.getCategoryId())
+                        .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategoryId())))
+                .collect(Collectors.toSet());
 
-            if (!Boolean.TRUE.equals(eventHost.getIsEventHost())) {
-                throw new BadRequestException("Volunteer is not an event host");
-            }
+        selectedEvent.setCategories(categoryEntities);
 
-            selectedEvent.setEventHost(eventHost);
-        }
-        if (eventDTO.getOrganizationId() != null) {
-            OrganizationEntity organization = organizationRepository.findById(eventDTO.getOrganizationId())
-                    .orElseThrow(() -> new OrganizationNotFoundException("Organization not found: "
-                            + eventDTO.getOrganizationId()));
-            selectedEvent.setOrganization(organization);
-        }
         eventRepository.save(selectedEvent);
     }
 
