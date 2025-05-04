@@ -1,11 +1,14 @@
 package com.DevSprint.voluntrix_backend.services;
 
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerEventStatsDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationCreateDTO;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEventParticipationEntity;
+import com.DevSprint.voluntrix_backend.enums.EventStatus;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerEventParticipationRepository;
+import com.DevSprint.voluntrix_backend.repositories.EventApplicationRepository;
 import com.DevSprint.voluntrix_backend.utils.VolunteerEventParticipationDTOConvert;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ public class VolunteerEventParticipationService {
 
     private final VolunteerEventParticipationRepository participationRepository;
     private final VolunteerEventParticipationDTOConvert participationDTOConvert;
+    private final EventApplicationRepository eventApplicationRepository;
 
     // Create a new volunteer event participation record
     public VolunteerEventParticipationDTO createParticipation(VolunteerEventParticipationCreateDTO createDTO, VolunteerEntity volunteer, EventEntity event) {
@@ -75,6 +79,15 @@ public class VolunteerEventParticipationService {
         } else {
             throw new IllegalArgumentException("Participation record not found for Volunteer ID: " + volunteerId + " and Event ID: " + eventId);
         }
+    }
+
+    // Get statistics for a specific volunteer's event participation
+    public VolunteerEventStatsDTO getVolunteerEventStats(Long volunteerId) {
+        long activeCount = participationRepository.countByVolunteerIdAndEventStatus(volunteerId, EventStatus.ACTIVE);
+        long completedCount = participationRepository.countByVolunteerIdAndEventStatus(volunteerId, EventStatus.COMPLETE);
+        long appliedCount = eventApplicationRepository.countPendingApplicationsByVolunteerId(volunteerId);
+
+        return new VolunteerEventStatsDTO(activeCount, completedCount, appliedCount);
     }
 
     // Delete a specific participation record for a given volunteer and event
