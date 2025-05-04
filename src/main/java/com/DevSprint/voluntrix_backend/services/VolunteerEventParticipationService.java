@@ -3,6 +3,7 @@ package com.DevSprint.voluntrix_backend.services;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventStatsDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationCreateDTO;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEventParticipationEntity;
 import com.DevSprint.voluntrix_backend.enums.EventStatus;
@@ -94,6 +95,11 @@ public class VolunteerEventParticipationService {
     // Get all active event details for a specific volunteer
     public List<VolunteerActiveEventDTO> getActiveEventsByVolunteerId(Long volunteerId) {
         return participationRepository.findActiveEventsByVolunteerId(volunteerId);
+    }
+    
+    // Get all completed event details for a specific volunteer
+    public List<VolunteerCompletedEventDTO> getCompletedEventsByVolunteerId(Long volunteerId) {
+        return participationRepository.findCompletedEventsByVolunteerId(volunteerId);
     }
 
     // Delete a specific participation record for a given volunteer and event

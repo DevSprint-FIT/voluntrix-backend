@@ -1,6 +1,7 @@
 package com.DevSprint.voluntrix_backend.repositories;
 
 import com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEventParticipationEntity;
 import com.DevSprint.voluntrix_backend.enums.EventStatus;
 
@@ -32,4 +33,12 @@ public interface VolunteerEventParticipationRepository extends JpaRepository<Vol
        "FROM VolunteerEventParticipationEntity vep " +"JOIN vep.event e " +
        "WHERE vep.volunteer.id = :volunteerId AND e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.ACTIVE")
     List<VolunteerActiveEventDTO> findActiveEventsByVolunteerId(@Param("volunteerId") Long volunteerId);
+
+    @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO(" +
+       "e.eventTitle, e.eventStartDate, e.eventEndDate, e.eventType, vep.areaOfContribution) " +
+       "FROM VolunteerEventParticipationEntity vep " +
+       "JOIN vep.event e " +
+       "WHERE vep.volunteer.volunteerId = :volunteerId " +
+       "AND e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.COMPLETE")
+    List<VolunteerCompletedEventDTO> findCompletedEventsByVolunteerId(@Param("volunteerId") Long volunteerId);
 }
