@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RequestDto {
+public class RequestPackageDto {
     
     private Long sponsorId;
     private Long eventId;

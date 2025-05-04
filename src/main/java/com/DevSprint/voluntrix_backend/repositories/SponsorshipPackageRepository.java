@@ -1,9 +1,9 @@
 package com.DevSprint.voluntrix_backend.repositories;
 
-
+import com.DevSprint.voluntrix_backend.entities.SponsorshipPackageEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import com.DevSprint.voluntrix_backend.entities.SponsorshipPackage;
-
-public interface SponsorshipPackageRepository extends JpaRepository<SponsorshipPackage, Long> {
+@Repository
+public interface SponsorshipPackageRepository extends JpaRepository<SponsorshipPackageEntity, Long> {
 }

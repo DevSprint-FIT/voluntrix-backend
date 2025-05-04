@@ -13,18 +13,18 @@ import lombok.Data;
 
 @Data
 @Entity
-public class SponsorshipRequest {
+public class SponsorshipRequestEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "sponsor_id",nullable = false)
-    private Sponsor sponsor;
+    private SponsorEntity sponsor;
 
     @ManyToOne
-    @JoinColumn(name = "event_id")
-    private EventEntity event;
+    @JoinColumn(name="sponsorship_package_id",nullable = false)
+    private SponsorshipPackageEntity sponsorshipPackage;
 
     private Timestamp createdAt;
 

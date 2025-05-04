@@ -8,20 +8,14 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-// import com.DevSprint.voluntrix_backend.enums.EventStatus;
-// import com.DevSprint.voluntrix_backend.enums.EventType;
-// import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Entity;
-// import jakarta.persistence.EnumType;
-// import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.ManyToOne;  // <-- Import for @ManyToOne
-import jakarta.persistence.JoinColumn; // <-- Import for @JoinColumn
+
 
 
 @NoArgsConstructor
@@ -45,22 +39,8 @@ public class EventEntity {
     private LocalTime eventTime;
 
     private String eventImageUrl;
-
-    // @Enumerated(EnumType.STRING)
-    // private EventType eventType; // ONLINE or ONSITE
-
-    // @Enumerated(EnumType.STRING)
-    // private EventVisibility eventVisibility; // PRIVATE or PUBLIC
-
-    // @Enumerated(EnumType.STRING)
-    // private EventStatus eventStatus; // DRAFT, PENDING, ACTIVE, COMPLETE, DENIED
-
-
     private Boolean sponsorshipEnabled;
     private Boolean donationEnabled;
 
-    // Foreign Key Reference to Organization Table
-    // @ManyToOne
-    // @JoinColumn(name = "organization_id", nullable = true)
-    // private OrganizationEntity organization;
+
 }

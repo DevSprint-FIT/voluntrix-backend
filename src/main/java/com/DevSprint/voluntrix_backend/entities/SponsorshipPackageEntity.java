@@ -12,9 +12,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
-public class SponsorshipPackage {
+@Table(name = "sponsorship_package")
+public class SponsorshipPackageEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,8 +38,6 @@ public class SponsorshipPackage {
     
     
     private String benefits;
-
-    private boolean isAvailable;
     private Timestamp createdAt;
 
     
