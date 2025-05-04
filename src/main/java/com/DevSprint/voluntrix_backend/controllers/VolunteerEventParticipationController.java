@@ -3,6 +3,7 @@ package com.DevSprint.voluntrix_backend.controllers;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventStatsDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerAppliedEventDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationCreateDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
@@ -77,6 +78,12 @@ public class VolunteerEventParticipationController {
     public ResponseEntity<List<VolunteerCompletedEventDTO>> getCompletedEvents(@PathVariable Long volunteerId) {
         List<VolunteerCompletedEventDTO> completedEvents = participationService.getCompletedEventsByVolunteerId(volunteerId);
         return ResponseEntity.ok(completedEvents);
+    }
+
+    @GetMapping("/volunteers/{volunteerId}/applied-events")
+    public ResponseEntity<List<VolunteerAppliedEventDTO>> getAppliedEvents(@PathVariable Long volunteerId) {
+        List<VolunteerAppliedEventDTO> appliedEvents = participationService.getAppliedEventsByVolunteerId(volunteerId);
+        return ResponseEntity.ok(appliedEvents);
     }
 
     @DeleteMapping("/volunteer/{volunteerId}/event/{eventId}")

@@ -3,6 +3,7 @@ package com.DevSprint.voluntrix_backend.services;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventStatsDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerAppliedEventDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationCreateDTO;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEventParticipationEntity;
@@ -102,6 +103,11 @@ public class VolunteerEventParticipationService {
         return participationRepository.findCompletedEventsByVolunteerId(volunteerId);
     }
 
+    // Get all events that a volunteer has applied for
+    public List<VolunteerAppliedEventDTO> getAppliedEventsByVolunteerId(Long volunteerId) {
+        return eventApplicationRepository.findAppliedEventsByVolunteerId(volunteerId);
+    }
+
     // Delete a specific participation record for a given volunteer and event
     public void deleteParticipationByVolunteerAndEvent(Long volunteerId, Long eventId) {
         VolunteerEventParticipationEntity participationEntity = participationRepository.findByVolunteer_VolunteerIdAndEvent_EventId(volunteerId, eventId);
@@ -111,5 +117,5 @@ public class VolunteerEventParticipationService {
         } else {
             throw new IllegalArgumentException("Participation record not found for Volunteer ID: " + volunteerId + " and Event ID: " + eventId);
         }
-    } 
+    }
 }

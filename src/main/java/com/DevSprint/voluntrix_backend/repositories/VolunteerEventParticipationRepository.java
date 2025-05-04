@@ -15,30 +15,32 @@ import java.util.List;
 @Repository
 public interface VolunteerEventParticipationRepository extends JpaRepository<VolunteerEventParticipationEntity, Long> {
 
-    // Find all participation records for a given volunteer
-    List<VolunteerEventParticipationEntity> findByVolunteer_VolunteerId(Long volunteerId);
+   // Find all participation records for a given volunteer
+   List<VolunteerEventParticipationEntity> findByVolunteer_VolunteerId(Long volunteerId);
 
-    // Find all participation records for a given event
-    List<VolunteerEventParticipationEntity> findByEvent_EventId(Long eventId);
+   // Find all participation records for a given event
+   List<VolunteerEventParticipationEntity> findByEvent_EventId(Long eventId);
 
-    // Find participation record by both volunteer and event
-    VolunteerEventParticipationEntity findByVolunteer_VolunteerIdAndEvent_EventId(Long volunteerId, Long eventId);
+   // Find participation record by both volunteer and event
+   VolunteerEventParticipationEntity findByVolunteer_VolunteerIdAndEvent_EventId(Long volunteerId, Long eventId);
 
-    // Find participation event count by event status
-    @Query("SELECT COUNT(vp) FROM VolunteerEventParticipationEntity vp WHERE vp.volunteer.id = :volunteerId AND vp.event.eventStatus = :status")
-    long countByVolunteerIdAndEventStatus(@Param("volunteerId") Long volunteerId, @Param("status") EventStatus status);
+   // Find participation event count by event status
+   @Query("SELECT COUNT(vp) FROM VolunteerEventParticipationEntity vp WHERE vp.volunteer.id = :volunteerId AND vp.event.eventStatus = :status")
+   long countByVolunteerIdAndEventStatus(@Param("volunteerId") Long volunteerId, @Param("status") EventStatus status);
 
-    // Find all active events for a given volunteer
-    @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO(" +"e.eventTitle, e.eventStartDate, e.eventEndDate, e.eventLocation) " +
-       "FROM VolunteerEventParticipationEntity vep " +"JOIN vep.event e " +
-       "WHERE vep.volunteer.id = :volunteerId AND e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.ACTIVE")
-    List<VolunteerActiveEventDTO> findActiveEventsByVolunteerId(@Param("volunteerId") Long volunteerId);
+   // Find all active events for a given volunteer
+   @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO(" +
+      "e.eventTitle, e.eventStartDate, e.eventEndDate, e.eventLocation) " +
+      "FROM VolunteerEventParticipationEntity vep " +"JOIN vep.event e " +
+      "WHERE vep.volunteer.id = :volunteerId AND e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.ACTIVE")
+   List<VolunteerActiveEventDTO> findActiveEventsByVolunteerId(@Param("volunteerId") Long volunteerId);
 
-    @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO(" +
-       "e.eventTitle, e.eventStartDate, e.eventEndDate, e.eventType, vep.areaOfContribution) " +
-       "FROM VolunteerEventParticipationEntity vep " +
-       "JOIN vep.event e " +
-       "WHERE vep.volunteer.volunteerId = :volunteerId " +
-       "AND e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.COMPLETE")
-    List<VolunteerCompletedEventDTO> findCompletedEventsByVolunteerId(@Param("volunteerId") Long volunteerId);
+   // Find all completed events for a given volunteer
+   @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO(" +
+      "e.eventTitle, e.eventStartDate, e.eventEndDate, e.eventType, vep.areaOfContribution) " +
+      "FROM VolunteerEventParticipationEntity vep " +
+      "JOIN vep.event e " +
+      "WHERE vep.volunteer.id = :volunteerId " +
+      "AND e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.COMPLETE")
+   List<VolunteerCompletedEventDTO> findCompletedEventsByVolunteerId(@Param("volunteerId") Long volunteerId);
 }
