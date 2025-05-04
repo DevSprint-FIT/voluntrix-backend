@@ -2,12 +2,15 @@ package com.DevSprint.voluntrix_backend.controllers;
 
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventStatsDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationCreateDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.services.EventService;
 import com.DevSprint.voluntrix_backend.services.VolunteerService;
 import com.DevSprint.voluntrix_backend.services.VolunteerEventParticipationService;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
@@ -62,6 +65,12 @@ public class VolunteerEventParticipationController {
     @GetMapping("/volunteer/{volunteerId}/stats")
     public ResponseEntity<VolunteerEventStatsDTO> getVolunteerEventStats(@PathVariable Long volunteerId) {
         return ResponseEntity.ok(participationService.getVolunteerEventStats(volunteerId));
+    }
+
+    @GetMapping("/volunteers/{volunteerId}/active-events")
+    public ResponseEntity<List<VolunteerActiveEventDTO>> getActiveEventsForVolunteer(@PathVariable Long volunteerId) {
+        List<VolunteerActiveEventDTO> activeEvents = participationService.getActiveEventsByVolunteerId(volunteerId);
+        return ResponseEntity.ok(activeEvents);
     }
 
     @DeleteMapping("/volunteer/{volunteerId}/event/{eventId}")
