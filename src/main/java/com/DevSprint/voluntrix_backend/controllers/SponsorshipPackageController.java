@@ -28,8 +28,8 @@ public class SponsorshipPackageController {
     }
 
     @PostMapping
-    public SponsorshipPackageEntity createPackage(@RequestBody SponsorshipPackageEntity sponsorshipPackage) {
-        return sponsorshipPackageService.create(sponsorshipPackage);
+    public SponsorshipPackageEntity createPackage(@RequestBody SponsorshipPackageDto dto) {
+        return sponsorshipPackageService.createFromDto(dto);
     }
 
     @PutMapping("/{id}")
