@@ -57,13 +57,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(new ErrorResponse("RESOURCE_NOT_FOUND", ex.getMessage()));
     }
-
-    // Handles event not found exceptions
-    @ExceptionHandler(EventNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleEventNotFound(EventNotFoundException ex) {        
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new ErrorResponse("EVENT_NOT_FOUND", ex.getMessage()));
-    }
     
     // Handles other illegal argument errors
     @ExceptionHandler(IllegalArgumentException.class)
@@ -110,5 +103,23 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {        
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(new ErrorResponse("INTERNAL_SERVER_ERROR", "An unexpected error occurred."));
-    }  
+    }
+
+    @ExceptionHandler(EventNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEventNotFoundException(EventNotFoundException ex) {        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(new ErrorResponse("EVENT_NOT_FOUND", ex.getMessage()));
+    }
+
+    @ExceptionHandler(CategoryNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCategoryNotFoundException(CategoryNotFoundException ex) {        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(new ErrorResponse("CATEGORY_NOT_FOUND", ex.getMessage()));
+    }
+
+    @ExceptionHandler(EventApplicationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEventApplicationNotFoundException(EventApplicationNotFoundException ex) {        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(new ErrorResponse("EVENT_APPLICATION_NOT_FOUND", ex.getMessage()));
+    }
 }
