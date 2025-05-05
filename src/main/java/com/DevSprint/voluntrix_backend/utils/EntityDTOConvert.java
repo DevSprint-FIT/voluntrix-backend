@@ -13,9 +13,7 @@ import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
-import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
-import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +24,6 @@ public class EntityDTOConvert {
     // Event Mapping
     private final ModelMapper modelMapper;
     private final CategoryRepository categoryRepository;
-    private final VolunteerRepository volunteerRepository;
 
     // EventEntity to EventDTO
     public EventDTO toEventDTO(EventEntity eventEntity) {
