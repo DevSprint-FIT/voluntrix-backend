@@ -13,11 +13,15 @@ import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
+import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
+import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
+import com.DevSprint.voluntrix_backend.exceptions.BadRequestException;
 import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
+import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.EntityDTOConvert;
 
 import jakarta.transaction.Transactional;
@@ -31,9 +35,18 @@ public class EventService {
     private final EventRepository eventRepository;
     private final EntityDTOConvert entityDTOConvert;
     private final CategoryRepository categoryRepository;
+    private final VolunteerRepository volunteerRepository;
 
     public void addEvent(EventCreateDTO eventCreateDTO) {
-        EventEntity eventEntity = entityDTOConvert.toEventCreateEntity(eventCreateDTO);
+        VolunteerEntity eventHost = volunteerRepository.findById(eventCreateDTO.getEventHostId())
+                .orElseThrow(() -> new VolunteerNotFoundException(
+                        "Event Host not found: " + eventCreateDTO.getEventHostId()));
+
+        if (!Boolean.TRUE.equals(eventHost.getIsEventHost())) {
+            throw new BadRequestException("Volunteer is not an event host");
+        }
+
+        EventEntity eventEntity = entityDTOConvert.toEventCreateEntity(eventCreateDTO, eventHost);
         eventRepository.save(eventEntity);
     }
 

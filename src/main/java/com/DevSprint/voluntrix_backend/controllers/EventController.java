@@ -47,6 +47,10 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        if (eventCreateDTO.getEventHostId() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         eventService.addEvent(eventCreateDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

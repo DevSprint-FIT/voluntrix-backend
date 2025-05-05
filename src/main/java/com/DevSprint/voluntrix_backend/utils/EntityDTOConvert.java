@@ -34,7 +34,7 @@ public class EntityDTOConvert {
     }
 
     // EventCreateDTO to EventEntity
-    public EventEntity toEventCreateEntity(EventCreateDTO eventCreateDTO) {
+    public EventEntity toEventCreateEntity(EventCreateDTO eventCreateDTO, VolunteerEntity eventHost) {
         EventEntity eventEntity = new EventEntity();
 
         eventEntity.setEventTitle(eventCreateDTO.getEventTitle());
@@ -61,12 +61,8 @@ public class EntityDTOConvert {
         }
 
         // Set event host
-        if (eventCreateDTO.getEventHostId() != null) {
-            VolunteerEntity eventHost = volunteerRepository.findById(eventCreateDTO.getEventHostId())
-                    .orElseThrow(() -> new VolunteerNotFoundException(
-                            "Volunteer not found: " + eventCreateDTO.getEventHostId()));
-            eventEntity.setEventHost(eventHost);
-        }
+        eventEntity.setEventHost(eventHost);
+
         return eventEntity;
     }
 
