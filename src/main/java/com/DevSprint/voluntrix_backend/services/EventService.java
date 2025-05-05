@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
@@ -31,10 +32,8 @@ public class EventService {
     private final EntityDTOConvert entityDTOConvert;
     private final CategoryRepository categoryRepository;
 
-    public void addEvent(EventDTO eventDTO) {
-        eventDTO.setVolunteerCount(0);
-
-        EventEntity eventEntity = entityDTOConvert.toEventEntity(eventDTO);
+    public void addEvent(EventCreateDTO eventCreateDTO) {
+        EventEntity eventEntity = entityDTOConvert.toEventCreateEntity(eventCreateDTO);
         eventRepository.save(eventEntity);
     }
 
