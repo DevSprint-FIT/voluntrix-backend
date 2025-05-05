@@ -42,4 +42,5 @@ public class EventDTO implements Serializable {
     private Boolean donationEnabled;
 
     private Set<CategoryDTO> categories;
+    private Long eventHostId;
 }
