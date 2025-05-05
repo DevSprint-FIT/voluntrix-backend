@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
@@ -36,17 +37,17 @@ public class EventController {
     private final EventService eventService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> addEvent(@RequestBody EventDTO eventDTO) {
+    public ResponseEntity<Void> addEvent(@RequestBody EventCreateDTO eventCreateDTO) {
 
-        if (eventDTO == null) {
+        if (eventCreateDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        if (eventDTO.getEventStartDate().isAfter(eventDTO.getEventEndDate())) {
+        if (eventCreateDTO.getEventStartDate().isAfter(eventCreateDTO.getEventEndDate())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        eventService.addEvent(eventDTO);
+        eventService.addEvent(eventCreateDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
