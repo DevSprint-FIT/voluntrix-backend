@@ -25,6 +25,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @NoArgsConstructor
@@ -74,4 +75,6 @@ public class EventEntity {
     @JoinColumn(name = "event_host_id", nullable = true)
     private VolunteerEntity eventHost;
 
+    @OneToMany(mappedBy = "event")
+    private Set<EventApplicationEntity> applications;
 }
