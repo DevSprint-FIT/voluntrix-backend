@@ -55,7 +55,9 @@ public class OrganizationService {
         organization.setDescription(organizationCreateDTO.getDescription());
         organization.setWebsite(organizationCreateDTO.getWebsite());
         organization.setBankName(organizationCreateDTO.getBankName());
-
+        organization.setFacebookLink(organizationCreateDTO.getFacebookLink());
+        organization.setLinkedinLink(organizationCreateDTO.getLinkedinLink());
+        organization.setInstagramLink(organizationCreateDTO.getInstagramLink());
 
         OrganizationEntity savedOrganization = organizationRepository.save(organization);
         return entityDTOConverter.toOrganizationDTO(savedOrganization);
@@ -103,6 +105,18 @@ public class OrganizationService {
 
                     if(organizationDTO.getDescription() != null) {
                         existingOrg.setDescription(organizationDTO.getDescription());
+                    }
+
+                    if(organizationDTO.getFacebookLink() != null){
+                        existingOrg.setFacebookLink(organizationDTO.getFacebookLink());
+                    }
+
+                    if(organizationDTO.getLinkedinLink() != null){
+                        existingOrg.setLinkedinLink(organizationDTO.getLinkedinLink());
+                    }
+
+                    if(organizationDTO.getInstagramLink() != null){
+                        existingOrg.setInstagramLink(organizationDTO.getInstagramLink());
                     }
 
 
