@@ -108,12 +108,9 @@ public class EventController {
         try {
             eventService.updateEvent(eventId, eventDTO);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (EventNotFoundException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
