@@ -117,6 +117,17 @@ public class EventService {
 
             selectedEvent.setCategories(categoryEntities);
         }
+        if (eventDTO.getEventHostId() != null) {
+            VolunteerEntity eventHost = volunteerRepository.findById(eventDTO.getEventHostId())
+                    .orElseThrow(() -> new VolunteerNotFoundException(
+                            "Event Host not found: " + eventDTO.getEventHostId()));
+
+            if (!Boolean.TRUE.equals(eventHost.getIsEventHost())) {
+                throw new BadRequestException("Volunteer is not an event host");
+            }
+
+            selectedEvent.setEventHost(eventHost);
+        }
         eventRepository.save(selectedEvent);
     }
 
