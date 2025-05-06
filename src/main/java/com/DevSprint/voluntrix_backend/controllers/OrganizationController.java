@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/public/organizations")
 @SecurityRequirement(name = "bearerAuth")
