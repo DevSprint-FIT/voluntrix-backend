@@ -1,5 +1,6 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
+import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDto;
 import com.DevSprint.voluntrix_backend.entities.SponsorshipRequestEntity;
 import com.DevSprint.voluntrix_backend.services.SponsorshipRequestService;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +29,8 @@ public class SponsorshipRequestController {
     }
 
     @PostMapping
-    public SponsorshipRequestEntity createRequest(@RequestBody SponsorshipRequestEntity sponsorshipRequest) {
-        return sponsorshipRequestService.create(sponsorshipRequest);
+    public SponsorshipRequestEntity createRequest(@RequestBody SponsorshipRequestDto dto) {
+        return sponsorshipRequestService.create(dto);
     }
 
     @PutMapping("/{id}")

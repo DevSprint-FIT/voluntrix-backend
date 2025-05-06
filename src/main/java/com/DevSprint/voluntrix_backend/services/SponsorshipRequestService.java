@@ -1,5 +1,6 @@
 package com.DevSprint.voluntrix_backend.services;
 
+import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDto;
 import com.DevSprint.voluntrix_backend.entities.SponsorshipRequestEntity;
 import com.DevSprint.voluntrix_backend.repositories.SponsorshipRequestRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,8 @@ public class SponsorshipRequestService {
         return repository.findById(id);
     }
 
-    public SponsorshipRequestEntity create(SponsorshipRequestEntity sponsorshipRequest) {
-        return repository.save(sponsorshipRequest);
+    public SponsorshipRequestEntity create(SponsorshipRequestDto dto) {
+        return repository.save(dto);
     }
 
     public Optional<SponsorshipRequestEntity> update(Long id, SponsorshipRequestEntity updated) {
