@@ -46,7 +46,7 @@ public class EventService {
             throw new BadRequestException("Volunteer is not an event host");
         }
 
-        EventEntity eventEntity = entityDTOConvert.toEventCreateEntity(eventCreateDTO, eventHost);
+        EventEntity eventEntity = entityDTOConvert.toEventEntity(eventCreateDTO, eventHost);
         eventRepository.save(eventEntity);
     }
 
