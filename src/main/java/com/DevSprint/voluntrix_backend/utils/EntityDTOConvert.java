@@ -7,9 +7,12 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import com.DevSprint.voluntrix_backend.dtos.EventApplicationCreateDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventApplicationDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
+import com.DevSprint.voluntrix_backend.entities.EventApplicationEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
@@ -21,9 +24,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EntityDTOConvert {
 
-    // Event Mapping
     private final ModelMapper modelMapper;
     private final CategoryRepository categoryRepository;
+
+    // Event Mapping
 
     // EventEntity to EventDTO
     public EventDTO toEventDTO(EventEntity eventEntity) {
@@ -31,7 +35,7 @@ public class EntityDTOConvert {
     }
 
     // EventCreateDTO to EventEntity
-    public EventEntity toEventCreateEntity(EventCreateDTO eventCreateDTO, VolunteerEntity eventHost) {
+    public EventEntity toEventEntity(EventCreateDTO eventCreateDTO, VolunteerEntity eventHost) {
         EventEntity eventEntity = new EventEntity();
 
         eventEntity.setEventTitle(eventCreateDTO.getEventTitle());
@@ -69,4 +73,35 @@ public class EntityDTOConvert {
                 .collect(Collectors.toList());
     }
 
+    // Event Application Mapping
+
+    // EventApplicationEntity to EventApplicationDTO
+    public EventApplicationDTO toEventApplicationDTO(EventApplicationEntity eventApplicationEntity) {
+        return modelMapper.map(eventApplicationEntity, EventApplicationDTO.class);
+    }
+
+    // EventApplicationCreateDTO to EventApplicationEntity
+    public EventApplicationEntity toEventApplicationEntity(EventApplicationCreateDTO eventApplicationCreateDTO,
+            EventEntity eventEntity, VolunteerEntity volunteerEntity) {
+        EventApplicationEntity eventApplicationEntity = new EventApplicationEntity();
+
+        eventApplicationEntity.setDescription(eventApplicationCreateDTO.getDescription());
+        eventApplicationEntity.setContributionArea(eventApplicationCreateDTO.getContributionArea());
+        eventApplicationEntity.setApplicationStatus(eventApplicationCreateDTO.getApplicationStatus());
+
+        // Set event
+        eventApplicationEntity.setEvent(eventEntity);
+
+        // set volunteer
+        eventApplicationEntity.setVolunteer(volunteerEntity);
+
+        return eventApplicationEntity;
+    }
+
+    // List<EventApplicationEntity> to List<EventApplicationDTO>
+    public List<EventApplicationDTO> toEventApplicationDTOList(
+            List<EventApplicationEntity> eventEntityApplicationList) {
+        return eventEntityApplicationList.stream().map(entity -> modelMapper.map(entity, EventApplicationDTO.class))
+                .collect(Collectors.toList());
+    }
 }
