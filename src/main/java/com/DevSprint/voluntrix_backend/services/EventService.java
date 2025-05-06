@@ -69,27 +69,54 @@ public class EventService {
         var selectedEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
-        selectedEvent.setEventTitle(eventDTO.getEventTitle());
-        selectedEvent.setEventDescription(eventDTO.getEventDescription());
-        selectedEvent.setEventLocation(eventDTO.getEventLocation());
-        selectedEvent.setEventStartDate(eventDTO.getEventStartDate());
-        selectedEvent.setEventEndDate(eventDTO.getEventEndDate());
-        selectedEvent.setEventTime(eventDTO.getEventTime());
-        selectedEvent.setEventImageUrl(eventDTO.getEventImageUrl());
-        selectedEvent.setVolunteerCount(eventDTO.getVolunteerCount());
-        selectedEvent.setEventType(eventDTO.getEventType());
-        selectedEvent.setEventVisibility(eventDTO.getEventVisibility());
-        selectedEvent.setEventStatus(eventDTO.getEventStatus());
-        selectedEvent.setSponsorshipEnabled(eventDTO.getSponsorshipEnabled());
-        selectedEvent.setDonationEnabled(eventDTO.getDonationEnabled());
+        if (eventDTO.getEventTitle() != null) {
+            selectedEvent.setEventTitle(eventDTO.getEventTitle());
+        }
+        if (eventDTO.getEventDescription() != null) {
+            selectedEvent.setEventDescription(eventDTO.getEventDescription());
+        }
+        if (eventDTO.getEventLocation() != null) {
+            selectedEvent.setEventLocation(eventDTO.getEventLocation());
+        }
+        if (eventDTO.getEventStartDate() != null) {
+            selectedEvent.setEventStartDate(eventDTO.getEventStartDate());
+        }
+        if (eventDTO.getEventEndDate() != null) {
+            selectedEvent.setEventEndDate(eventDTO.getEventEndDate());
+        }
+        if (eventDTO.getEventTime() != null) {
+            selectedEvent.setEventTime(eventDTO.getEventTime());
+        }
+        if (eventDTO.getEventImageUrl() != null) {
+            selectedEvent.setEventImageUrl(eventDTO.getEventImageUrl());
+        }
+        if (eventDTO.getVolunteerCount() != null) {
+            selectedEvent.setVolunteerCount(eventDTO.getVolunteerCount());
+        }
+        if (eventDTO.getEventType() != null) {
+            selectedEvent.setEventType(eventDTO.getEventType());
+        }
+        if (eventDTO.getEventVisibility() != null) {
+            selectedEvent.setEventVisibility(eventDTO.getEventVisibility());
+        }
+        if (eventDTO.getEventStatus() != null) {
+            selectedEvent.setEventStatus(eventDTO.getEventStatus());
+        }
+        if (eventDTO.getSponsorshipEnabled() != null) {
+            selectedEvent.setSponsorshipEnabled(eventDTO.getSponsorshipEnabled());
+        }
+        if (eventDTO.getDonationEnabled() != null) {
+            selectedEvent.setDonationEnabled(eventDTO.getDonationEnabled());
+        }
+        if (eventDTO.getCategories() != null) {
+            Set<CategoryEntity> categoryEntities = eventDTO.getCategories().stream()
+                    .map(dto -> categoryRepository.findById(dto.getCategoryId())
+                            .orElseThrow(
+                                    () -> new CategoryNotFoundException("Category not found: " + dto.getCategoryId())))
+                    .collect(Collectors.toSet());
 
-        Set<CategoryEntity> categoryEntities = eventDTO.getCategories().stream()
-                .map(dto -> categoryRepository.findById(dto.getCategoryId())
-                        .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategoryId())))
-                .collect(Collectors.toSet());
-
-        selectedEvent.setCategories(categoryEntities);
-
+            selectedEvent.setCategories(categoryEntities);
+        }
         eventRepository.save(selectedEvent);
     }
 
