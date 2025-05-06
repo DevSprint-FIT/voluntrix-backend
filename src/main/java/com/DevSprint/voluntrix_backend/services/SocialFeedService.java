@@ -85,14 +85,24 @@ public class SocialFeedService {
         SocialFeedEntity post = socialFeedRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with ID: " + id));
 
+        boolean contentOrMediaChanged = false;
+
         if (updateDTO.getContent() != null) {
             post.setContent(updateDTO.getContent());
+            contentOrMediaChanged = true;
         }
         if(updateDTO.getMediaUrl() != null){
             post.setMediaUrl(updateDTO.getMediaUrl());
+            contentOrMediaChanged = true;
         }
-        post.setUpdatedAt(LocalDateTime.now());
 
+        if(updateDTO.getImpressions() != null){
+            post.setImpressions(updateDTO.getImpressions());
+        }
+
+        if(contentOrMediaChanged){
+            post.setUpdatedAt(LocalDateTime.now());
+        }
         return socialFeedRepository.save(post);
     }
 
