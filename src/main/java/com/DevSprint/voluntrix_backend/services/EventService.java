@@ -13,14 +13,17 @@ import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
+import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
+import com.DevSprint.voluntrix_backend.exceptions.OrganizationNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.BadRequestException;
 import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
+import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.EntityDTOConvert;
 
@@ -36,6 +39,7 @@ public class EventService {
     private final EntityDTOConvert entityDTOConvert;
     private final CategoryRepository categoryRepository;
     private final VolunteerRepository volunteerRepository;
+    private final OrganizationRepository organizationRepository;
 
     public void addEvent(EventCreateDTO eventCreateDTO) {
         VolunteerEntity eventHost = volunteerRepository.findById(eventCreateDTO.getEventHostId())
@@ -127,6 +131,12 @@ public class EventService {
             }
 
             selectedEvent.setEventHost(eventHost);
+        }
+        if (eventDTO.getOrganizationId() != null) {
+            OrganizationEntity organization = organizationRepository.findById(eventDTO.getOrganizationId())
+                    .orElseThrow(() -> new OrganizationNotFoundException("Organization not found: "
+                            + eventDTO.getOrganizationId()));
+            selectedEvent.setOrganization(organization);
         }
         eventRepository.save(selectedEvent);
     }
