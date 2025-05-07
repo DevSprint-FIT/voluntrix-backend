@@ -105,4 +105,10 @@ public class EventApplicationService {
 
         eventApplicationRepository.save(selectedApplication);
     }
+
+    public void deleteEventApplication(Long id) {
+        eventApplicationRepository.findById(id)
+                .orElseThrow(() -> new EventApplicationNotFoundException("Event application not found"));
+        eventApplicationRepository.deleteById(id);
+    }
 }
