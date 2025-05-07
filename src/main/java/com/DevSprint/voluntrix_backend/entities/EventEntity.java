@@ -72,9 +72,13 @@ public class EventEntity {
     private Set<CategoryEntity> categories;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "event_host_id", nullable = true)
+    @JoinColumn(name = "event_host_id", nullable = false)
     private VolunteerEntity eventHost;
 
     @OneToMany(mappedBy = "event")
     private Set<EventApplicationEntity> applications;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "organization_id", nullable = true)
+    private OrganizationEntity organization;
 }
