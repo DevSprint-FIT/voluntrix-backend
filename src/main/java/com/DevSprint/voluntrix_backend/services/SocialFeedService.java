@@ -47,7 +47,6 @@ public class SocialFeedService {
         SocialFeedEntity savedPost = socialFeedRepository.save(post);
         return entityDTOConverter.toSocialFeedResponseDTO(savedPost);
 
-
     }
 
     public List<SocialFeedResponseDTO> getPostsByOrganizationId(Long organizationId){
