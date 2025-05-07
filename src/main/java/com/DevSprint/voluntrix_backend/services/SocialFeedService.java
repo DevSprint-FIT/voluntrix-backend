@@ -10,6 +10,8 @@ import com.DevSprint.voluntrix_backend.repositories.SocialFeedRepository;
 import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.DevSprint.voluntrix_backend.enums.MediaType;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,8 +40,15 @@ public class SocialFeedService {
         SocialFeedEntity post = new SocialFeedEntity();
         post.setOrganization(organization);
         post.setContent(socialFeedRequestDTO.getContent());
-        post.setMediaUrl(socialFeedRequestDTO.getMediaUrl());
+        if (socialFeedRequestDTO.getMediaType() == null || socialFeedRequestDTO.getMediaType().equals(MediaType.NONE)) {
+            post.setMediaUrl(null);
+            post.setMediaSizeInBytes(null);
+        } else {
+            post.setMediaUrl(socialFeedRequestDTO.getMediaUrl());
+            post.setMediaSizeInBytes(socialFeedRequestDTO.getMediaSizeInBytes());
+        }
         post.setMediaType(socialFeedRequestDTO.getMediaType());
+
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
         post.setMediaSizeInBytes(socialFeedRequestDTO.getMediaSizeInBytes());
