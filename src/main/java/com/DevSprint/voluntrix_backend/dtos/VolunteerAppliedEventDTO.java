@@ -1,12 +1,11 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
+import com.DevSprint.voluntrix_backend.enums.EventType;
+import com.DevSprint.voluntrix_backend.enums.ContributionArea;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
-
-import com.DevSprint.voluntrix_backend.enums.ContributionArea;
-import com.DevSprint.voluntrix_backend.enums.EventType;
-
 import lombok.AllArgsConstructor;
 
 @Getter

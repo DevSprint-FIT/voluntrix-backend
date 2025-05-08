@@ -1,6 +1,7 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
 import com.DevSprint.voluntrix_backend.enums.EventType;
+import com.DevSprint.voluntrix_backend.enums.ContributionArea;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +19,5 @@ public class VolunteerCompletedEventDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private EventType eventType;
-    private String contributionArea;
+    private ContributionArea contributionArea;
 }
