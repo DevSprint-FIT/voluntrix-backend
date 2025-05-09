@@ -5,6 +5,7 @@ import com.DevSprint.voluntrix_backend.dtos.SocialFeedResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.SocialFeedUpdateDTO;
 import com.DevSprint.voluntrix_backend.entities.SocialFeedEntity;
 import com.DevSprint.voluntrix_backend.services.SocialFeedService;
+import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,12 @@ import java.util.List;
 public class SocialFeedController {
 
     private final SocialFeedService socialFeedService;
+    private final EntityDTOConverter entityDTOConverter;
 
     @Autowired
-    public SocialFeedController(SocialFeedService socialFeedService){
+    public SocialFeedController(SocialFeedService socialFeedService,EntityDTOConverter entityDTOConverter){
         this.socialFeedService = socialFeedService;
+        this.entityDTOConverter = entityDTOConverter;
     }
 
     @PostMapping
@@ -47,8 +50,9 @@ public class SocialFeedController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<SocialFeedEntity> updatePost(@PathVariable Long id, @RequestBody SocialFeedUpdateDTO socialFeedUpdateDTO){
+    public ResponseEntity<SocialFeedResponseDTO> updatePost(@PathVariable Long id, @RequestBody SocialFeedUpdateDTO socialFeedUpdateDTO) {
         SocialFeedEntity updatedPost = socialFeedService.updatePost(id, socialFeedUpdateDTO);
-        return new ResponseEntity<>(updatedPost, HttpStatus.OK);
+        SocialFeedResponseDTO responseDTO = entityDTOConverter.toSocialFeedResponseDTO(updatedPost);  // Use injected instance here
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 }
