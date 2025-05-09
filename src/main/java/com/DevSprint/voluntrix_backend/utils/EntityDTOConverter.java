@@ -21,6 +21,7 @@ public class EntityDTOConverter {
         dto.setCreatedAt(socialFeed.getCreatedAt());
         dto.setUpdatedAt(socialFeed.getUpdatedAt());
         dto.setOrganizationName(socialFeed.getOrganization().getName());
+        dto.setInstitute(socialFeed.getOrganization().getInstitute());
         dto.setOrganizationImageUrl(socialFeed.getOrganization().getImageUrl());
         dto.setImpressions(socialFeed.getImpressions());
         dto.setShares(socialFeed.getShares());

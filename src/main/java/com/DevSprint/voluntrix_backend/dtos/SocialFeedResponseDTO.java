@@ -20,4 +20,6 @@ public class SocialFeedResponseDTO {
     private int impressions;
     private int shares;
     private Long mediaSizeInBytes;
+    private String institute;
+
 }
