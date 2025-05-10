@@ -53,22 +53,9 @@ public class EventController {
         if (eventCreateDTO.getEventHostId() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        try {
-            eventService.addEvent(eventCreateDTO);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (VolunteerNotFoundException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (OrganizationNotFoundException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (CategoryNotFoundException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+        eventService.addEvent(eventCreateDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{eventId}")
