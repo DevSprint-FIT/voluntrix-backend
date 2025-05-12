@@ -67,4 +67,3 @@ public class OrganizationEntity {
     @Column(nullable = true)
     private String bankName;
 }
-
