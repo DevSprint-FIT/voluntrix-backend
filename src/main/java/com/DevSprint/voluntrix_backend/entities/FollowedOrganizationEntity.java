@@ -1,7 +1,6 @@
 package com.DevSprint.voluntrix_backend.entities;
 
 import jakarta.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +17,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @IdClass(FollowedOrganizationIdEntity.class)
 public class FollowedOrganizationEntity {
-
 
     @Id
     @Column(nullable = false)
@@ -39,11 +37,5 @@ public class FollowedOrganizationEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organizationId", insertable = false, updatable = false)
     private OrganizationEntity organization;
-
-
-
-
-
-
 
 }
