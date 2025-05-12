@@ -97,7 +97,7 @@ public class FollowedOrganizationService {
     }
 
     // Get all followed organizations for a volunteer and map to DTO
-    public List<String> getFollowedOrganizations(Long volunteerId) {
+    public List<Long> getFollowedOrganizations(Long volunteerId) {
         if (!volunteerRepository.existsById(volunteerId)) {
             throw new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId);
         }
@@ -106,9 +106,9 @@ public class FollowedOrganizationService {
                 .stream()
                 .map(f -> {
                     OrganizationEntity org = organizationRepository.findById(f.getOrganizationId()).orElse(null);
-                    return org != null ? org.getName() : null;
+                    return org != null ? org.getId() : null;
                 })
-                .filter(name -> name != null)
+                .filter(id -> id != null)
                 .collect(Collectors.toList());
     }
 
