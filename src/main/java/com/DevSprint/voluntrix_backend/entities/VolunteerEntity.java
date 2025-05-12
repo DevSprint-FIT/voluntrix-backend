@@ -36,7 +36,7 @@ public class VolunteerEntity {
 
     @Column(nullable = false, unique = true)
     private String email;
-
+  
     @Column
     private String institute;
 
@@ -44,10 +44,11 @@ public class VolunteerEntity {
     private Boolean isAvailable = false;
 
     @Column(nullable = false)
-    private Integer volunteerLevel = 1;
+
+    private Integer volunteerLevel = 1; 
 
     @Column(nullable = false)
-    private Integer rewardPoints = 0;
+    private Integer rewardPoints = 0; 
 
     @Column(nullable = false)
     private Boolean isEventHost = false;
