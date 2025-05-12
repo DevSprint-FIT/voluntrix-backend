@@ -44,9 +44,39 @@ public class SponsorService {
         SponsorEntity existingSponsor = sponsorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sponsor with ID " + id + " not found"));
 
-        modelMapper.map(sponsorDTO, existingSponsor);
-        SponsorEntity updatedSponsor = sponsorRepository.save(existingSponsor);
-        return modelMapper.map(updatedSponsor, SponsorResponseDTO.class);
+     if(sponsorDTO.getCompany() != null ) {
+            existingSponsor.setCompany(sponsorDTO.getCompany());
+        }
+
+    
+    existingSponsor.setVerified(sponsorDTO.isVerified());
+        
+
+    if(sponsorDTO.getJobTitle() != null ) {
+           existingSponsor.setJobTitle(sponsorDTO.getJobTitle());
+        }
+
+     if(sponsorDTO.getMobileNumber() != null ) {
+           existingSponsor.setMobileNumber(sponsorDTO.getMobileNumber());
+        }
+
+     if(sponsorDTO.getName() != null ) {
+           existingSponsor.setName(sponsorDTO.getName());
+        }
+
+     if(sponsorDTO.getEmail() != null ) {
+           existingSponsor.setEmail(sponsorDTO.getEmail());
+        }
+
+     if(sponsorDTO.getWebsite() != null ) {
+           existingSponsor.setWebsite(sponsorDTO.getWebsite());
+        }
+
+
+
+    
+        sponsorRepository.save(existingSponsor);
+        return modelMapper.map(existingSponsor, SponsorResponseDTO.class);
     }
 
     public void deleteSponsor(Long id) {

@@ -3,6 +3,9 @@ package com.DevSprint.voluntrix_backend.controllers;
 import com.DevSprint.voluntrix_backend.dtos.SponsorRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorResponseDTO;
 import com.DevSprint.voluntrix_backend.services.SponsorService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,12 +33,12 @@ public ResponseEntity<SponsorResponseDTO> getSponsorById(@PathVariable Long id) 
 
 
     @PostMapping
-    public SponsorResponseDTO createSponsor(@RequestBody SponsorRequestDTO sponsorDTO) {
+    public SponsorResponseDTO createSponsor(@Valid @RequestBody SponsorRequestDTO sponsorDTO) {
         return sponsorService.createSponsor(sponsorDTO);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<SponsorResponseDTO> updateSponsor(@PathVariable Long id, @RequestBody SponsorRequestDTO sponsorDTO) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<SponsorResponseDTO> updateSponsor(@PathVariable Long id, @Valid @RequestBody SponsorRequestDTO sponsorDTO) {
         SponsorResponseDTO updated = sponsorService.updateSponsor(id, sponsorDTO);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
