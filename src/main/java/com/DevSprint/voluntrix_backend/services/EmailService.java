@@ -20,26 +20,17 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    public boolean sendEmailService(String to, String name, String orderId, Double amount) {
+    public void sendEmailService(String to, String name, String orderId, Double amount) throws MailException,MessagingException,IOException{
         String subject = "Thank You for Your Donation to Voluntrix!";
+        String content = loadTemplate(name, orderId, amount);
 
-        try {
-            String content = loadTemplate(name, orderId, amount);
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(null, true); 
 
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(content, true); 
-
-            mailSender.send(message);
-
-            return true;
-        } catch (MailException | MessagingException |IOException e) {
-            // e.printStackTrace();
-            System.out.println("I am here");
-            return false;
-        }
+        mailSender.send(message);
     }
 
     private String loadTemplate(String name, String orderId, Double amount) throws IOException {
