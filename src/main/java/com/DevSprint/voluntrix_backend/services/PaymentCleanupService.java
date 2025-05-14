@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ public class PaymentCleanupService {
     
     private final PaymentRepository paymentRepository;
 
+    @Autowired
     public PaymentCleanupService(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
     }
