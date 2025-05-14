@@ -7,13 +7,11 @@ import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerAlreadyFollowsOrganizationException;
 import com.DevSprint.voluntrix_backend.repositories.FollowedOrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
-import com.DevSprint.voluntrix_backend.utils.FollowSystemDTOConverter;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.DevSprint.voluntrix_backend.dtos.MonthlyFollowCountDTO;
-
 
 import java.time.Month;
 import java.time.format.TextStyle;
@@ -30,9 +28,6 @@ public class FollowedOrganizationService {
 
     @Autowired
     private OrganizationRepository organizationRepository;
-
-    @Autowired
-    private FollowSystemDTOConverter entityDTOConverter;
 
     @Autowired
     private VolunteerRepository volunteerRepository;
@@ -115,7 +110,7 @@ public class FollowedOrganizationService {
 
     public List<MonthlyFollowCountDTO> getMonthlyFollowerStats(int year, Long organizationId) {
         // Validate organization exists
-        OrganizationEntity organization = organizationRepository.findById(organizationId)
+        organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with ID: " + organizationId));
 
         List<Object[]> rawStats = followedOrganizationRepository.countMonthlyFollowers(year, organizationId);

@@ -9,15 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/public/follow")
 public class FollowedOrganizationController {
 
-    @Autowired
     private FollowedOrganizationService followedOrganizationService;
 
+    @Autowired
+    public FollowedOrganizationController(FollowedOrganizationService followedOrganizationService) {
+        this.followedOrganizationService = followedOrganizationService;
+    }
 
     @PostMapping("/")
     public ResponseEntity<String> followOrganization(@RequestBody FollowOrganizationDTO request) {
@@ -32,13 +34,11 @@ public class FollowedOrganizationController {
         return ResponseEntity.ok(response);
     }
 
-
     @GetMapping("/{volunteerId}")
     public ResponseEntity<List<Long>> getFollowedOrganizations(@PathVariable Long volunteerId) {
         List<Long> organizationNames = followedOrganizationService.getFollowedOrganizations(volunteerId);
         return ResponseEntity.ok(organizationNames);
     }
-
 
     //Monthly follower statistics
     @GetMapping("/stats/{organizationId}")
@@ -48,9 +48,4 @@ public class FollowedOrganizationController {
         List<MonthlyFollowCountDTO> stats = followedOrganizationService.getMonthlyFollowerStats(year, organizationId);
         return ResponseEntity.ok(stats);
     }
-
-
-
-
-
 }
