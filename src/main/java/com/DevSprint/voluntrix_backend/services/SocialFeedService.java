@@ -7,7 +7,7 @@ import com.DevSprint.voluntrix_backend.entities.SocialFeedEntity;
 import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.SocialFeedRepository;
-import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
+import com.DevSprint.voluntrix_backend.utils.OrganizationDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +19,15 @@ import java.util.stream.Collectors;
 public class SocialFeedService {
     private final SocialFeedRepository socialFeedRepository;
     private final OrganizationRepository organizationRepository;
-    private final EntityDTOConverter entityDTOConverter;
+    private final OrganizationDTOConverter organizationDTOConverter;
 
     @Autowired
     public SocialFeedService(SocialFeedRepository socialFeedRepository,
                              OrganizationRepository organizationRepository,
-                             EntityDTOConverter entityDTOConverter){
+                             OrganizationDTOConverter organizationDTOConverter){
         this.socialFeedRepository = socialFeedRepository;
         this.organizationRepository = organizationRepository;
-        this.entityDTOConverter = entityDTOConverter;
+        this.organizationDTOConverter = organizationDTOConverter;
     }
 
     public SocialFeedResponseDTO createPost(SocialFeedRequestDTO socialFeedRequestDTO){
@@ -44,14 +44,14 @@ public class SocialFeedService {
         post.setUpdatedAt(LocalDateTime.now());
 
         SocialFeedEntity savedPost = socialFeedRepository.save(post);
-        return entityDTOConverter.toSocialFeedResponseDTO(savedPost);
+        return organizationDTOConverter.toSocialFeedResponseDTO(savedPost);
 
 
     }
 
     public List<SocialFeedResponseDTO> getPostsByOrganizationId(Long organizationId){
         // Check if the organization exists
-        OrganizationEntity organization = organizationRepository.findById(organizationId)
+        organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Organization not found with ID: " + organizationId));
 
         // If the organization exists
@@ -63,13 +63,13 @@ public class SocialFeedService {
         }
 
         return posts.stream()
-                .map(entityDTOConverter::toSocialFeedResponseDTO)
+                .map(organizationDTOConverter::toSocialFeedResponseDTO)
                 .collect(Collectors.toList());
     }
 
     public List<SocialFeedResponseDTO> getAllPosts(){
         return socialFeedRepository.findAll().stream()
-                .map(entityDTOConverter::toSocialFeedResponseDTO)
+                .map(organizationDTOConverter::toSocialFeedResponseDTO)
                 .collect(Collectors.toList());
     }
 
