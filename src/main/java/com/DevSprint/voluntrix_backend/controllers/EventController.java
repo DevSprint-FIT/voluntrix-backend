@@ -26,7 +26,6 @@ import com.DevSprint.voluntrix_backend.services.EventService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/public/events")

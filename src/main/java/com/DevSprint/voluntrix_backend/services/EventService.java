@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -17,19 +18,24 @@ import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
-import com.DevSprint.voluntrix_backend.utils.EntityDTOConvert;
+import com.DevSprint.voluntrix_backend.utils.EventDTOConverter;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final EntityDTOConvert entityDTOConvert;
+    private final EventDTOConverter entityDTOConvert;
     private final CategoryRepository categoryRepository;
+
+    @Autowired
+    public EventService(EventRepository eventRepository, EventDTOConverter entityDTOConvert, CategoryRepository categoryRepository) {
+        this.eventRepository = eventRepository;
+        this.entityDTOConvert = entityDTOConvert;
+        this.categoryRepository = categoryRepository;
+    }
 
     public void addEvent(EventDTO eventDTO) {
         eventDTO.setVolunteerCount(0);
