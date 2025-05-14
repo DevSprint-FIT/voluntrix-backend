@@ -10,7 +10,6 @@ import com.DevSprint.voluntrix_backend.utils.PaymentMapper;
 
 import jakarta.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +30,6 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final PaymentMapper paymentMapper;
 
-    @Autowired
     public PaymentController(PaymentService paymentService, PaymentMapper paymentMapper) {
         this.paymentService = paymentService;
         this.paymentMapper = paymentMapper;

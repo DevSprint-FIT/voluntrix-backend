@@ -3,7 +3,6 @@ package com.DevSprint.voluntrix_backend.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.MonthlyDonationData;
@@ -15,7 +14,6 @@ public class VolunteerPaymentAnalyticsService {
     
     private final PaymentRepository paymentRepository;
 
-    @Autowired
     public VolunteerPaymentAnalyticsService(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
     }

@@ -1,6 +1,5 @@
 package com.DevSprint.voluntrix_backend.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +32,6 @@ public class PaymentService {
     private final VolunteerRepository volunteerRepository;
     private final PaymentMapper paymentMapper;
 
-    @Autowired
     public PaymentService(PaymentRepository paymentRepository, EventRepository eventRepository, SponsorRepository sponsorRepository, VolunteerRepository volunteerRepository, PaymentMapper paymentMapper) {
         this.paymentRepository = paymentRepository;
         this.eventRepository = eventRepository;
