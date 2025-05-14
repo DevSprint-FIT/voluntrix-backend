@@ -9,23 +9,30 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.mail.MailException;
+import org.springframework.validation.FieldError;
 
 import java.util.HashMap;
 import java.util.Map;
 
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
   
-    // Handles validation errors from @Valid annotated request bodies
+    // private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+  
+    // Handles validation errors from @Valid in DTO
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error -> 
-            errors.put(error.getField(), error.getDefaultMessage())
-        );
-
-        return ResponseEntity.badRequest().body(errors);
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return new ResponseEntity<>(new ErrorResponse("VALIDATION_FAILED", errors.toString()), 
+                                    HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(VolunteerNotFoundException.class)
@@ -56,12 +63,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
     
+    // Handles other illegal argument errors
     @ExceptionHandler(IllegalArgumentException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
-        Map<String, String> error = new HashMap<>();
-        error.put("error", ex.getMessage());
-        return ResponseEntity.badRequest().body(error);
+    public ResponseEntity<ErrorResponse> handleIllegalArg(IllegalArgumentException ex) {
+        return new ResponseEntity<>(new ErrorResponse("ILLEGAL_ARGUMENT", ex.getMessage()), 
+                                    HttpStatus.BAD_REQUEST);
     }
     
     // follow system exceptions
@@ -74,12 +80,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleAlreadyFollowing(VolunteerAlreadyFollowsOrganizationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(ex.getMessage()));
     }
-    
-    // all the other exceptions
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleOtherExceptions(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse("Something went wrong: " + ex.getMessage()));
      
     // email service exception
     @ExceptionHandler(MailException.class)
@@ -88,4 +88,24 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Failed to send email");
     }
+  
+    // payment service exceptions
+    @ExceptionHandler(PaymentVerificationException.class)
+    public ResponseEntity<ErrorResponse> handlePaymentVerificationExceptio(PaymentVerificationException ex) {
+        return new ResponseEntity<>(new ErrorResponse("PAYMENT_VERIFICATION_FAILED", ex.getMessage()), 
+                                    HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PaymentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePaymentNotFoundException(PaymentNotFoundException ex) {
+        return new ResponseEntity<>(new ErrorResponse("PAYMENT_NOT_FOUND", ex.getMessage()), 
+                                   HttpStatus.NOT_FOUND);
+    }
+      
+    // Catch-all for unknown exceptions
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        return new ResponseEntity<>(new ErrorResponse("INTERNAL_SERVER_ERROR", "An unexpected error occurred."), 
+                                    HttpStatus.INTERNAL_SERVER_ERROR);
+    }  
 }

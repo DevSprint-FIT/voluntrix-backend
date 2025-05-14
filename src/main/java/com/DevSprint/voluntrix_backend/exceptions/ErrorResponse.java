@@ -1,17 +1,14 @@
 package com.DevSprint.voluntrix_backend.exceptions;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.springframework.http.HttpStatus;
+import lombok.Data;
 
-@Getter
-@AllArgsConstructor
+@Data
 public class ErrorResponse {
+    private String code;
     private String message;
-    private int code;
 
-    public ErrorResponse(String message) {
+    public ErrorResponse(String code, String message) {
+        this.code = code;
         this.message = message;
-        this.code = HttpStatus.NOT_FOUND.value(); // Default error code
     }
 }

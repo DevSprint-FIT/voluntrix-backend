@@ -65,4 +65,9 @@ public class EventEntity {
     @ManyToMany
     @JoinTable(name = "event_category", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<CategoryEntity> categories;
+  
+    // Foreign Key Reference to Organization Table
+    @ManyToOne
+    @JoinColumn(name = "organization_id", nullable = true)
+    private OrganizationEntity organization;
 }
