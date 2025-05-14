@@ -5,9 +5,12 @@ import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 import com.DevSprint.voluntrix_backend.exceptions.BadRequestException;
 import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import com.DevSprint.voluntrix_backend.services.OrganizationService;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,10 +21,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/api/public/organizations")
@@ -30,6 +33,7 @@ import java.util.List;
 public class OrganizationController {
     private final OrganizationService organizationService;
 
+    @Autowired
     public OrganizationController(OrganizationService organizationService) {
         this.organizationService = organizationService;
     }
