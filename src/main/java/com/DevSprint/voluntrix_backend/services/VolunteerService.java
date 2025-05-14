@@ -7,6 +7,8 @@ import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.VolunteerDTOConvert;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,7 @@ public class VolunteerService {
     private final VolunteerRepository volunteerRepository;
     private final VolunteerDTOConvert entityDTOConvert;
 
+    @Autowired
     public VolunteerService(VolunteerRepository volunteerRepository, VolunteerDTOConvert entityDTOConvert) {
         this.volunteerRepository = volunteerRepository;
         this.entityDTOConvert = entityDTOConvert;
