@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/public/follow")
@@ -48,9 +47,5 @@ public class FollowedOrganizationController {
         List<MonthlyFollowCountDTO> stats = followedOrganizationService.getMonthlyFollowerStats(year, organizationId);
         return ResponseEntity.ok(stats);
     }
-
-
-
-
 
 }
