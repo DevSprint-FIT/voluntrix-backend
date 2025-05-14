@@ -1,33 +1,35 @@
-package com.DevSprint.voluntrix_backend.controller;
+package com.DevSprint.voluntrix_backend.controllers;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Io;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.DevSprint.voluntrix_backend.dtos.EmailRequestDto;
 import com.DevSprint.voluntrix_backend.services.EmailService;
 
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/public/email")
+@Validated
 public class EmailController {
     
-    @Autowired
     private final EmailService emailService;
     
-    EmailController(EmailService emailService) {
+    @Autowired
+    public EmailController(EmailService emailService) {
         this.emailService = emailService;
     }
 
     @PostMapping("/send-html-email")
-    public ResponseEntity<String> sendEmail(@RequestBody EmailRequestDto request) {
+    public ResponseEntity<String> sendEmail(@Valid @RequestBody EmailRequestDto request) {
         try {
             emailService.sendEmailService(
                     request.getTo(),
