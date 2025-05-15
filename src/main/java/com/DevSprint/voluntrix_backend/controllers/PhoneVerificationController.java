@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/public/verify")
 public class PhoneVerificationController {
+
     private final RecaptchaService recaptchaService;
 
     @PostMapping
