@@ -50,53 +50,13 @@ public class OrganizationService {
     public OrganizationDTO updateOrganization(Long id, OrganizationDTO organizationDTO) {
         return organizationRepository.findById(id)
                 .map(existingOrg -> {
-                    if (organizationDTO.getName() != null) {
-                        existingOrg.setName(organizationDTO.getName());
-                    }
-
-                    if (organizationDTO.getInstitute() != null) {
-                        existingOrg.setInstitute(organizationDTO.getInstitute());
-                    }
-
-                    if (organizationDTO.getEmail() != null) {
-                        existingOrg.setEmail(organizationDTO.getEmail());
-                    }
-
-                    if (organizationDTO.getPhone() != null) {
-                        existingOrg.setPhone(organizationDTO.getPhone());
-                    }
-
-                    if (organizationDTO.getAccountNumber() != null) {
-                        existingOrg.setAccountNumber(organizationDTO.getAccountNumber());
-
-                    }
-
-                    if (organizationDTO.getIsVerified() != null) {
-                        existingOrg.setIsVerified(organizationDTO.getIsVerified());
-                    }
-
-                    if (organizationDTO.getFollowerCount() != null) {
-                        existingOrg.setFollowerCount(organizationDTO.getFollowerCount());
-                    }
-
-                    if (organizationDTO.getWebsite() != null) {
-                        existingOrg.setWebsite(organizationDTO.getWebsite());
-                    }
-
-                    if (organizationDTO.getBankName() != null) {
-                        existingOrg.setBankName(organizationDTO.getBankName());
-                    }
-
-                    if(organizationDTO.getDescription() != null) {
-                        existingOrg.setDescription(organizationDTO.getDescription());
-                    }
-
-
+                    entityDTOConverter.updateEntityFromDTO(organizationDTO, existingOrg);
                     OrganizationEntity updatedOrg = organizationRepository.save(existingOrg);
                     return entityDTOConverter.toOrganizationDTO(updatedOrg);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Organization not found with id: " + id));
     }
+
 
     public void deleteOrganization(Long id) {
         if (!organizationRepository.existsById(id)) {
