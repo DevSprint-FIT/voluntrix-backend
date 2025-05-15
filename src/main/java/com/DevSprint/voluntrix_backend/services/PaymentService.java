@@ -1,6 +1,5 @@
 package com.DevSprint.voluntrix_backend.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +19,14 @@ import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.PaymentMapper;
 
+import lombok.RequiredArgsConstructor;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
@@ -32,15 +34,6 @@ public class PaymentService {
     private final SponsorRepository sponsorRepository;
     private final VolunteerRepository volunteerRepository;
     private final PaymentMapper paymentMapper;
-
-    @Autowired
-    public PaymentService(PaymentRepository paymentRepository, EventRepository eventRepository, SponsorRepository sponsorRepository, VolunteerRepository volunteerRepository, PaymentMapper paymentMapper) {
-        this.paymentRepository = paymentRepository;
-        this.eventRepository = eventRepository;
-        this.sponsorRepository = sponsorRepository;
-        this.volunteerRepository = volunteerRepository;
-        this.paymentMapper = paymentMapper;
-    }
 
     @Value("${PAYHERE_MERCHANT_ID}")
     private String merchantId;

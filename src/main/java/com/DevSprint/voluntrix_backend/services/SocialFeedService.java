@@ -1,4 +1,5 @@
 package com.DevSprint.voluntrix_backend.services;
+
 import com.DevSprint.voluntrix_backend.dtos.SocialFeedRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.SocialFeedResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.SocialFeedUpdateDTO;
@@ -8,7 +9,9 @@ import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.SocialFeedRepository;
 import com.DevSprint.voluntrix_backend.utils.OrganizationDTOConverter;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,19 +19,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class SocialFeedService {
     private final SocialFeedRepository socialFeedRepository;
     private final OrganizationRepository organizationRepository;
     private final OrganizationDTOConverter organizationDTOConverter;
-
-    @Autowired
-    public SocialFeedService(SocialFeedRepository socialFeedRepository,
-                             OrganizationRepository organizationRepository,
-                             OrganizationDTOConverter organizationDTOConverter){
-        this.socialFeedRepository = socialFeedRepository;
-        this.organizationRepository = organizationRepository;
-        this.organizationDTOConverter = organizationDTOConverter;
-    }
 
     public SocialFeedResponseDTO createPost(SocialFeedRequestDTO socialFeedRequestDTO){
 

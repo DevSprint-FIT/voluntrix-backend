@@ -2,21 +2,17 @@ package com.DevSprint.voluntrix_backend.services;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
 import com.DevSprint.voluntrix_backend.dtos.MonthlyDonationData;
 import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 
 @Service
+@RequiredArgsConstructor
 public class OrganizationPaymentAnalyticsService {
 
     private final PaymentRepository paymentRepository;
-
-    @Autowired
-    public OrganizationPaymentAnalyticsService(PaymentRepository paymentRepository) {
-        this.paymentRepository = paymentRepository;
-    }
 
     public Double getThisMonthsTotalDonations(Long organizationId) {
         return paymentRepository.sumDonationsForOrganizationThisMonth(organizationId);

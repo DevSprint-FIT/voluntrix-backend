@@ -7,21 +7,18 @@ import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.utils.AESUtil;
 import com.DevSprint.voluntrix_backend.utils.OrganizationDTOConverter;
 import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class OrganizationService {
     private final OrganizationRepository organizationRepository;
     private final OrganizationDTOConverter organizationDTOConverter;
-
-    @Autowired
-    public OrganizationService(OrganizationRepository organizationRepository, OrganizationDTOConverter organizationDTOConverter) {
-        this.organizationRepository = organizationRepository;
-        this.organizationDTOConverter = organizationDTOConverter;
-    }
 
     public List<OrganizationDTO> getAllOrganizations() {
         return organizationDTOConverter.toOrganizationDTOList(organizationRepository.findAll());

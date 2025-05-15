@@ -5,23 +5,19 @@ import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 import com.DevSprint.voluntrix_backend.entities.PaymentEntity;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentCleanupService {
     
     private final PaymentRepository paymentRepository;
-
-    @Autowired
-    public PaymentCleanupService(PaymentRepository paymentRepository) {
-        this.paymentRepository = paymentRepository;
-    }
 
     @Scheduled(fixedRate = 5 * 60 * 1000)
     @Transactional

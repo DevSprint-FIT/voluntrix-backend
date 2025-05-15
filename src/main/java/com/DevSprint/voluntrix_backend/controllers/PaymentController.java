@@ -9,8 +9,8 @@ import com.DevSprint.voluntrix_backend.services.PaymentService;
 import com.DevSprint.voluntrix_backend.utils.PaymentMapper;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,18 +24,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Map;
 
 @Validated
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
 
     private final PaymentService paymentService;
     private final PaymentMapper paymentMapper;
-
-    @Autowired
-    public PaymentController(PaymentService paymentService, PaymentMapper paymentMapper) {
-        this.paymentService = paymentService;
-        this.paymentMapper = paymentMapper;
-    }
 
     @PostMapping("/start")
     public ResponseEntity<PaymentResponseDto> startPayment(@RequestBody @Valid PaymentRequestDto paymentRequest) {

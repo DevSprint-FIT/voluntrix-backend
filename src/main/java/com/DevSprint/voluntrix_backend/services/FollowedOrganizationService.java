@@ -7,8 +7,10 @@ import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerAlreadyFollowsOrganizationException;
 import com.DevSprint.voluntrix_backend.repositories.FollowedOrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
+
+import lombok.RequiredArgsConstructor;
+
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.DevSprint.voluntrix_backend.dtos.MonthlyFollowCountDTO;
@@ -21,17 +23,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class FollowedOrganizationService {
 
-    @Autowired
     private FollowedOrganizationRepository followedOrganizationRepository;
-
-    @Autowired
     private OrganizationRepository organizationRepository;
-
-    @Autowired
     private VolunteerRepository volunteerRepository;
-
 
     // Follow an organization and update follow count
     @Transactional

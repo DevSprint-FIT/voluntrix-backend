@@ -2,24 +2,22 @@ package com.DevSprint.voluntrix_backend.controllers;
 
 import com.DevSprint.voluntrix_backend.dtos.FollowOrganizationDTO;
 import com.DevSprint.voluntrix_backend.services.FollowedOrganizationService;
+
+import lombok.RequiredArgsConstructor;
+
 import com.DevSprint.voluntrix_backend.dtos.MonthlyFollowCountDTO;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/public/follow")
 public class FollowedOrganizationController {
 
     private FollowedOrganizationService followedOrganizationService;
-
-    @Autowired
-    public FollowedOrganizationController(FollowedOrganizationService followedOrganizationService) {
-        this.followedOrganizationService = followedOrganizationService;
-    }
 
     @PostMapping("/")
     public ResponseEntity<String> followOrganization(@RequestBody FollowOrganizationDTO request) {

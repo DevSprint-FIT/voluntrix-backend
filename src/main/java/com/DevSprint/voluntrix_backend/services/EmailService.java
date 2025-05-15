@@ -3,28 +3,24 @@ package com.DevSprint.voluntrix_backend.services;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Service
+@RequiredArgsConstructor
 public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    @Autowired
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
-
-    public void sendEmailService(String to, String name, String orderId, Double amount) throws MailException,MessagingException,IOException{
+    public void sendEmailService(String to, String name, String orderId, Double amount) throws MailException, MessagingException,IOException{
         String subject = "Thank You for Your Donation to Voluntrix!";
         String content = loadTemplate(name, orderId, amount);
 
