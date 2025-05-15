@@ -5,7 +5,7 @@ import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.utils.AESUtil;
-import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
+import com.DevSprint.voluntrix_backend.utils.OrganizationDTOConverter;
 import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,10 +15,10 @@ import java.util.List;
 @Service
 public class OrganizationService {
     private final OrganizationRepository organizationRepository;
-    private final EntityDTOConverter entityDTOConverter;
+    private final OrganizationDTOConverter entityDTOConverter;
 
     @Autowired
-    public OrganizationService(OrganizationRepository organizationRepository, EntityDTOConverter entityDTOConverter) {
+    public OrganizationService(OrganizationRepository organizationRepository, OrganizationDTOConverter entityDTOConverter) {
         this.organizationRepository = organizationRepository;
         this.entityDTOConverter = entityDTOConverter;
     }

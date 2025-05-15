@@ -7,7 +7,7 @@ import com.DevSprint.voluntrix_backend.entities.SocialFeedEntity;
 import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.SocialFeedRepository;
-import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
+import com.DevSprint.voluntrix_backend.utils.OrganizationDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 public class SocialFeedService {
     private final SocialFeedRepository socialFeedRepository;
     private final OrganizationRepository organizationRepository;
-    private final EntityDTOConverter entityDTOConverter;
+    private final OrganizationDTOConverter entityDTOConverter;
 
     @Autowired
     public SocialFeedService(SocialFeedRepository socialFeedRepository,
                              OrganizationRepository organizationRepository,
-                             EntityDTOConverter entityDTOConverter){
+                             OrganizationDTOConverter entityDTOConverter){
         this.socialFeedRepository = socialFeedRepository;
         this.organizationRepository = organizationRepository;
         this.entityDTOConverter = entityDTOConverter;
