@@ -4,9 +4,8 @@ import com.DevSprint.voluntrix_backend.dtos.OrganizationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
-import com.DevSprint.voluntrix_backend.utils.AESUtil;
 import com.DevSprint.voluntrix_backend.utils.OrganizationDTOConverter;
-import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
+import com.DevSprint.voluntrix_backend.exceptions.OrganizationNotFoundException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,18 +26,18 @@ public class OrganizationService {
     public OrganizationDTO getOrganizationDetails(Long id) {
         return organizationRepository.findById(id)
                 .map(organizationDTOConverter::toOrganizationDTO)
-                .orElseThrow(() -> new ResourceNotFoundException("Organization not found with id: " + id));
+                .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with id: " + id));
     }
 
     public OrganizationDTO getOrganizationByUsername(String username) {
         return organizationRepository.findByUsername(username)
                 .map(organizationDTOConverter::toOrganizationDTO)
-                .orElseThrow(() -> new ResourceNotFoundException("Organization not found with username: " + username));
+                .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with username: " + username));
     }
 
 
     public OrganizationDTO createOrganization(OrganizationCreateDTO organizationCreateDTO) {
-        OrganizationEntity organization = entityDTOConverter.toOrganizationEntity(organizationCreateDTO);
+        OrganizationEntity organization = organizationDTOConverter.toOrganizationEntity(organizationCreateDTO);
         OrganizationEntity savedOrganization = organizationRepository.save(organization);
         return organizationDTOConverter.toOrganizationDTO(savedOrganization);
     }
@@ -47,17 +46,17 @@ public class OrganizationService {
     public OrganizationDTO updateOrganization(Long id, OrganizationDTO organizationDTO) {
         return organizationRepository.findById(id)
                 .map(existingOrg -> {
-                    entityDTOConverter.updateEntityFromDTO(organizationDTO, existingOrg);
+                    organizationDTOConverter.updateEntityFromDTO(organizationDTO, existingOrg);
                     OrganizationEntity updatedOrg = organizationRepository.save(existingOrg);
                     return organizationDTOConverter.toOrganizationDTO(updatedOrg);
                 })
-                .orElseThrow(() -> new ResourceNotFoundException("Organization not found with id: " + id));
+                .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with id: " + id));
     }
 
 
     public void deleteOrganization(Long id) {
         if (!organizationRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Organization not found with id: " + id);
+            throw new OrganizationNotFoundException("Organization not found with id: " + id);
         }
         organizationRepository.deleteById(id);
     }
