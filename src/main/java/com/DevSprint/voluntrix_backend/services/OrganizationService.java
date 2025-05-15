@@ -40,26 +40,12 @@ public class OrganizationService {
     }
 
 
-    // Updated createOrganization method to use OrganizationCreateDTO
     public OrganizationDTO createOrganization(OrganizationCreateDTO organizationCreateDTO) {
-        // Convert OrganizationCreateDTO to Organization entity
-        OrganizationEntity organization = new OrganizationEntity();
-        organization.setName(organizationCreateDTO.getName());
-        organization.setUsername(organizationCreateDTO.getUsername());
-        organization.setInstitute(organizationCreateDTO.getInstitute());
-        organization.setEmail(organizationCreateDTO.getEmail());
-        organization.setPhone(organizationCreateDTO.getPhone());
-        organization.setAccountNumber(AESUtil.encrypt(organizationCreateDTO.getAccountNumber()));
-        organization.setIsVerified(organizationCreateDTO.getIsVerified());
-        organization.setFollowerCount(organizationCreateDTO.getFollowerCount());
-        organization.setDescription(organizationCreateDTO.getDescription());
-        organization.setWebsite(organizationCreateDTO.getWebsite());
-        organization.setBankName(organizationCreateDTO.getBankName());
-
-
+        OrganizationEntity organization = entityDTOConverter.toOrganizationEntity(organizationCreateDTO);
         OrganizationEntity savedOrganization = organizationRepository.save(organization);
         return entityDTOConverter.toOrganizationDTO(savedOrganization);
     }
+
 
     public OrganizationDTO updateOrganization(Long id, OrganizationDTO organizationDTO) {
         return organizationRepository.findById(id)
