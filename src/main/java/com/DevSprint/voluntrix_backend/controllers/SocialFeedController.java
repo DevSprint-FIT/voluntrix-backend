@@ -5,23 +5,21 @@ import com.DevSprint.voluntrix_backend.dtos.SocialFeedResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.SocialFeedUpdateDTO;
 import com.DevSprint.voluntrix_backend.entities.SocialFeedEntity;
 import com.DevSprint.voluntrix_backend.services.SocialFeedService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/public/social-feed")
 public class SocialFeedController {
 
     private final SocialFeedService socialFeedService;
-
-    @Autowired
-    public SocialFeedController(SocialFeedService socialFeedService){
-        this.socialFeedService = socialFeedService;
-    }
 
     @PostMapping
     public SocialFeedResponseDTO createPost(@RequestBody SocialFeedRequestDTO requestDTO){

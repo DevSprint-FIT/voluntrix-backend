@@ -2,21 +2,22 @@ package com.DevSprint.voluntrix_backend.controllers;
 
 import com.DevSprint.voluntrix_backend.dtos.FollowOrganizationDTO;
 import com.DevSprint.voluntrix_backend.services.FollowedOrganizationService;
+
+import lombok.RequiredArgsConstructor;
+
 import com.DevSprint.voluntrix_backend.dtos.MonthlyFollowCountDTO;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/public/follow")
 public class FollowedOrganizationController {
 
-    @Autowired
     private FollowedOrganizationService followedOrganizationService;
-
 
     @PostMapping("/")
     public ResponseEntity<String> followOrganization(@RequestBody FollowOrganizationDTO request) {
@@ -31,13 +32,11 @@ public class FollowedOrganizationController {
         return ResponseEntity.ok(response);
     }
 
-
     @GetMapping("/{volunteerId}")
     public ResponseEntity<List<Long>> getFollowedOrganizations(@PathVariable Long volunteerId) {
         List<Long> organizationNames = followedOrganizationService.getFollowedOrganizations(volunteerId);
         return ResponseEntity.ok(organizationNames);
     }
-
 
     //Monthly follower statistics
     @GetMapping("/stats/{organizationId}")
@@ -47,5 +46,4 @@ public class FollowedOrganizationController {
         List<MonthlyFollowCountDTO> stats = followedOrganizationService.getMonthlyFollowerStats(year, organizationId);
         return ResponseEntity.ok(stats);
     }
-
 }

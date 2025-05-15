@@ -5,9 +5,13 @@ import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 import com.DevSprint.voluntrix_backend.exceptions.BadRequestException;
 import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import com.DevSprint.voluntrix_backend.services.OrganizationService;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,17 +26,13 @@ import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/public/organizations")
 @SecurityRequirement(name = "bearerAuth")
 @Validated
 public class OrganizationController {
     private final OrganizationService organizationService;
-
-    public OrganizationController(OrganizationService organizationService) {
-        this.organizationService = organizationService;
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<OrganizationDTO>> getOrganizationDetails(@PathVariable Long id) {

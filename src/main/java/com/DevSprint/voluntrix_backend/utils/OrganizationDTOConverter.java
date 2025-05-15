@@ -1,7 +1,8 @@
 package com.DevSprint.voluntrix_backend.utils;
 
-import com.DevSprint.voluntrix_backend.dtos.*;
+import com.DevSprint.voluntrix_backend.dtos.SocialFeedResponseDTO;
 import com.DevSprint.voluntrix_backend.entities.SocialFeedEntity;
+import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 
 import org.springframework.stereotype.Component;
@@ -82,6 +83,7 @@ public class OrganizationDTOConverter {
                 .collect(Collectors.toList());
     }
 
+
     // OrganizationCreateDTO to OrganizationEntity
     public OrganizationEntity toOrganizationEntity(OrganizationCreateDTO dto) {
         OrganizationEntity entity = new OrganizationEntity();
@@ -134,6 +136,4 @@ public class OrganizationDTOConverter {
         }
 
     }
-
-
 }
