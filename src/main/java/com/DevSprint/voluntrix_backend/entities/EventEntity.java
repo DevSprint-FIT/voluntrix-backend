@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 import com.DevSprint.voluntrix_backend.enums.EventStatus;
 import com.DevSprint.voluntrix_backend.enums.EventType;
@@ -19,10 +20,11 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.ManyToOne;  // <-- Import for @ManyToOne
-import jakarta.persistence.JoinColumn; // <-- Import for @JoinColumn
-
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,11 +42,14 @@ public class EventEntity {
     private String eventLocation;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate eventDate;
+    private LocalDate eventStartDate;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate eventEndDate;
     @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime eventTime;
 
     private String eventImageUrl;
+    private Integer volunteerCount;
 
     @Enumerated(EnumType.STRING)
     private EventType eventType; // ONLINE or ONSITE
@@ -55,11 +60,14 @@ public class EventEntity {
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus; // DRAFT, PENDING, ACTIVE, COMPLETE, DENIED
 
-
     private Boolean sponsorshipEnabled;
     private Boolean donationEnabled;
 
-        // Foreign Key Reference to Organization Table
+    @ManyToMany
+    @JoinTable(name = "event_category", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<CategoryEntity> categories;
+  
+    // Foreign Key Reference to Organization Table
     @ManyToOne
     @JoinColumn(name = "organization_id", nullable = true)
     private OrganizationEntity organization;
