@@ -25,7 +25,7 @@ import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
-import com.DevSprint.voluntrix_backend.utils.EntityDTOConvert;
+import com.DevSprint.voluntrix_backend.utils.EventDTOConverter;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final EntityDTOConvert entityDTOConvert;
+    private final EventDTOConverter entityDTOConvert;
     private final CategoryRepository categoryRepository;
     private final VolunteerRepository volunteerRepository;
     private final OrganizationRepository organizationRepository;

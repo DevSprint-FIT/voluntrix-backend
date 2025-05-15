@@ -16,7 +16,7 @@ import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.EventApplicationRepository;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
-import com.DevSprint.voluntrix_backend.utils.EntityDTOConvert;
+import com.DevSprint.voluntrix_backend.utils.EventDTOConverter;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class EventApplicationService {
     private final EventApplicationRepository eventApplicationRepository;
     private final EventRepository eventRepository;
     private final VolunteerRepository volunteerRepository;
-    private final EntityDTOConvert entityDTOConvert;
+    private final EventDTOConverter entityDTOConvert;
 
     public void addEventApplication(EventApplicationCreateDTO eventApplicationCreateDTO) {
         if (eventApplicationCreateDTO.getEventId() == null) {
