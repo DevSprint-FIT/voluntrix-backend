@@ -2,6 +2,9 @@ package com.DevSprint.voluntrix_backend.controllers;
 
 import com.DevSprint.voluntrix_backend.dtos.VerificationRequestDTO;
 import com.DevSprint.voluntrix_backend.services.RecaptchaService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,14 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/public/verify")
 public class PhoneVerificationController {
     private final RecaptchaService recaptchaService;
-
-    public PhoneVerificationController(RecaptchaService recaptchaService) {
-        this.recaptchaService = recaptchaService;
-    }
 
     @PostMapping
     public ResponseEntity<?> verifyPhone(@RequestBody VerificationRequestDTO request) {
