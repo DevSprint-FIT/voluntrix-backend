@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class EntityDTOConvert {
+public class EventDTOConverter {
 
     private final ModelMapper modelMapper;
     private final CategoryRepository categoryRepository;
