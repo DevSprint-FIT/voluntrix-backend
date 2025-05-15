@@ -3,7 +3,7 @@ package com.DevSprint.voluntrix_backend.controllers;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.enums.EventStatus;
 import com.DevSprint.voluntrix_backend.services.OrganizationEventService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/public/organizations/{organizationId}/events")
 public class OrganizationEventController {
 
-    @Autowired
-    private OrganizationEventService organizationEventService;
+    private final OrganizationEventService organizationEventService;
 
     // Single endpoint to get events by status
     @GetMapping
