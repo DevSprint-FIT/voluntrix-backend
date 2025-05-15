@@ -1,6 +1,7 @@
 package com.DevSprint.voluntrix_backend.entities;
 
 import com.DevSprint.voluntrix_backend.enums.MediaType;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,7 +44,5 @@ public class SocialFeedEntity {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-
 
 }

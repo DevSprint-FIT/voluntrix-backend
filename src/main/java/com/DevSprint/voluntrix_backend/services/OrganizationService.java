@@ -37,77 +37,23 @@ public class OrganizationService {
     }
 
 
-    // Updated createOrganization method to use OrganizationCreateDTO
     public OrganizationDTO createOrganization(OrganizationCreateDTO organizationCreateDTO) {
-        // Convert OrganizationCreateDTO to Organization entity
-        OrganizationEntity organization = new OrganizationEntity();
-        organization.setName(organizationCreateDTO.getName());
-        organization.setUsername(organizationCreateDTO.getUsername());
-        organization.setInstitute(organizationCreateDTO.getInstitute());
-        organization.setEmail(organizationCreateDTO.getEmail());
-        organization.setPhone(organizationCreateDTO.getPhone());
-        organization.setAccountNumber(AESUtil.encrypt(organizationCreateDTO.getAccountNumber()));
-        organization.setIsVerified(organizationCreateDTO.getIsVerified());
-        organization.setFollowerCount(organizationCreateDTO.getFollowerCount());
-        organization.setDescription(organizationCreateDTO.getDescription());
-        organization.setWebsite(organizationCreateDTO.getWebsite());
-        organization.setBankName(organizationCreateDTO.getBankName());
-
-
+        OrganizationEntity organization = entityDTOConverter.toOrganizationEntity(organizationCreateDTO);
         OrganizationEntity savedOrganization = organizationRepository.save(organization);
         return organizationDTOConverter.toOrganizationDTO(savedOrganization);
     }
 
+
     public OrganizationDTO updateOrganization(Long id, OrganizationDTO organizationDTO) {
         return organizationRepository.findById(id)
                 .map(existingOrg -> {
-                    if (organizationDTO.getName() != null) {
-                        existingOrg.setName(organizationDTO.getName());
-                    }
-
-                    if (organizationDTO.getInstitute() != null) {
-                        existingOrg.setInstitute(organizationDTO.getInstitute());
-                    }
-
-                    if (organizationDTO.getEmail() != null) {
-                        existingOrg.setEmail(organizationDTO.getEmail());
-                    }
-
-                    if (organizationDTO.getPhone() != null) {
-                        existingOrg.setPhone(organizationDTO.getPhone());
-                    }
-
-                    if (organizationDTO.getAccountNumber() != null) {
-                        existingOrg.setAccountNumber(organizationDTO.getAccountNumber());
-
-                    }
-
-                    if (organizationDTO.getIsVerified() != null) {
-                        existingOrg.setIsVerified(organizationDTO.getIsVerified());
-                    }
-
-                    if (organizationDTO.getFollowerCount() != null) {
-                        existingOrg.setFollowerCount(organizationDTO.getFollowerCount());
-                    }
-
-                    if (organizationDTO.getWebsite() != null) {
-                        existingOrg.setWebsite(organizationDTO.getWebsite());
-                    }
-
-                    if (organizationDTO.getBankName() != null) {
-                        existingOrg.setBankName(organizationDTO.getBankName());
-                    }
-
-                    if(organizationDTO.getDescription() != null) {
-                        existingOrg.setDescription(organizationDTO.getDescription());
-                    }
-
-
+                    entityDTOConverter.updateEntityFromDTO(organizationDTO, existingOrg);
                     OrganizationEntity updatedOrg = organizationRepository.save(existingOrg);
                     return organizationDTOConverter.toOrganizationDTO(updatedOrg);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Organization not found with id: " + id));
     }
+
 
     public void deleteOrganization(Long id) {
         if (!organizationRepository.existsById(id)) {
