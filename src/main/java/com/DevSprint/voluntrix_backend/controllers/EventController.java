@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
-import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.services.EventService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -57,16 +56,8 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        try {
-            eventService.deleteEvent(eventId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (EventNotFoundException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        eventService.deleteEvent(eventId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/{eventId}")
@@ -76,16 +67,8 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        try {
-            var selectedEvent = eventService.getEventById(eventId);
-            return new ResponseEntity<EventDTO>(selectedEvent, HttpStatus.OK);
-        } catch (EventNotFoundException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        var selectedEvent = eventService.getEventById(eventId);
+        return new ResponseEntity<EventDTO>(selectedEvent, HttpStatus.OK);
     }
 
     @GetMapping
@@ -100,16 +83,12 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        try {
-            eventService.updateEvent(eventId, eventDTO);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (EventNotFoundException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        if (eventDTO.getEventStartDate().isAfter(eventDTO.getEventEndDate())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        
+        eventService.updateEvent(eventId, eventDTO);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/filter")
@@ -125,17 +104,9 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        try {
-            List<EventDTO> filteredEventList = eventService.getFilterEvent(eventLocation, startDate, endDate,
-                    eventVisibility, categoryIds);
-            return new ResponseEntity<List<EventDTO>>(filteredEventList, HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        List<EventDTO> filteredEventList = eventService.getFilterEvent(eventLocation, startDate, endDate,
+                eventVisibility, categoryIds);
+        return new ResponseEntity<List<EventDTO>>(filteredEventList, HttpStatus.OK);
     }
 
     @GetMapping("/names")
