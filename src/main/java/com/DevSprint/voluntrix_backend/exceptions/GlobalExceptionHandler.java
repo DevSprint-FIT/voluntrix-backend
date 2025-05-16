@@ -122,4 +122,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(new ErrorResponse("EVENT_APPLICATION_NOT_FOUND", ex.getMessage()));
     }
+
+    @ExceptionHandler(DuplicateApplicationException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateApplicationException(DuplicateApplicationException ex) {        
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(new ErrorResponse("EVENT_APPLICATION_ALREADY_EXISTS", ex.getMessage()));
+    }
 }
