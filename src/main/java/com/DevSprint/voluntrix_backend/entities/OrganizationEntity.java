@@ -66,7 +66,7 @@ public class OrganizationEntity {
 
     @Column(nullable = true)
     private String bankName;
-
+  
     @Column(nullable = true)
     private String facebookLink;
 
@@ -77,4 +77,3 @@ public class OrganizationEntity {
     private String instagramLink;
 
 }
-

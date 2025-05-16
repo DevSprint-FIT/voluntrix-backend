@@ -1,4 +1,5 @@
 package com.DevSprint.voluntrix_backend.services;
+
 import com.DevSprint.voluntrix_backend.dtos.SocialFeedRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.SocialFeedResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.SocialFeedUpdateDTO;
@@ -8,7 +9,9 @@ import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.SocialFeedRepository;
 import com.DevSprint.voluntrix_backend.utils.OrganizationDTOConverter;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import com.DevSprint.voluntrix_backend.enums.MediaType;
 
@@ -18,19 +21,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class SocialFeedService {
     private final SocialFeedRepository socialFeedRepository;
     private final OrganizationRepository organizationRepository;
-    private final OrganizationDTOConverter entityDTOConverter;
-
-    @Autowired
-    public SocialFeedService(SocialFeedRepository socialFeedRepository,
-                             OrganizationRepository organizationRepository,
-                             OrganizationDTOConverter entityDTOConverter){
-        this.socialFeedRepository = socialFeedRepository;
-        this.organizationRepository = organizationRepository;
-        this.entityDTOConverter = entityDTOConverter;
-    }
+    private final OrganizationDTOConverter organizationDTOConverter;
 
     public SocialFeedResponseDTO createPost(SocialFeedRequestDTO socialFeedRequestDTO){
 
@@ -54,13 +49,13 @@ public class SocialFeedService {
         post.setMediaSizeInBytes(socialFeedRequestDTO.getMediaSizeInBytes());
 
         SocialFeedEntity savedPost = socialFeedRepository.save(post);
-        return entityDTOConverter.toSocialFeedResponseDTO(savedPost);
+        return organizationDTOConverter.toSocialFeedResponseDTO(savedPost);
 
     }
 
     public List<SocialFeedResponseDTO> getPostsByOrganizationId(Long organizationId){
         // Check if the organization exists
-        OrganizationEntity organization = organizationRepository.findById(organizationId)
+        organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Organization not found with ID: " + organizationId));
 
         // If the organization exists
@@ -72,13 +67,13 @@ public class SocialFeedService {
         }
 
         return posts.stream()
-                .map(entityDTOConverter::toSocialFeedResponseDTO)
+                .map(organizationDTOConverter::toSocialFeedResponseDTO)
                 .collect(Collectors.toList());
     }
 
     public List<SocialFeedResponseDTO> getAllPosts(){
         return socialFeedRepository.findAll().stream()
-                .map(entityDTOConverter::toSocialFeedResponseDTO)
+                .map(organizationDTOConverter::toSocialFeedResponseDTO)
                 .collect(Collectors.toList());
     }
 

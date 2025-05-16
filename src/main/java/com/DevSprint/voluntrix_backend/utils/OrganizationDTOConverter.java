@@ -2,6 +2,7 @@ package com.DevSprint.voluntrix_backend.utils;
 
 import com.DevSprint.voluntrix_backend.dtos.SocialFeedResponseDTO;
 import com.DevSprint.voluntrix_backend.entities.SocialFeedEntity;
+import com.DevSprint.voluntrix_backend.dtos.OrganizationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 
@@ -25,6 +26,7 @@ public class OrganizationDTOConverter {
         dto.setOrganizationImageUrl(socialFeed.getOrganization().getImageUrl());
         dto.setImpressions(socialFeed.getImpressions());
         dto.setShares(socialFeed.getShares());
+
         return dto;
 
     }
@@ -91,5 +93,57 @@ public class OrganizationDTOConverter {
                 .map(this::toOrganizationDTO)
                 .collect(Collectors.toList());
     }
+  
+    // OrganizationCreateDTO to OrganizationEntity
+    public OrganizationEntity toOrganizationEntity(OrganizationCreateDTO dto) {
+        OrganizationEntity entity = new OrganizationEntity();
 
+        entity.setName(dto.getName());
+        entity.setUsername(dto.getUsername());
+        entity.setInstitute(dto.getInstitute());
+        entity.setEmail(dto.getEmail());
+        entity.setPhone(dto.getPhone());
+        entity.setAccountNumber(AESUtil.encrypt(dto.getAccountNumber())); // encryption logic
+        entity.setIsVerified(dto.getIsVerified());
+        entity.setFollowerCount(dto.getFollowerCount());
+        entity.setDescription(dto.getDescription());
+        entity.setWebsite(dto.getWebsite());
+        entity.setBankName(dto.getBankName());
+
+        return entity;
+    }
+
+    public void updateEntityFromDTO(OrganizationDTO dto, OrganizationEntity entity) {
+        if (dto.getName() != null) {
+            entity.setName(dto.getName());
+        }
+        if (dto.getInstitute() != null) {
+            entity.setInstitute(dto.getInstitute());
+        }
+        if (dto.getEmail() != null) {
+            entity.setEmail(dto.getEmail());
+        }
+        if (dto.getPhone() != null) {
+            entity.setPhone(dto.getPhone());
+        }
+        if (dto.getAccountNumber() != null) {
+            entity.setAccountNumber(dto.getAccountNumber());
+        }
+        if (dto.getIsVerified() != null) {
+            entity.setIsVerified(dto.getIsVerified());
+        }
+        if (dto.getFollowerCount() != null) {
+            entity.setFollowerCount(dto.getFollowerCount());
+        }
+        if (dto.getWebsite() != null) {
+            entity.setWebsite(dto.getWebsite());
+        }
+        if (dto.getBankName() != null) {
+            entity.setBankName(dto.getBankName());
+        }
+        if (dto.getDescription() != null) {
+            entity.setDescription(dto.getDescription());
+        }
+
+    }
 }

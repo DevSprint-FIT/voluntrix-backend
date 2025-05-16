@@ -51,5 +51,4 @@ public class SocialFeedEntity {
     // Manage reactions
     @OneToMany(mappedBy = "socialFeed", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReactionEntity> reactions;
-
 }

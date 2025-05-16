@@ -1,12 +1,10 @@
 
 package com.DevSprint.voluntrix_backend.utils;
 
+import lombok.Data;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class ApiResponse<T> {
     private String message;
