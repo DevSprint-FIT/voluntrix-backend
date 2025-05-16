@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FollowedOrganizationService {
 
-    private FollowedOrganizationRepository followedOrganizationRepository;
-    private OrganizationRepository organizationRepository;
-    private VolunteerRepository volunteerRepository;
+    private final FollowedOrganizationRepository followedOrganizationRepository;
+    private final OrganizationRepository organizationRepository;
+    private final VolunteerRepository volunteerRepository;
 
     // Follow an organization and update follow count
     @Transactional

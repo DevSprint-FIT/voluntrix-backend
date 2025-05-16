@@ -32,7 +32,7 @@ public class ImageKitController {
         String token = UUID.randomUUID().toString();
         String raw = token + expire;
 
-        // HMAC-SHA1 signature
+        // HMAC-SHA256 signature
         Mac hmac = Mac.getInstance("HmacSHA256");
         SecretKeySpec secretKey = new SecretKeySpec(privateKey.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         hmac.init(secretKey);

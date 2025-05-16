@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api/public/follow")
 public class FollowedOrganizationController {
 
-    private FollowedOrganizationService followedOrganizationService;
+    private final FollowedOrganizationService followedOrganizationService;
 
     @PostMapping("/")
     public ResponseEntity<String> followOrganization(@RequestBody FollowOrganizationDTO request) {

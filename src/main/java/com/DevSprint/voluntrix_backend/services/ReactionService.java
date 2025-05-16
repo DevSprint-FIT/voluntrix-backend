@@ -70,7 +70,7 @@ public class ReactionService {
 
     // Get all reactions for a post
     public List<ReactionDTO> getReactionsForPost(Long socialFeedId) {
-        SocialFeedEntity post = socialFeedRepository.findById(socialFeedId)
+        socialFeedRepository.findById(socialFeedId)
                 .orElseThrow(() -> new ResourceNotFoundException("Social feed post not found with ID: " + socialFeedId));
 
         return reactionRepository.findBySocialFeedId(socialFeedId)
@@ -117,7 +117,7 @@ public class ReactionService {
     // Delete reactions for a post when the post is deleted
     @Transactional
     public void deletePostWithReactions(Long socialFeedId) {
-        SocialFeedEntity feed = socialFeedRepository.findById(socialFeedId)
+        socialFeedRepository.findById(socialFeedId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post not found with ID: " + socialFeedId));
 
         // Only delete the post — reactions will be automatically deleted

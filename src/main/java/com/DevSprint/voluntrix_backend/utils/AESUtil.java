@@ -6,7 +6,7 @@ import java.util.Base64;
 
 public class AESUtil {
     private static final String ALGORITHM = "AES";
-    private static final String SECRET_KEY = System.getenv("AES_SECRET_KEY");
+    private static final String SECRET_KEY = "mySuperSecret123"; 
 
     public static String encrypt(String data) {
         try {
