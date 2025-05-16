@@ -34,7 +34,6 @@ public class RecaptchaService {
         ResponseEntity<RecaptchaResponseDTO> response =
                 restTemplate.postForEntity(VERIFY_URL, request, RecaptchaResponseDTO.class);
 
-        RecaptchaResponseDTO responseBody = response.getBody();
-        return responseBody != null && responseBody.isSuccess();
+        return response.getBody() != null && response.getBody().isSuccess();
     }
 }
