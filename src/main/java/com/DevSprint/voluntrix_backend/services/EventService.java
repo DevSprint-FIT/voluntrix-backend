@@ -39,13 +39,13 @@ public class EventService {
     }
 
     public void deleteEvent(Long eventId) {
-        eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found"));
+        eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException("Event not found: " + eventId));
         eventRepository.deleteById(eventId);
     }
 
     public EventDTO getEventById(Long eventId) {
         EventEntity eventEntity = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+                .orElseThrow(() -> new EventNotFoundException("Event not found: " + eventId));
         return entityDTOConvert.toEventDTO(eventEntity);
     }
 
@@ -55,7 +55,7 @@ public class EventService {
 
     public void updateEvent(Long eventId, EventDTO eventDTO) {
         var selectedEvent = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+                .orElseThrow(() -> new EventNotFoundException("Event not found: " + eventId));
 
         selectedEvent.setEventTitle(eventDTO.getEventTitle());
         selectedEvent.setEventDescription(eventDTO.getEventDescription());
