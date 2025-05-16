@@ -16,8 +16,8 @@ import com.DevSprint.voluntrix_backend.services.MessageService;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-@RestController
+@RequiredArgsConstructor //Creates a constructor that accepts only the required fields
+@RestController //Automatically serializes return values (usually Java objects) into JSON or XML.
 @RequestMapping("/api/public/messages")
 public class MessageController {
 
