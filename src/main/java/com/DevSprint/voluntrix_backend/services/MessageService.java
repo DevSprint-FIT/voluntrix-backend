@@ -3,18 +3,19 @@ package com.DevSprint.voluntrix_backend.services;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.MessageDTO;
 import com.DevSprint.voluntrix_backend.entities.Message;
 import com.DevSprint.voluntrix_backend.repositories.MessageRepository;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 public class MessageService {
 
-    @Autowired
-    private MessageRepository messageRepository;
+    private final MessageRepository messageRepository;
 
     public Message saveMessage(MessageDTO dto) {
         Message message = new Message();
