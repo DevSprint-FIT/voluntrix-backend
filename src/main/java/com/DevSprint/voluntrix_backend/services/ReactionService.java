@@ -1,7 +1,6 @@
 package com.DevSprint.voluntrix_backend.services;
 
-import com.DevSprint.voluntrix_backend.dtos.CreateReactionDTO;
-import com.DevSprint.voluntrix_backend.dtos.ReactionDTO;
+import com.DevSprint.voluntrix_backend.dtos.*;
 import com.DevSprint.voluntrix_backend.entities.ReactionEntity;
 import com.DevSprint.voluntrix_backend.entities.SocialFeedEntity;
 import com.DevSprint.voluntrix_backend.enums.UserType;
@@ -26,53 +25,39 @@ public class ReactionService {
     private final SocialFeedRepository socialFeedRepository;
 
     @Transactional
-    public ReactionDTO reactToPost(CreateReactionDTO dto){
-        Optional<SocialFeedEntity> optionalFeed = socialFeedRepository.findById(dto.getSocialFeedId());
-        if(optionalFeed.isEmpty()){
-            throw new RuntimeException("Social feed post not found");
-        }
+    public ReactionDTO reactToPost(CreateReactionDTO dto) {
+        SocialFeedEntity feed = socialFeedRepository.findById(dto.getSocialFeedId())
+                .orElseThrow(() -> new ResourceNotFoundException("Social feed post not found with ID: " + dto.getSocialFeedId()));
 
-        SocialFeedEntity feed = optionalFeed.get();
-
-        UserType userType;
-        try {
-            userType = UserType.valueOf(dto.getUserType().toUpperCase());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new RuntimeException("Invalid or missing userType: " + dto.getUserType());
-        }
+        UserType userType = parseUserType(dto.getUserType());
 
         Optional<ReactionEntity> existingReaction = reactionRepository.findBySocialFeedIdAndUserIdAndUserType(
-                dto.getSocialFeedId(), dto.getUserId(), userType
-        );
+                dto.getSocialFeedId(), dto.getUserId(), userType);
 
         ReactionEntity savedReaction;
 
-        if(existingReaction.isPresent()){
+        if (existingReaction.isPresent()) {
             ReactionEntity reaction = existingReaction.get();
             boolean wasReacted = reaction.isReacted();
-
             boolean nowReacted = !wasReacted;
+
             reaction.setReacted(nowReacted);
 
-            // Update impressions count based on toggle
-            if(wasReacted && !nowReacted){
-                // Previously liked, now unliked
-                if(feed.getImpressions() > 0){
-                    feed.setImpressions(feed.getImpressions() - 1);
-                }
-
-            } else if(!wasReacted && nowReacted) {
-                // Previously unliked, now liked
+            // Update impressions
+            if (wasReacted && !nowReacted && feed.getImpressions() > 0) {
+                feed.setImpressions(feed.getImpressions() - 1);
+            } else if (!wasReacted && nowReacted) {
                 feed.setImpressions(feed.getImpressions() + 1);
             }
+
             savedReaction = reactionRepository.save(reaction);
         } else {
-            // First time like
+            // First-time like
             ReactionEntity newReaction = new ReactionEntity();
             newReaction.setSocialFeed(feed);
             newReaction.setUserId(dto.getUserId());
             newReaction.setUserType(userType);
-            newReaction.setReacted(true); // Always true on creation
+            newReaction.setReacted(true);
             newReaction.setCreatedAt(LocalDateTime.now());
 
             feed.setImpressions(feed.getImpressions() + 1);
@@ -80,81 +65,72 @@ public class ReactionService {
         }
 
         socialFeedRepository.save(feed);
-
         return ReactionConverter.toDTO(savedReaction);
     }
 
     // Get all reactions for a post
-    public List<ReactionDTO> getReactionsForPost(Long socialFeedId){
-        List<ReactionEntity> reactions = reactionRepository.findBySocialFeedId(socialFeedId);
-        return reactions.stream()
+    public List<ReactionDTO> getReactionsForPost(Long socialFeedId) {
+        SocialFeedEntity post = socialFeedRepository.findById(socialFeedId)
+                .orElseThrow(() -> new ResourceNotFoundException("Social feed post not found with ID: " + socialFeedId));
+
+        return reactionRepository.findBySocialFeedId(socialFeedId)
+                .stream()
                 .map(ReactionConverter::toDTO)
                 .toList();
     }
 
-
     // Get a user's reaction on a specific post
-    public ReactionDTO getUserReaction(Long socialFeedId, Long userId, String userTypeStr) {
-        UserType userType;
-        try {
-            userType = UserType.valueOf(userTypeStr.toUpperCase());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new InvalidUserTypeException("Invalid userType: " + userTypeStr);
-        }
+    public ReactionStatusDTO getUserReaction(Long socialFeedId, Long userId, String userTypeStr) {
+        UserType userType = parseUserType(userTypeStr);
 
         // Check if social feed exists
-        SocialFeedEntity socialFeed = socialFeedRepository.findById(socialFeedId)
+        socialFeedRepository.findById(socialFeedId)
                 .orElseThrow(() -> new ResourceNotFoundException("Social feed post not found with ID: " + socialFeedId));
 
         // Find the reaction for the user on the post
         ReactionEntity reaction = reactionRepository.findBySocialFeedIdAndUserIdAndUserType(socialFeedId, userId, userType)
                 .orElseThrow(() -> new ResourceNotFoundException("No reaction found for the user on the given post."));
 
-        return ReactionConverter.toDTO(reaction);
+        return new ReactionStatusDTO(reaction.getUserId(), reaction.isReacted());
     }
-
 
     // Remove a reaction completely
     @Transactional
     public void removeReaction(Long socialFeedId, Long userId, String userTypeStr) {
-        UserType userType;
-        try {
-            userType = UserType.valueOf(userTypeStr.toUpperCase());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new RuntimeException("Invalid userType: " + userTypeStr);
+        UserType userType = parseUserType(userTypeStr);
+
+        ReactionEntity reactionEntity = reactionRepository.findBySocialFeedIdAndUserIdAndUserType(socialFeedId, userId, userType)
+                .orElseThrow(() -> new ResourceNotFoundException("Reaction not found for socialFeedId: " + socialFeedId +
+                        ", userId: " + userId + ", userType: " + userTypeStr));
+
+        SocialFeedEntity feed = reactionEntity.getSocialFeed();
+
+        // Decrease impressions if the reaction is liked
+        if (reactionEntity.isReacted() && feed.getImpressions() > 0) {
+            feed.setImpressions(feed.getImpressions() - 1);
         }
 
-        Optional<ReactionEntity> reaction = reactionRepository.findBySocialFeedIdAndUserIdAndUserType(socialFeedId, userId, userType);
-        if (reaction.isPresent()) {
-            ReactionEntity reactionEntity = reaction.get();
-            SocialFeedEntity feed = reactionEntity.getSocialFeed();
-
-            // Decrease impressions if the reaction is liked
-            if (reactionEntity.isReacted() && feed.getImpressions() > 0) {
-                feed.setImpressions(feed.getImpressions() - 1);
-            }
-
-            reactionRepository.delete(reactionEntity);
-            socialFeedRepository.save(feed);
-        } else {
-            throw new RuntimeException("Reaction not found to remove.");
-        }
+        reactionRepository.delete(reactionEntity);
+        socialFeedRepository.save(feed);
     }
 
     // Delete reactions for a post when the post is deleted
     @Transactional
     public void deletePostWithReactions(Long socialFeedId) {
-        Optional<SocialFeedEntity> optionalFeed = socialFeedRepository.findById(socialFeedId);
-        if (optionalFeed.isEmpty()) {
-            throw new RuntimeException("Post not found");
-        }
+        SocialFeedEntity feed = socialFeedRepository.findById(socialFeedId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post not found with ID: " + socialFeedId));
 
         // Only delete the post — reactions will be automatically deleted
         socialFeedRepository.deleteById(socialFeedId);
+
     }
 
-
+    // Utility method for parsing userType safely
+    private UserType parseUserType(String userTypeStr) {
+        try {
+            return UserType.valueOf(userTypeStr.toUpperCase());
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new InvalidUserTypeException("Invalid userType: " + userTypeStr);
+        }
+    }
 }
-
-
-
