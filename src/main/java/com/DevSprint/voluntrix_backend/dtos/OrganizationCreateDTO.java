@@ -41,5 +41,10 @@ public class OrganizationCreateDTO {
 
     private String bankName;
 
+    private String facebookLink;
+
+    private String linkedinLink;
+
+    private String instagramLink;
 
 }

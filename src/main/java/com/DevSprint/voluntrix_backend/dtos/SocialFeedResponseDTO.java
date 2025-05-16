@@ -17,4 +17,9 @@ public class SocialFeedResponseDTO {
     private LocalDateTime updatedAt;
     private String organizationName;
     private String organizationImageUrl;
+    private int impressions;
+    private int shares;
+    private Long mediaSizeInBytes;
+    private String institute;
+
 }

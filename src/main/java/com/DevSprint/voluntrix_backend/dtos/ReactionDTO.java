@@ -9,8 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SocialFeedUpdateDTO {
-    private String content;
-    private String mediaUrl;
-    private Integer impressions;
+public class ReactionDTO {
+    private Long id;
+    private Long socialFeedId;
+    private Long userId;
+    private String userType;
+    private boolean reacted;
+    private String createdAt;
 }

@@ -22,7 +22,11 @@ public class OrganizationDTOConverter {
         dto.setCreatedAt(socialFeed.getCreatedAt());
         dto.setUpdatedAt(socialFeed.getUpdatedAt());
         dto.setOrganizationName(socialFeed.getOrganization().getName());
+        dto.setInstitute(socialFeed.getOrganization().getInstitute());
         dto.setOrganizationImageUrl(socialFeed.getOrganization().getImageUrl());
+        dto.setImpressions(socialFeed.getImpressions());
+        dto.setShares(socialFeed.getShares());
+
         return dto;
 
     }
@@ -53,6 +57,9 @@ public class OrganizationDTOConverter {
         organization.setWebsite(organizationDTO.getWebsite());
         organization.setBankName(organizationDTO.getBankName());
         organizationDTO.setImageUrl(organization.getImageUrl());
+        organizationDTO.setFacebookLink(organization.getFacebookLink());
+        organizationDTO.setLinkedinLink(organization.getLinkedinLink());
+        organizationDTO.setInstagramLink(organization.getInstagramLink());
 
         return organizationDTO;
     }
@@ -73,6 +80,9 @@ public class OrganizationDTOConverter {
         organization.setCreatedAt(organizationDTO.getJoinedDate());
         organization.setDescription(organizationDTO.getDescription());
         organization.setImageUrl(organizationDTO.getImageUrl());
+        organization.setFacebookLink(organizationDTO.getFacebookLink());
+        organization.setLinkedinLink(organizationDTO.getLinkedinLink());
+        organization.setInstagramLink(organizationDTO.getInstagramLink());
 
         return organization;
     }
@@ -83,8 +93,7 @@ public class OrganizationDTOConverter {
                 .map(this::toOrganizationDTO)
                 .collect(Collectors.toList());
     }
-
-
+  
     // OrganizationCreateDTO to OrganizationEntity
     public OrganizationEntity toOrganizationEntity(OrganizationCreateDTO dto) {
         OrganizationEntity entity = new OrganizationEntity();
