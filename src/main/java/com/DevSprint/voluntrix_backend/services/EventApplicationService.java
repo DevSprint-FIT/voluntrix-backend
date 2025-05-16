@@ -50,8 +50,8 @@ public class EventApplicationService {
 
         boolean alreadyApplied = eventApplicationRepository.existsByEventAndVolunteer(event, volunteer);
         if (alreadyApplied) {
-            throw new DuplicateApplicationException("Application already exists for this volunteer and event."
-                    + eventApplicationCreateDTO.getVolunteerId() + eventApplicationCreateDTO.getEventId());
+            throw new DuplicateApplicationException("Application already exists for this volunteer and event. Volunteer ID:"
+                    + eventApplicationCreateDTO.getVolunteerId() + " Event ID:"+ eventApplicationCreateDTO.getEventId());
         }
 
         EventApplicationEntity eventApplicationEntity = entityDTOConvert
