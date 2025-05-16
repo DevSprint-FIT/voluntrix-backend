@@ -5,7 +5,7 @@ import com.DevSprint.voluntrix_backend.dtos.SocialFeedResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.SocialFeedUpdateDTO;
 import com.DevSprint.voluntrix_backend.entities.SocialFeedEntity;
 import com.DevSprint.voluntrix_backend.services.SocialFeedService;
-import com.DevSprint.voluntrix_backend.utils.EntityDTOConverter;
+import com.DevSprint.voluntrix_backend.utils.OrganizationDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +18,10 @@ import java.util.List;
 public class SocialFeedController {
 
     private final SocialFeedService socialFeedService;
-    private final EntityDTOConverter entityDTOConverter;
+    private final OrganizationDTOConverter entityDTOConverter;
 
     @Autowired
-    public SocialFeedController(SocialFeedService socialFeedService,EntityDTOConverter entityDTOConverter){
+    public SocialFeedController(SocialFeedService socialFeedService, OrganizationDTOConverter entityDTOConverter){
         this.socialFeedService = socialFeedService;
         this.entityDTOConverter = entityDTOConverter;
     }

@@ -17,7 +17,7 @@ import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
-import com.DevSprint.voluntrix_backend.utils.EntityDTOConvert;
+import com.DevSprint.voluntrix_backend.utils.EventDTOConverter;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class EventService {
 
     private final EventRepository eventRepository;
-    private final EntityDTOConvert entityDTOConvert;
+    private final EventDTOConverter entityDTOConvert;
     private final CategoryRepository categoryRepository;
 
     public void addEvent(EventDTO eventDTO) {

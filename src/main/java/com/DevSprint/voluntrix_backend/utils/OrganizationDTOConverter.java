@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class EntityDTOConverter {
+public class OrganizationDTOConverter {
     public SocialFeedResponseDTO toSocialFeedResponseDTO(SocialFeedEntity socialFeed){
         SocialFeedResponseDTO dto = new SocialFeedResponseDTO();
         dto.setId(socialFeed.getId());
