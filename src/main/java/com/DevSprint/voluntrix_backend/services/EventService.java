@@ -46,6 +46,10 @@ public class EventService {
                 .orElseThrow(() -> new VolunteerNotFoundException(
                         "Event Host not found: " + eventCreateDTO.getEventHostId()));
 
+        if (eventCreateDTO.getEventStartDate().isAfter(eventCreateDTO.getEventEndDate())) {
+            throw new BadRequestException("Event start date cannot be after the event end date.");
+        }
+
         if (!Boolean.TRUE.equals(eventHost.getIsEventHost())) {
             throw new BadRequestException("Volunteer is not an event host");
         }
@@ -83,9 +87,17 @@ public class EventService {
             selectedEvent.setEventLocation(eventDTO.getEventLocation());
         }
         if (eventDTO.getEventStartDate() != null) {
+            if (eventDTO.getEventStartDate().isAfter(selectedEvent.getEventEndDate())) {
+                throw new BadRequestException("Event start date cannot be after the event end date.");
+            }
+
             selectedEvent.setEventStartDate(eventDTO.getEventStartDate());
         }
         if (eventDTO.getEventEndDate() != null) {
+            if (selectedEvent.getEventStartDate().isAfter(eventDTO.getEventEndDate())) {
+                throw new BadRequestException("Event start date cannot be after the event end date.");
+            }
+
             selectedEvent.setEventEndDate(eventDTO.getEventEndDate());
         }
         if (eventDTO.getEventTime() != null) {
