@@ -1,6 +1,12 @@
 package com.DevSprint.voluntrix_backend.entities;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.DevSprint.voluntrix_backend.enums.AuthProvider;
 import com.DevSprint.voluntrix_backend.enums.UserType;
@@ -25,11 +31,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserEntity {
+public class UserEntity implements UserDetails{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "user_id")
+    private Long userId;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -45,6 +52,42 @@ public class UserEntity {
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(nullable = false)
     @Builder.Default
     private Boolean isVerified = false;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean isProfileCompleted = false;
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email; // Usually the email is used as the username
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; 
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; 
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; 
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; 
+    }
 }
