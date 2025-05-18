@@ -1,5 +1,6 @@
 package com.DevSprint.voluntrix_backend.services;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.SignupRequestDto;
@@ -27,7 +28,8 @@ public class AuthService {
         UserEntity user = userMapper.toEntity(request);
         userRepository.save(user);
 
-        String token = jwtService.generateToken(user);
+        UserDetails userDetails = userMapper.toUserDetails(user);
+        String token = jwtService.generateToken(userDetails);
 
         ApiResponse<SignupResponseDto> response = new ApiResponse<SignupResponseDto>(
             "User registered successfully",

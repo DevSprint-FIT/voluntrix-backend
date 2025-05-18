@@ -1,5 +1,10 @@
 package com.DevSprint.voluntrix_backend.utils;
 
+import java.util.Collections;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -23,5 +28,13 @@ public class UserMapper {
         user.setAuthProvider(AuthProvider.EMAIL);
 
         return user;
+    }
+
+    public UserDetails toUserDetails(UserEntity user) {
+        return new User(
+            user.getEmail(),
+            user.getPassword(),
+            Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+        );
     }
 }
