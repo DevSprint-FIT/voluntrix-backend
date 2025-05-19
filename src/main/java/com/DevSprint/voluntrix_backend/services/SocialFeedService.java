@@ -51,7 +51,7 @@ public class SocialFeedService {
 
     public List<SocialFeedResponseDTO> getPostsByOrganizationId(Long organizationId){
         // Check if the organization exists
-        OrganizationEntity organization = organizationRepository.findById(organizationId)
+        organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Organization not found with ID: " + organizationId));
 
         // If the organization exists
