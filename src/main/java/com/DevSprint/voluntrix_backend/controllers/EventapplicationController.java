@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationDTO;
-import com.DevSprint.voluntrix_backend.exceptions.EventApplicationNotFoundException;
 import com.DevSprint.voluntrix_backend.services.EventApplicationService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -43,13 +42,8 @@ public class EventapplicationController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        try {
-            eventApplicationService.addEventApplication(eventApplicationCreateDTO);
-            return new ResponseEntity<>(HttpStatus.CREATED);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        eventApplicationService.addEventApplication(eventApplicationCreateDTO);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/{eventApplicationId}")
@@ -57,16 +51,9 @@ public class EventapplicationController {
         if (eventApplicationId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        try {
-            var selectedApplication = eventApplicationService.getEventApplicationById(eventApplicationId);
-            return new ResponseEntity<>(selectedApplication, HttpStatus.OK);
-        } catch (EventApplicationNotFoundException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+        var selectedApplication = eventApplicationService.getEventApplicationById(eventApplicationId);
+        return new ResponseEntity<>(selectedApplication, HttpStatus.OK);
     }
 
     @PatchMapping(value = "/{eventApplicationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -76,13 +63,8 @@ public class EventapplicationController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        try {
-            eventApplicationService.updateEventApplication(eventApplicationCreateDTO, eventApplicationId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        eventApplicationService.updateEventApplication(eventApplicationCreateDTO, eventApplicationId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{eventApplicationId}")
@@ -91,15 +73,7 @@ public class EventapplicationController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        try {
-            eventApplicationService.deleteEventApplication(eventApplicationId);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (EventApplicationNotFoundException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        eventApplicationService.deleteEventApplication(eventApplicationId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
