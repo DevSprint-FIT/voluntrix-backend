@@ -1,8 +1,6 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -24,16 +22,7 @@ public class VolunteerCreateDTO {
     @NotBlank(message = "Last name is required")
     private String lastName;
 
-    @Email(message = "Email should be valid")
-    @NotBlank(message = "Email is required")
-    private String email;
-
     private String institute;
-
-    @NotNull(message = "Availability status is required")
-    private Boolean isAvailable;
-
-    private Boolean isEventHost;
 
     @Size(max = 255, message = "About section can have at most 255 characters")
     private String about;

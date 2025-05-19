@@ -3,13 +3,16 @@ package com.DevSprint.voluntrix_backend.services;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerUpdateDTO;
+import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
+import com.DevSprint.voluntrix_backend.repositories.UserRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.VolunteerDTOConvert;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,24 +24,33 @@ public class VolunteerService {
 
     private final VolunteerRepository volunteerRepository;
     private final VolunteerDTOConvert entityDTOConvert;
+    private final UserRepository userRepository;
 
-    public VolunteerDTO createVolunteer(VolunteerCreateDTO volunteerCreateDTO) {
+    public VolunteerDTO createVolunteer(Long userId, VolunteerCreateDTO volunteerCreateDTO) {
         // Check for existing username
         if (volunteerRepository.findByUsername(volunteerCreateDTO.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
         }
-    
-        // Check for existing email
-        if (volunteerRepository.findByEmail(volunteerCreateDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-    
+
         // Check for existing phone number
         if (volunteerRepository.findByPhoneNumber(volunteerCreateDTO.getPhoneNumber()).isPresent()) {
             throw new IllegalArgumentException("Phone number already exists");
         }
+
+        UserEntity user = userRepository.findById(userId)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with ID:" + userId));
+
+        if (user.getIsProfileCompleted()) {
+            throw new IllegalArgumentException("User profile is already completed");
+        }
     
         VolunteerEntity volunteer = entityDTOConvert.toVolunteerEntity(volunteerCreateDTO);
+        volunteer.setUser(user);
+        volunteer.setEmail(user.getEmail());
+
+        user.setIsProfileCompleted(true);
+        userRepository.save(user);
+
         VolunteerEntity savedVolunteer = volunteerRepository.save(volunteer);
         return entityDTOConvert.toVolunteerDTO(savedVolunteer);
     }

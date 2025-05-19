@@ -45,7 +45,7 @@ public class VolunteerEntity {
     private String institute;
 
     @Column(nullable = false)
-    private Boolean isAvailable = false;
+    private Boolean isAvailable = true;
 
     @Column(nullable = false)
 
