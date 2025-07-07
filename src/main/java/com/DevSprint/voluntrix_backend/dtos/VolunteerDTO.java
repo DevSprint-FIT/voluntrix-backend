@@ -26,4 +26,5 @@ public class VolunteerDTO {
     private LocalDate joinedDate;
     private String about;
     private String phoneNumber;
+    private String profilePictureUrl;
 }
