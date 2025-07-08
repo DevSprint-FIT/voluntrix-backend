@@ -40,7 +40,7 @@ public class SecurityConfig {
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:3000", "https://voluntrix-preview.vercel.app", "https://1d49-2402-4000-2100-693d-a5c6-d62f-f9bc-2e42.ngrok-free.app")); // Allow local & production frontend
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // Needed if frontend sends credentials (e.g., tokens)
 
