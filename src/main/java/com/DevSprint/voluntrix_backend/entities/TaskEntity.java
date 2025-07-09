@@ -1,5 +1,6 @@
 package com.DevSprint.voluntrix_backend.entities;
 
+import com.DevSprint.voluntrix_backend.enums.TaskDifficulty;
 import com.DevSprint.voluntrix_backend.enums.TaskStatus;
 
 import jakarta.persistence.Entity;
@@ -51,6 +52,10 @@ public class TaskEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus taskStatus; // TO_DO, IN_PROGRESS, DONE
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TaskDifficulty taskDifficulty; // EASY, MEDIUM, HARD, EXTREME
 
     @Column(length = 1000)
     private String resourceUrl;
