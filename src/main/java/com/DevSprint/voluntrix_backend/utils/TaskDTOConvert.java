@@ -10,6 +10,7 @@ import com.DevSprint.voluntrix_backend.dtos.TaskDTO;
 import com.DevSprint.voluntrix_backend.dtos.TaskCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.TaskUpdateDTO;
 import com.DevSprint.voluntrix_backend.entities.TaskEntity;
+import com.DevSprint.voluntrix_backend.enums.TaskStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,7 +48,7 @@ public class TaskDTOConvert {
         TaskEntity task = new TaskEntity();
         task.setDescription(taskCreateDTO.getDescription());
         task.setDueDate(taskCreateDTO.getDueDate());
-        task.setTaskStatus(taskCreateDTO.getTaskStatus());
+        task.setTaskStatus(TaskStatus.TO_DO); // Automatically set to TO_DO for new tasks
         task.setTaskDifficulty(taskCreateDTO.getTaskDifficulty());
         return task;
     }
