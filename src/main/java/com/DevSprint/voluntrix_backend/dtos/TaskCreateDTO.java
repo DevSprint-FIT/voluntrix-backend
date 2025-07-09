@@ -35,6 +35,7 @@ public class TaskCreateDTO {
     @NotNull(message = "Task difficulty is required")
     private TaskDifficulty taskDifficulty; // EASY, MEDIUM, HARD, EXTREME
 
+    @NotNull(message = "Assignee ID is required")
     private Long assigneeId;
 
     @NotNull(message = "Event ID is required")
