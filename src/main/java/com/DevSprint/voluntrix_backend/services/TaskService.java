@@ -68,10 +68,10 @@ public class TaskService {
         return taskDTOConvert.toTaskDTOList(tasks);
     }
     
-    public List<TaskDTO> getTasksByVolunteerUsername(String username) {
-        List<TaskEntity> tasks = taskRepository.findByAssignee_Username(username);
+    public List<TaskDTO> getTasksByAssigneeIdAndEventId(Long assigneeId, Long eventId) {
+        List<TaskEntity> tasks = taskRepository.findByAssignee_VolunteerIdAndEvent_EventId(assigneeId, eventId);
         if (tasks.isEmpty()) {
-            throw new TaskNotFoundException("No tasks found for volunteer with username: " + username);
+            throw new TaskNotFoundException("No tasks found for assignee ID: " + assigneeId + " and event ID: " + eventId);
         }
         return taskDTOConvert.toTaskDTOList(tasks);
     }

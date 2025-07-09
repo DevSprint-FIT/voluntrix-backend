@@ -47,9 +47,11 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
-    @GetMapping("/volunteer/{username}")
-    public ResponseEntity<List<TaskDTO>> getTasksByVolunteerUsername(@PathVariable String username) {
-        List<TaskDTO> tasks = taskService.getTasksByVolunteerUsername(username);
+    @GetMapping("/assignee/{assigneeId}/event/{eventId}")
+    public ResponseEntity<List<TaskDTO>> getTasksByAssigneeIdAndEventId(
+            @PathVariable Long assigneeId,
+            @PathVariable Long eventId) {
+        List<TaskDTO> tasks = taskService.getTasksByAssigneeIdAndEventId(assigneeId, eventId);
         return ResponseEntity.ok(tasks);
     }
 
