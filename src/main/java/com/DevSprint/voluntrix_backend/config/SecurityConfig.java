@@ -27,6 +27,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/analytics/**").permitAll()
                         .requestMatchers("/api/payment/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll() // Allow all requests under `/api/public/`
+                        .requestMatchers("/api/chat/**").permitAll() // Allow chat API endpoints
+                        .requestMatchers("/ws/**").permitAll() // Allow WebSocket connections
+                        .requestMatchers("/chat", "/chat.html", "/static/**", "/*.html", "/*.css", "/*.js", "/").permitAll() // Allow static resources and chat pages
                         .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
                         .anyRequest().authenticated() // Require authentication for everything else
                 )
