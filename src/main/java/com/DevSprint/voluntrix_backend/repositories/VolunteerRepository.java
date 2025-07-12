@@ -12,4 +12,3 @@ public interface VolunteerRepository extends JpaRepository<VolunteerEntity, Long
     Optional<VolunteerEntity> findByPhoneNumber(String phoneNumber);
     Optional<VolunteerEntity> findByVolunteerId(Long volunteerId);
 }
-
