@@ -40,3 +40,4 @@ public class FollowedOrganizationEntity {
     private OrganizationEntity organization;
 
 }
+

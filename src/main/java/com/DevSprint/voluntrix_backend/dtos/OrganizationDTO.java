@@ -27,6 +27,8 @@ public class OrganizationDTO {
     private String website;
     private String bankName;
     private String imageUrl;
-
+    private String facebookLink;
+    private String linkedinLink;
+    private String instagramLink;
 
 }

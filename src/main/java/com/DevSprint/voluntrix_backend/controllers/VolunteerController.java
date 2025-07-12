@@ -5,6 +5,7 @@ import com.DevSprint.voluntrix_backend.dtos.VolunteerCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerUpdateDTO;
 import com.DevSprint.voluntrix_backend.services.VolunteerService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,19 +16,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import jakarta.validation.Valid; 
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/public/volunteers")
 @SecurityRequirement(name = "bearerAuth")
 public class VolunteerController {
 
     private final VolunteerService volunteerService;
-
-    public VolunteerController(VolunteerService volunteerService) {
-        this.volunteerService = volunteerService;
-    }
 
     @GetMapping
     public ResponseEntity<List<VolunteerDTO>> getAllVolunteers() {

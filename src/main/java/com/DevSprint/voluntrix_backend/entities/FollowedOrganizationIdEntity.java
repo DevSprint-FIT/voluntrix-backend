@@ -16,3 +16,4 @@ public class FollowedOrganizationIdEntity implements Serializable {
         this.organizationId = organizationId;
     }
 }
+
