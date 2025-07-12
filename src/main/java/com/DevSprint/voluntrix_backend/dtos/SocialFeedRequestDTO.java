@@ -11,4 +11,5 @@ public class SocialFeedRequestDTO {
     private String content;
     private String mediaUrl;
     private MediaType mediaType;
+    private Long mediaSizeInBytes;
 }

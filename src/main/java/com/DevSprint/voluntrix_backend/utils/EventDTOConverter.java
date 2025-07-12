@@ -21,6 +21,7 @@ import com.DevSprint.voluntrix_backend.exceptions.OrganizationNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -30,8 +31,6 @@ public class EventDTOConverter {
     private final ModelMapper modelMapper;
     private final CategoryRepository categoryRepository;
     private final OrganizationRepository organizationRepository;
-
-    // Event Mapping
 
     // EventEntity to EventDTO
     public EventDTO toEventDTO(EventEntity eventEntity) {
@@ -76,6 +75,16 @@ public class EventDTOConverter {
             eventEntity.setOrganization(organization);
         }
 
+    // EventDTO to EventEntity
+    public EventEntity toEventEntity(EventDTO eventDTO) {
+        EventEntity eventEntity = modelMapper.map(eventDTO, EventEntity.class);
+        if (eventDTO.getCategories() != null) {
+            Set<CategoryEntity> categoryEntities = eventDTO.getCategories().stream()
+                    .map(dto -> categoryRepository.findById(dto.getCategoryId())
+                            .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategoryId())))
+                    .collect(Collectors.toSet());
+            eventEntity.setCategories(categoryEntities);
+        }
         return eventEntity;
     }
 
@@ -117,3 +126,4 @@ public class EventDTOConverter {
                 .collect(Collectors.toList());
     }
 }
+

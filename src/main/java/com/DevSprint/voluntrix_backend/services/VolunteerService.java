@@ -7,21 +7,20 @@ import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.VolunteerDTOConvert;
+
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class VolunteerService {
 
     private final VolunteerRepository volunteerRepository;
     private final VolunteerDTOConvert entityDTOConvert;
-
-    public VolunteerService(VolunteerRepository volunteerRepository, VolunteerDTOConvert entityDTOConvert) {
-        this.volunteerRepository = volunteerRepository;
-        this.entityDTOConvert = entityDTOConvert;
-    }
 
     public VolunteerDTO createVolunteer(VolunteerCreateDTO volunteerCreateDTO) {
         // Check for existing username
@@ -54,6 +53,11 @@ public class VolunteerService {
         return volunteer.map(entityDTOConvert::toVolunteerDTO)
             .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with username: " + username));
     }
+
+    public VolunteerEntity getVolunteerById(Long volunteerId) {
+        return volunteerRepository.findById(volunteerId)
+            .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
+    }    
 
     public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerUpdateDTO volunteerUpdateDTO) {
         VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)

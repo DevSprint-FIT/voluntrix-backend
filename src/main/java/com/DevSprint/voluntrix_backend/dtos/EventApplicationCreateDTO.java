@@ -19,3 +19,4 @@ public class EventApplicationCreateDTO implements Serializable {
     private ContributionArea contributionArea;
     private ApplicationStatus applicationStatus;
 }
+

@@ -12,4 +12,5 @@ import lombok.Setter;
 public class SocialFeedUpdateDTO {
     private String content;
     private String mediaUrl;
+    private Integer impressions;
 }

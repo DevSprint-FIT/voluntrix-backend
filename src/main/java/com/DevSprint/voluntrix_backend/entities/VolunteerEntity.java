@@ -66,6 +66,9 @@ public class VolunteerEntity {
     @Column(nullable = false, unique = true, length = 15)
     private String phoneNumber;
 
+    @Column(length = 2048)
+    private String profilePictureUrl;
+
     @PrePersist
     protected void onCreate() {
         this.joinedDate = LocalDate.now();
@@ -77,3 +80,4 @@ public class VolunteerEntity {
     @OneToMany(mappedBy = "volunteer")
     private Set<EventApplicationEntity> applications;
 }
+

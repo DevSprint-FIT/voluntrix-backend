@@ -4,3 +4,4 @@ public enum EventType {
     ONLINE,
     ONSITE
 }
+

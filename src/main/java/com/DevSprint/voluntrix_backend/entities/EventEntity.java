@@ -82,3 +82,4 @@ public class EventEntity {
     @JoinColumn(name = "organization_id", nullable = true)
     private OrganizationEntity organization;
 }
+

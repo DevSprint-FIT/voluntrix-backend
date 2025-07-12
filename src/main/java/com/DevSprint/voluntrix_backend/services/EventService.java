@@ -31,8 +31,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class EventService {
 
     private final EventRepository eventRepository;
@@ -68,6 +68,11 @@ public class EventService {
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
         return entityDTOConvert.toEventDTO(eventEntity);
     }
+
+    public EventEntity getEventEntityById(Long eventId) {
+        return eventRepository.findById(eventId)
+            .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
+    } 
 
     public List<EventDTO> getAllEvents() {
         return entityDTOConvert.toEventDTOList(eventRepository.findAll());
