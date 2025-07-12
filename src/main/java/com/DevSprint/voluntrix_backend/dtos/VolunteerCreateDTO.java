@@ -38,6 +38,9 @@ public class VolunteerCreateDTO {
     @Size(max = 255, message = "About section can have at most 255 characters")
     private String about;
 
+    @Size(max = 2048, message = "Profile picture URL can have at most 2048 characters")
+    private String profilePictureUrl;
+
     @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^(?:\\+94|0)?7\\d{8}$", message = "Phone number must be a valid Sri Lankan mobile number")
     private String phoneNumber;

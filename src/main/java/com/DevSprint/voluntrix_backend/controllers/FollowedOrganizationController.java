@@ -47,3 +47,4 @@ public class FollowedOrganizationController {
         return ResponseEntity.ok(stats);
     }
 }
+
