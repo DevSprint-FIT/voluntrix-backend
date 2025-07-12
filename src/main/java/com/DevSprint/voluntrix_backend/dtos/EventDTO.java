@@ -47,3 +47,4 @@ public class EventDTO implements Serializable {
 
     private Long organizationId;
 }
+

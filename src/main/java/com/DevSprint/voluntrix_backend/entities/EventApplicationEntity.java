@@ -46,3 +46,4 @@ public class EventApplicationEntity {
     private ApplicationStatus applicationStatus;
 
 }
+
