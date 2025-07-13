@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.DevSprint.voluntrix_backend.dtos.AuthResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.LoginRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.SignupRequestDTO;
-import com.DevSprint.voluntrix_backend.dtos.SignupResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.UserProfileStatusDTO;
 import com.DevSprint.voluntrix_backend.dtos.VerifyEmailRequestDTO;
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
@@ -33,7 +33,7 @@ public class AuthController {
     private final CurrentUserService currentUserService;
     
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<SignupResponseDTO>> signup(@RequestBody @Valid SignupRequestDTO request) {
+    public ResponseEntity<ApiResponse<AuthResponseDTO>> signup(@RequestBody @Valid SignupRequestDTO request) {
         return ResponseEntity.ok(authService.signUp(request));
     }
 
@@ -46,9 +46,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<SignupResponseDTO>> login(@RequestBody @Valid LoginRequestDTO request) {
-        SignupResponseDTO response = authService.login(request);
-        return ResponseEntity.ok(new ApiResponse<SignupResponseDTO>("Login successful", response));
+    public ResponseEntity<ApiResponse<AuthResponseDTO>> login(@RequestBody @Valid LoginRequestDTO request) {
+        AuthResponseDTO response = authService.login(request);
+        return ResponseEntity.ok(new ApiResponse<AuthResponseDTO>("Login successful", response));
     }
 
     @PostMapping("/logout")

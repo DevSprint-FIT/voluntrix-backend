@@ -21,9 +21,9 @@ public class CustomUserDetailsService  implements UserDetailsService{
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException{
-        UserEntity user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     
         // Handle null role for users who haven't selected a role yet
         String roleAuthority = user.getRole() != null 
@@ -31,7 +31,7 @@ public class CustomUserDetailsService  implements UserDetailsService{
             : "ROLE_UNASSIGNED";
     
         return new User(
-            user.getEmail(),
+            user.getUsername(),
             user.getPassword(),
             Collections.singletonList(new SimpleGrantedAuthority(roleAuthority))
         );

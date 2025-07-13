@@ -37,7 +37,7 @@ public class UserMapper {
             : "ROLE_UNASSIGNED";
             
         return new User(
-            user.getEmail(),
+            user.getUsername(), // Use actual username instead of email
             user.getPassword(),
             Collections.singleton(new SimpleGrantedAuthority(authority))
         );

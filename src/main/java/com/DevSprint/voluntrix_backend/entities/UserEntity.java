@@ -83,7 +83,7 @@ public class UserEntity implements UserDetails{
 
     @Override
     public String getUsername() {
-        return this.email; // Usually the email is used as the username
+        return this.username; // Use the actual username field, not email
     }
 
     @Override

@@ -6,10 +6,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.DevSprint.voluntrix_backend.dtos.AuthResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.LoginRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.SignupRequestDTO;
-import com.DevSprint.voluntrix_backend.dtos.SignupResponseDTO;
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.exceptions.UserNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
@@ -43,7 +43,7 @@ public class AuthService {
         return email != null && EMAIL_PATTERN.matcher(email).matches();
     }
 
-    public ApiResponse<SignupResponseDTO> signUp(SignupRequestDTO request) {
+    public ApiResponse<AuthResponseDTO> signUp(SignupRequestDTO request) {
         // Additional server-side email validation
         if (!isValidEmail(request.getEmail())) {
             throw new IllegalArgumentException("Invalid email format.");
@@ -66,19 +66,41 @@ public class AuthService {
         UserDetails userDetails = userMapper.toUserDetails(user);
         String token = jwtService.generateToken(userDetails);
 
-        ApiResponse<SignupResponseDTO> response = new ApiResponse<SignupResponseDTO>(
-            "User registered successfully. Please check your email for verification code.",
-            new SignupResponseDTO(
-                token,
-                user.getRole() != null ? user.getRole().name() : null,
-                user.getIsProfileCompleted()
-            )
-        );
+        // Determine next step for the user
+        String nextStep = user.getIsVerified() ? 
+            (user.getRole() == null ? "SELECT_ROLE" : "COMPLETE_PROFILE") : 
+            "VERIFY_EMAIL";
 
-        return response;
+        String redirectUrl = switch (nextStep) {
+            case "VERIFY_EMAIL" -> "/verify-email";
+            case "SELECT_ROLE" -> "/select-role";
+            case "COMPLETE_PROFILE" -> "/complete-profile";
+            default -> "/dashboard";
+        };
+
+        AuthResponseDTO authResponse = AuthResponseDTO.builder()
+            .token(token)
+            .userId(user.getUserId())
+            .email(user.getEmail())
+            .username(user.getUsername())
+            .fullName(user.getFullName())
+            .role(user.getRole() != null ? user.getRole().name() : null)
+            .isEmailVerified(user.getIsVerified())
+            .isProfileCompleted(user.getIsProfileCompleted())
+            .createdAt(user.getCreatedAt())
+            .lastLogin(user.getLastLogin())
+            .authProvider(user.getAuthProvider().name())
+            .nextStep(nextStep)
+            .redirectUrl(redirectUrl)
+            .build();
+
+        return new ApiResponse<>(
+            "User registered successfully. Please check your email for verification code.",
+            authResponse
+        );
     }
 
-    public SignupResponseDTO login(LoginRequestDTO request) {
+    public AuthResponseDTO login(LoginRequestDTO request) {
         UserEntity user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("Invalid email or password"));
         
@@ -102,11 +124,40 @@ public class AuthService {
             };
         }
 
-        return new SignupResponseDTO(
-            token,
-            user.getRole() != null ? user.getRole().name() : null,
-            isProfileCompleted
-        );
+        // Determine next step for the user
+        String nextStep;
+        if (!user.getIsVerified()) {
+            nextStep = "VERIFY_EMAIL";
+        } else if (user.getRole() == null) {
+            nextStep = "SELECT_ROLE";
+        } else if (!isProfileCompleted) {
+            nextStep = "COMPLETE_PROFILE";
+        } else {
+            nextStep = "DASHBOARD";
+        }
+
+        String redirectUrl = switch (nextStep) {
+            case "VERIFY_EMAIL" -> "/verify-email";
+            case "SELECT_ROLE" -> "/select-role";
+            case "COMPLETE_PROFILE" -> "/complete-profile";
+            default -> "/dashboard";
+        };
+
+        return AuthResponseDTO.builder()
+            .token(token)
+            .userId(user.getUserId())
+            .email(user.getEmail())
+            .username(user.getUsername())
+            .fullName(user.getFullName())
+            .role(user.getRole() != null ? user.getRole().name() : null)
+            .isEmailVerified(user.getIsVerified())
+            .isProfileCompleted(isProfileCompleted)
+            .createdAt(user.getCreatedAt())
+            .lastLogin(user.getLastLogin())
+            .authProvider(user.getAuthProvider().name())
+            .nextStep(nextStep)
+            .redirectUrl(redirectUrl)
+            .build();
     }
 
     public ApiResponse<EmailVerificationResponseDTO> verifyEmail(Long userId, String otp) {
