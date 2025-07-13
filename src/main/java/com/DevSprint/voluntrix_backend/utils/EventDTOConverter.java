@@ -129,4 +129,3 @@ public class EventDTOConverter {
                 .collect(Collectors.toList());
     }
 }
-

@@ -1,5 +1,6 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
+import com.DevSprint.voluntrix_backend.enums.TaskDifficulty;
 import com.DevSprint.voluntrix_backend.enums.TaskStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -31,6 +32,10 @@ public class TaskCreateDTO {
     @NotNull(message = "Task status is required")
     private TaskStatus taskStatus; // TO_DO, IN_PROGRESS, DONE
 
+    @NotNull(message = "Task difficulty is required")
+    private TaskDifficulty taskDifficulty; // EASY, MEDIUM, HARD, EXTREME
+
+    @NotNull(message = "Assignee ID is required")
     private Long assigneeId;
 
     @NotNull(message = "Event ID is required")

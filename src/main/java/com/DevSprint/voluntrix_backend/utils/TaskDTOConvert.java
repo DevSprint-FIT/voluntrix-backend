@@ -48,6 +48,7 @@ public class TaskDTOConvert {
         task.setDescription(taskCreateDTO.getDescription());
         task.setDueDate(taskCreateDTO.getDueDate());
         task.setTaskStatus(taskCreateDTO.getTaskStatus());
+        task.setTaskDifficulty(taskCreateDTO.getTaskDifficulty());
         return task;
     }
 
