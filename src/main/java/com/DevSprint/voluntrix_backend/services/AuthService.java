@@ -6,10 +6,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDto;
+import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.LoginRequestDTO;
-import com.DevSprint.voluntrix_backend.dtos.SignupRequestDto;
-import com.DevSprint.voluntrix_backend.dtos.SignupResponseDto;
+import com.DevSprint.voluntrix_backend.dtos.SignupRequestDTO;
+import com.DevSprint.voluntrix_backend.dtos.SignupResponseDTO;
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.exceptions.UserNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
@@ -43,7 +43,7 @@ public class AuthService {
         return email != null && EMAIL_PATTERN.matcher(email).matches();
     }
 
-    public ApiResponse<SignupResponseDto> signUp(SignupRequestDto request) {
+    public ApiResponse<SignupResponseDTO> signUp(SignupRequestDTO request) {
         // Additional server-side email validation
         if (!isValidEmail(request.getEmail())) {
             throw new IllegalArgumentException("Invalid email format.");
@@ -66,9 +66,9 @@ public class AuthService {
         UserDetails userDetails = userMapper.toUserDetails(user);
         String token = jwtService.generateToken(userDetails);
 
-        ApiResponse<SignupResponseDto> response = new ApiResponse<SignupResponseDto>(
+        ApiResponse<SignupResponseDTO> response = new ApiResponse<SignupResponseDTO>(
             "User registered successfully. Please check your email for verification code.",
-            new SignupResponseDto(
+            new SignupResponseDTO(
                 token,
                 user.getRole() != null ? user.getRole().name() : null,
                 user.getIsProfileCompleted()
@@ -78,7 +78,7 @@ public class AuthService {
         return response;
     }
 
-    public SignupResponseDto login(LoginRequestDTO request) {
+    public SignupResponseDTO login(LoginRequestDTO request) {
         UserEntity user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("Invalid email or password"));
         
@@ -102,14 +102,14 @@ public class AuthService {
             };
         }
 
-        return new SignupResponseDto(
+        return new SignupResponseDTO(
             token,
             user.getRole() != null ? user.getRole().name() : null,
             isProfileCompleted
         );
     }
 
-    public ApiResponse<EmailVerificationResponseDto> verifyEmail(Long userId, String otp) {
+    public ApiResponse<EmailVerificationResponseDTO> verifyEmail(Long userId, String otp) {
         UserEntity user = userRepository.findById(userId)
             .orElseThrow(() -> new UserNotFoundException("User not found"));
 
@@ -118,12 +118,12 @@ public class AuthService {
         if (isVerified) {
             return new ApiResponse<>(
                 "Email verified successfully",
-                new EmailVerificationResponseDto(true, "Email verified successfully")
+                new EmailVerificationResponseDTO(true, "Email verified successfully")
             );
         } else {
             return new ApiResponse<>(
                 "Invalid or expired OTP",
-                new EmailVerificationResponseDto(false, "Invalid or expired OTP")
+                new EmailVerificationResponseDTO(false, "Invalid or expired OTP")
             );
         }
     }

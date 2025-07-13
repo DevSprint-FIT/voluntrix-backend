@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UserProfileStatusDto {
+public class UserProfileStatusDTO {
     private UserType role;
     private boolean isProfileCompleted;
 }

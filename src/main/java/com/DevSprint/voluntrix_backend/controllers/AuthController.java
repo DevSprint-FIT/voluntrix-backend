@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDto;
+import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.LoginRequestDTO;
-import com.DevSprint.voluntrix_backend.dtos.SignupRequestDto;
-import com.DevSprint.voluntrix_backend.dtos.SignupResponseDto;
-import com.DevSprint.voluntrix_backend.dtos.UserProfileStatusDto;
-import com.DevSprint.voluntrix_backend.dtos.VerifyEmailRequestDto;
+import com.DevSprint.voluntrix_backend.dtos.SignupRequestDTO;
+import com.DevSprint.voluntrix_backend.dtos.SignupResponseDTO;
+import com.DevSprint.voluntrix_backend.dtos.UserProfileStatusDTO;
+import com.DevSprint.voluntrix_backend.dtos.VerifyEmailRequestDTO;
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.services.AuthService;
 import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
@@ -33,22 +33,22 @@ public class AuthController {
     private final CurrentUserService currentUserService;
     
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<SignupResponseDto>> signup(@RequestBody @Valid SignupRequestDto request) {
+    public ResponseEntity<ApiResponse<SignupResponseDTO>> signup(@RequestBody @Valid SignupRequestDTO request) {
         return ResponseEntity.ok(authService.signUp(request));
     }
 
     @GetMapping("/profile-status")
-    public ResponseEntity<UserProfileStatusDto> getUserProfileStatus() {
+    public ResponseEntity<UserProfileStatusDTO> getUserProfileStatus() {
         Long userId = currentUserService.getCurrentUserId();
         UserEntity user = currentUserService.getCurrentUser(userId);
 
-        return ResponseEntity.ok(new UserProfileStatusDto(user.getRole(), user.getIsProfileCompleted()));
+        return ResponseEntity.ok(new UserProfileStatusDTO(user.getRole(), user.getIsProfileCompleted()));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<SignupResponseDto>> login(@RequestBody @Valid LoginRequestDTO request) {
-        SignupResponseDto response = authService.login(request);
-        return ResponseEntity.ok(new ApiResponse<SignupResponseDto>("Login successful", response));
+    public ResponseEntity<ApiResponse<SignupResponseDTO>> login(@RequestBody @Valid LoginRequestDTO request) {
+        SignupResponseDTO response = authService.login(request);
+        return ResponseEntity.ok(new ApiResponse<SignupResponseDTO>("Login successful", response));
     }
 
     @PostMapping("/logout")
@@ -57,7 +57,7 @@ public class AuthController {
     }
 
     @PostMapping("/verify-email")
-    public ResponseEntity<ApiResponse<EmailVerificationResponseDto>> verifyEmail(@RequestBody @Valid VerifyEmailRequestDto request) {
+    public ResponseEntity<ApiResponse<EmailVerificationResponseDTO>> verifyEmail(@RequestBody @Valid VerifyEmailRequestDTO request) {
         Long userId = currentUserService.getCurrentUserId();
         return ResponseEntity.ok(authService.verifyEmail(userId, request.getOtp()));
     }
