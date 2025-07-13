@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.DevSprint.voluntrix_backend.dtos.SignupRequestDto;
+import com.DevSprint.voluntrix_backend.dtos.SignupRequestDTO;
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.enums.AuthProvider;
 
@@ -20,7 +20,7 @@ public class UserMapper {
     
     private final PasswordEncoder passwordEncoder;
 
-    public UserEntity toEntity(SignupRequestDto dto) {
+    public UserEntity toEntity(SignupRequestDTO dto) {
         UserEntity user = new UserEntity();
         user.setEmail(dto.getEmail());
         user.setUsername(dto.getUsername());
