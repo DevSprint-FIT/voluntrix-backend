@@ -3,6 +3,7 @@ package com.DevSprint.voluntrix_backend.utils;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.DevSprint.voluntrix_backend.enums.TaskStatus;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +11,6 @@ import com.DevSprint.voluntrix_backend.dtos.TaskDTO;
 import com.DevSprint.voluntrix_backend.dtos.TaskCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.TaskUpdateDTO;
 import com.DevSprint.voluntrix_backend.entities.TaskEntity;
-import com.DevSprint.voluntrix_backend.enums.TaskStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,6 +50,7 @@ public class TaskDTOConvert {
         task.setDueDate(taskCreateDTO.getDueDate());
         task.setTaskStatus(TaskStatus.TO_DO); // Automatically set to TO_DO for new tasks
         task.setTaskDifficulty(taskCreateDTO.getTaskDifficulty());
+        task.setTaskRewardPoints(10);
         return task;
     }
 

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/public/tasks")
@@ -66,4 +67,11 @@ public class TaskController {
         taskService.deleteTask(taskId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/volunteer/{username}/rewards")
+    public ResponseEntity<Map<String, Object>> getVolunteerRewardStats(@PathVariable String username) {
+        Map<String, Object> rewardStats = taskService.getVolunteerRewardStats(username);
+        return ResponseEntity.ok(rewardStats);
+    }
+
 }

@@ -40,4 +40,9 @@ public class TaskDTO {
 
     private Long eventId;
     private String eventTitle;
+
+    private Integer taskRewardPoints;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime taskReviewedDate;
 }
