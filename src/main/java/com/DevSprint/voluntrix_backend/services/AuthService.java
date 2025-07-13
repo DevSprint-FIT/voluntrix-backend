@@ -35,6 +35,10 @@ public class AuthService {
             throw new IllegalArgumentException("Email already registered.");
         }
 
+        if(userRepository.existsByUsername(request.getUsername())) {
+            throw new IllegalArgumentException("Username already taken.");
+        }
+
         UserEntity user = userMapper.toEntity(request);
         userRepository.save(user);
 
@@ -45,7 +49,7 @@ public class AuthService {
             "User registered successfully",
             new SignupResponseDto(
                 token,
-                user.getRole().name(),
+                user.getRole() != null ? user.getRole().name() : null,
                 user.getIsProfileCompleted()
             )
         );
@@ -61,18 +65,25 @@ public class AuthService {
             throw new UserNotFoundException("Invalid email or password");
         }
 
+        // Update last login timestamp
+        user.setLastLogin(java.time.LocalDateTime.now());
+        userRepository.save(user);
+
         String token = jwtService.generateToken(user);
 
-        boolean isProfileCompleted = switch (user.getRole()) {
-            case VOLUNTEER -> volunteerRepository.existsById(user.getUserId());
-            case SPONSOR -> sponsorRepository.existsById(user.getUserId());
-            case ORGANIZATION -> organizationRepository.existsById(user.getUserId());
-            case PUBLIC -> false;
-        };
+        boolean isProfileCompleted = false;
+        if (user.getRole() != null) {
+            isProfileCompleted = switch (user.getRole()) {
+                case VOLUNTEER -> volunteerRepository.existsById(user.getUserId());
+                case SPONSOR -> sponsorRepository.existsById(user.getUserId());
+                case ORGANIZATION -> organizationRepository.existsById(user.getUserId());
+                case PUBLIC -> false;
+            };
+        }
 
         return new SignupResponseDto(
             token,
-            user.getRole().name(),
+            user.getRole() != null ? user.getRole().name() : null,
             isProfileCompleted
         );
     }

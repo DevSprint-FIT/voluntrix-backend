@@ -42,20 +42,31 @@ public class UserEntity implements UserDetails{
     @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(unique = true, nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String fullName;
+
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_type")
+    private AuthProvider authProvider;
+
+    @Column(name = "email_verified", nullable = false)
+    @Builder.Default
+    private Boolean isVerified = false;
 
     @Enumerated(EnumType.STRING)
     private UserType role;
 
-    @Enumerated(EnumType.STRING)
-    private AuthProvider authProvider;
-    
     @CreationTimestamp
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    @Builder.Default
-    private Boolean isVerified = false;
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
 
     @Column(nullable = false)
     @Builder.Default
@@ -64,6 +75,9 @@ public class UserEntity implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (role == null) {
+            return List.of(new SimpleGrantedAuthority("ROLE_UNASSIGNED"));
+        }
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
     }
 
