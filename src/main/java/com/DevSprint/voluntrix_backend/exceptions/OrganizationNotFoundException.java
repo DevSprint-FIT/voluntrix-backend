@@ -1,0 +1,7 @@
+package com.DevSprint.voluntrix_backend.exceptions;
+
+public class OrganizationNotFoundException extends RuntimeException {
+    public OrganizationNotFoundException(String message) {
+        super(message);
+    }
+}
