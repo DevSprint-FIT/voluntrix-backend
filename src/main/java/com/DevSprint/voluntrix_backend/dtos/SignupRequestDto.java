@@ -18,4 +18,7 @@ public class SignupRequestDto {
 
     @NotNull
     private UserType role;
+
+    @NotBlank
+    private String username;
 }
