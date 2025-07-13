@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDto;
 import com.DevSprint.voluntrix_backend.dtos.LoginRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.SignupRequestDto;
 import com.DevSprint.voluntrix_backend.dtos.SignupResponseDto;
@@ -31,6 +32,7 @@ public class AuthService {
     private final VolunteerRepository volunteerRepository;
     private final SponsorRepository sponsorRepository;
     private final OrganizationRepository organizationRepository;
+    private final EmailVerificationService emailVerificationService;
 
     // Email validation pattern
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
@@ -58,11 +60,14 @@ public class AuthService {
         UserEntity user = userMapper.toEntity(request);
         userRepository.save(user);
 
+        // Send verification email
+        emailVerificationService.sendVerificationEmail(user);
+
         UserDetails userDetails = userMapper.toUserDetails(user);
         String token = jwtService.generateToken(userDetails);
 
         ApiResponse<SignupResponseDto> response = new ApiResponse<SignupResponseDto>(
-            "User registered successfully",
+            "User registered successfully. Please check your email for verification code.",
             new SignupResponseDto(
                 token,
                 user.getRole() != null ? user.getRole().name() : null,
@@ -101,6 +106,41 @@ public class AuthService {
             token,
             user.getRole() != null ? user.getRole().name() : null,
             isProfileCompleted
+        );
+    }
+
+    public ApiResponse<EmailVerificationResponseDto> verifyEmail(Long userId, String otp) {
+        UserEntity user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        boolean isVerified = emailVerificationService.verifyOTP(user, otp);
+        
+        if (isVerified) {
+            return new ApiResponse<>(
+                "Email verified successfully",
+                new EmailVerificationResponseDto(true, "Email verified successfully")
+            );
+        } else {
+            return new ApiResponse<>(
+                "Invalid or expired OTP",
+                new EmailVerificationResponseDto(false, "Invalid or expired OTP")
+            );
+        }
+    }
+
+    public ApiResponse<String> resendVerificationEmail(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (user.getIsVerified()) {
+            throw new IllegalArgumentException("Email is already verified");
+        }
+
+        emailVerificationService.sendVerificationEmail(user);
+        
+        return new ApiResponse<>(
+            "Verification email sent successfully",
+            "Please check your email for the new verification code"
         );
     }
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class SignupResponseDto {
+public class SignupResponseDTO {
     private String token;
     private String role;
     private boolean isProfileCompleted;

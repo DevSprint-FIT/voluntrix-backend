@@ -8,10 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDto;
 import com.DevSprint.voluntrix_backend.dtos.LoginRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.SignupRequestDto;
 import com.DevSprint.voluntrix_backend.dtos.SignupResponseDto;
 import com.DevSprint.voluntrix_backend.dtos.UserProfileStatusDto;
+import com.DevSprint.voluntrix_backend.dtos.VerifyEmailRequestDto;
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.services.AuthService;
 import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
@@ -52,5 +54,17 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logout() {
         return ResponseEntity.ok(new ApiResponse<>("Logout successful", "You have been logged out successfully."));
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<ApiResponse<EmailVerificationResponseDto>> verifyEmail(@RequestBody @Valid VerifyEmailRequestDto request) {
+        Long userId = currentUserService.getCurrentUserId();
+        return ResponseEntity.ok(authService.verifyEmail(userId, request.getOtp()));
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<ApiResponse<String>> resendVerificationEmail() {
+        Long userId = currentUserService.getCurrentUserId();
+        return ResponseEntity.ok(authService.resendVerificationEmail(userId));
     }
 }
