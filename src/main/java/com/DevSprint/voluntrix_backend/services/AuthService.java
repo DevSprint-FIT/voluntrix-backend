@@ -1,5 +1,7 @@
 package com.DevSprint.voluntrix_backend.services;
 
+import java.util.regex.Pattern;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,21 @@ public class AuthService {
     private final SponsorRepository sponsorRepository;
     private final OrganizationRepository organizationRepository;
 
+    // Email validation pattern
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+        "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+    );
+
+    private boolean isValidEmail(String email) {
+        return email != null && EMAIL_PATTERN.matcher(email).matches();
+    }
+
     public ApiResponse<SignupResponseDto> signUp(SignupRequestDto request) {
+        // Additional server-side email validation
+        if (!isValidEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Invalid email format.");
+        }
+
         if(userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already registered.");
         }

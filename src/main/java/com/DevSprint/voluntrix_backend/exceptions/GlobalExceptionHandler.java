@@ -28,8 +28,10 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
+        // Return the first error for better UX, or all errors if needed
+        String firstErrorMessage = errors.values().iterator().next();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponse("VALIDATION_FAILED", errors.toString()));
+                .body(new ErrorResponse("VALIDATION_FAILED", firstErrorMessage));
     }
 
     // Handles enum conversion errors
