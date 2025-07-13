@@ -11,6 +11,7 @@ import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.services.EventService;
 import com.DevSprint.voluntrix_backend.services.VolunteerService;
 import com.DevSprint.voluntrix_backend.services.VolunteerEventParticipationService;
+import com.DevSprint.voluntrix_backend.dtos.EventLeaderboardDTO;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -90,5 +91,12 @@ public class VolunteerEventParticipationController {
     public ResponseEntity<Void> deleteParticipation(@PathVariable Long volunteerId, @PathVariable Long eventId) {
         participationService.deleteParticipationByVolunteerAndEvent(volunteerId, eventId);
         return ResponseEntity.noContent().build();
+    }
+
+    // Get event leaderboard
+    @GetMapping("/event/{eventId}/leaderboard")
+    public ResponseEntity<List<EventLeaderboardDTO>> getEventLeaderboard(@PathVariable Long eventId) {
+        List<EventLeaderboardDTO> leaderboard = participationService.getEventLeaderboard(eventId);
+        return ResponseEntity.ok(leaderboard);
     }
 }
