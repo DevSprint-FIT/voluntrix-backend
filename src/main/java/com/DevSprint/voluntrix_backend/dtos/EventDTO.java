@@ -46,5 +46,7 @@ public class EventDTO implements Serializable {
     private Long eventHostId;
 
     private Long organizationId;
+
+    private Integer eventHostRewardPoints;
 }
 

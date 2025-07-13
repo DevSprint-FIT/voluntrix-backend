@@ -81,5 +81,8 @@ public class EventEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "organization_id", nullable = true)
     private OrganizationEntity organization;
+
+    @Builder.Default
+    private Integer eventHostRewardPoints = 0;
 }
 
