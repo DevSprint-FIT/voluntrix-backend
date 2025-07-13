@@ -15,6 +15,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import com.DevSprint.voluntrix_backend.security.JwtAuthenticationFilter;
+import com.DevSprint.voluntrix_backend.security.OAuth2SuccessHandler;
 import com.DevSprint.voluntrix_backend.services.auth.CustomUserDetailsService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService customUserDetailsService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -44,12 +46,15 @@ public class SecurityConfig {
                     .anyRequest().authenticated() // Require authentication for everything else
             )
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Use stateless session management
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Use stateless session management4
+            .oauth2Login(oauth2 -> oauth2
+                .successHandler(oAuth2SuccessHandler)
+            )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter
             .userDetailsService(customUserDetailsService) // Set custom user details service
             .formLogin(form -> form.disable())
             .httpBasic(httpBasic -> httpBasic.disable());
-
+        
         return http.build();
     }
 

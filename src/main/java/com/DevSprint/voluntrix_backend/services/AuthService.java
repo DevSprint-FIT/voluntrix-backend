@@ -67,7 +67,7 @@ public class AuthService {
             case VOLUNTEER -> volunteerRepository.existsById(user.getUserId());
             case SPONSOR -> sponsorRepository.existsById(user.getUserId());
             case ORGANIZATION -> organizationRepository.existsById(user.getUserId());
-            case PUBLIC -> true;
+            case PUBLIC -> false;
         };
 
         return new SignupResponseDto(
@@ -76,5 +76,4 @@ public class AuthService {
             isProfileCompleted
         );
     }
-    
 }
