@@ -36,7 +36,7 @@ public class VolunteerEntity {
 
     @Column(nullable = false, unique = true)
     private String email;
-  
+
     @Column
     private String institute;
 
@@ -44,11 +44,10 @@ public class VolunteerEntity {
     private Boolean isAvailable = false;
 
     @Column(nullable = false)
-
-    private Integer volunteerLevel = 1; 
+    private Integer volunteerLevel = 1;
 
     @Column(nullable = false)
-    private Integer rewardPoints = 0; 
+    private Integer rewardPoints = 0;
 
     @Column(nullable = false)
     private Boolean isEventHost = false;
@@ -61,6 +60,9 @@ public class VolunteerEntity {
 
     @Column(nullable = false, unique = true, length = 15)
     private String phoneNumber;
+
+    @Column(length = 2048)
+    private String profilePictureUrl;
 
     @PrePersist
     protected void onCreate() {

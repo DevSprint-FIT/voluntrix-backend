@@ -33,16 +33,19 @@ public class CommentService {
         UserType userType = parseUserType(dto.getUserType());
 
         String commenterName;
+        String profileImageUrl;
 
         // Validate the user BEFORE saving the comment
         switch (userType) {
             case VOLUNTEER -> {
                 var volunteerDTO = volunteerService.getVolunteerByUsername(dto.getUserUsername());
                 commenterName = volunteerDTO.getFirstName() + " " + volunteerDTO.getLastName();
+                profileImageUrl = volunteerDTO.getProfilePictureUrl();
             }
             case ORGANIZATION -> {
-                var organizationDTO = organizationService.getOrganizationByUsername(dto.getUserUsername()); // throws if not found
+                var organizationDTO = organizationService.getOrganizationByUsername(dto.getUserUsername());
                 commenterName = organizationDTO.getName();
+                profileImageUrl = organizationDTO.getImageUrl();
             }
             default -> throw new InvalidUserTypeException("Invalid userType: " + dto.getUserType());
         }
@@ -51,29 +54,31 @@ public class CommentService {
         CommentEntity comment = commentDTOConverter.toEntity(dto, feed);
         CommentEntity savedComment = commentRepository.save(comment);
 
-        return commentDTOConverter.toDTO(savedComment, commenterName);
+        return commentDTOConverter.toDTO(savedComment, commenterName, profileImageUrl);
     }
-
 
     public List<CommentDTO> getCommentsForPost(Long socialFeedId) {
         List<CommentEntity> comments = commentRepository.findBySocialFeedIdOrderByCreatedAtAsc(socialFeedId);
 
         return comments.stream().map(comment -> {
             String commenterName;
+            String profileImageUrl;
 
             switch (comment.getUserType()) {
                 case VOLUNTEER -> {
                     var volunteerDTO = volunteerService.getVolunteerByUsername(comment.getUserUsername());
                     commenterName = volunteerDTO.getFirstName() + " " + volunteerDTO.getLastName();
+                    profileImageUrl = volunteerDTO.getProfilePictureUrl();
                 }
                 case ORGANIZATION -> {
                     var organizationDTO = organizationService.getOrganizationByUsername(comment.getUserUsername());
                     commenterName = organizationDTO.getName();
+                    profileImageUrl = organizationDTO.getImageUrl();
                 }
                 default -> throw new InvalidUserTypeException("Invalid userType: " + comment.getUserType());
             }
 
-            return commentDTOConverter.toDTO(comment, commenterName);
+            return commentDTOConverter.toDTO(comment, commenterName, profileImageUrl);
         }).collect(Collectors.toList());
     }
 

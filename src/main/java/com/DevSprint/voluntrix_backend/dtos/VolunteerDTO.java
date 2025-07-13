@@ -20,10 +20,11 @@ public class VolunteerDTO {
     private String email;
     private String institute;
     private Boolean isAvailable;
-    private Integer volunteerLevel; 
-    private Integer rewardPoints; 
-    private Boolean isEventHost;  
+    private Integer volunteerLevel;
+    private Integer rewardPoints;
+    private Boolean isEventHost;
     private LocalDate joinedDate;
     private String about;
     private String phoneNumber;
+    private String profilePictureUrl;
 }

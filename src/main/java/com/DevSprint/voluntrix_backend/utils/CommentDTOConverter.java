@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class CommentDTOConverter {
 
-    public CommentDTO toDTO(CommentEntity entity, String commenterName) {
+    public CommentDTO toDTO(CommentEntity entity, String commenterName, String profileImageUrl) {
         CommentDTO dto = new CommentDTO();
         dto.setId(entity.getId());
         dto.setSocialFeedId(entity.getSocialFeed().getId());
@@ -21,7 +21,7 @@ public class CommentDTOConverter {
         dto.setContent(entity.getContent());
         dto.setCreatedAt(entity.getCreatedAt().format(DateTimeFormatter.ISO_DATE_TIME));
         dto.setCommenterName(commenterName);
-       // dto.setProfileImageUrl(profileImageUrl);
+        dto.setProfileImageUrl(profileImageUrl); // Now properly set
         return dto;
     }
 
@@ -35,3 +35,4 @@ public class CommentDTOConverter {
         return entity;
     }
 }
+

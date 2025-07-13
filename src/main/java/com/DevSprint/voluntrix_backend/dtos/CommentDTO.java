@@ -14,5 +14,5 @@ public class CommentDTO {
     private String content;
     private String createdAt;
     private String commenterName;
-   // private String profileImageUrl;
+    private String profileImageUrl;
 }

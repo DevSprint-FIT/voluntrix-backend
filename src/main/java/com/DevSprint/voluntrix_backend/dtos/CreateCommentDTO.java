@@ -11,4 +11,5 @@ public class CreateCommentDTO {
     private String userUsername;
     private String userType;
     private String content;
+    private String profileImageUrl;
 }
