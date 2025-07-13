@@ -75,6 +75,9 @@ public class EventDTOConverter {
             eventEntity.setOrganization(organization);
         }
 
+        return eventEntity;
+    }
+
     // EventDTO to EventEntity
     public EventEntity toEventEntity(EventDTO eventDTO) {
         EventEntity eventEntity = modelMapper.map(eventDTO, EventEntity.class);
