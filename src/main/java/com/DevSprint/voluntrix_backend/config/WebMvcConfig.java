@@ -12,12 +12,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         // Serve static resources from classpath:/static/
         registry.addResourceHandler("/**")
                 .addResourceLocations("classpath:/static/")
-                .setCachePeriod(3600)
+                .setCachePeriod(0)  // Disable caching during development
                 .resourceChain(true);
-        
-        // Specifically handle chat.html
-        registry.addResourceHandler("/chat.html")
-                .addResourceLocations("classpath:/static/")
-                .setCachePeriod(3600);
     }
 }

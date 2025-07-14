@@ -1,377 +1,202 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta charset="UTF-8">
-    <title>Real-Time Chat</title>
+    <title>Chat Application</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 20px;
-        }
-
         .chat-container {
             max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            margin: 30px auto;
         }
-
-        .chat-header {
-            background: #25d366;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .user-section {
-            padding: 15px;
-            background: #e8f4f8;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .user-section input {
-            width: 200px;
-            padding: 8px;
-            margin: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .user-section button {
-            padding: 8px 15px;
-            background: #25d366;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
         .chat-messages {
             height: 400px;
             overflow-y: auto;
-            padding: 15px;
-            background: #f8f9fa;
-        }
-
-        .message {
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 10px;
-            max-width: 70%;
-        }
-
-        .message.sent {
-            background: #dcf8c6;
-            margin-left: auto;
-            text-align: right;
-        }
-
-        .message.received {
-            background: white;
-            margin-right: auto;
-        }
-
-        .message.system {
-            background: #fff3cd;
-            text-align: center;
-            margin: 5px auto;
-            max-width: 50%;
-            color: #856404;
-        }
-
-        .message-input {
-            display: flex;
-            padding: 15px;
-            background: white;
-            border-top: 1px solid #ddd;
-        }
-
-        .message-input input {
-            flex: 1;
-            padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 25px;
-            margin-right: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
         }
-
-        .message-input button {
-            padding: 10px 20px;
-            background: #25d366;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
         }
-
+        .received {
+            background-color: #f1f0f0;
+        }
+        .sent {
+            background-color: #dcf8c6;
+            margin-left: auto;
+            margin-right: 0;
+            max-width: 80%;
+        }
         .online-users {
-            background: #e8f4f8;
-            padding: 10px 15px;
-            border-bottom: 1px solid #ddd;
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 15px;
         }
-
-        .status {
-            font-size: 12px;
+        .timestamp {
+            font-size: 0.8em;
             color: #666;
-            margin-top: 5px;
-        }
-
-        .typing-indicator {
-            font-style: italic;
-            color: #666;
-            padding: 5px 15px;
         }
     </style>
 </head>
-
 <body>
-    <div class="chat-container">
-        <div class="chat-header">
-            <h2>WhatsApp-like Real-Time Chat</h2>
-        </div>
-
-        <div class="user-section">
-            <input type="text" id="userId" placeholder="Your User ID" />
-            <input type="text" id="userName" placeholder="Your Name" />
-            <input type="text" id="receiverId" placeholder="Receiver ID" />
-            <button onclick="connect()">Connect</button>
-            <button onclick="disconnect()">Disconnect</button>
-            <span id="connectionStatus">Disconnected</span>
-        </div>
-
-        <div class="online-users">
-            <strong>Online Users:</strong> <span id="onlineUsers">None</span>
-        </div>
-
-        <div class="chat-messages" id="chatMessages">
-            <div class="message system">Welcome! Enter your details and click Connect to start chatting.</div>
-        </div>
-
-        <div class="typing-indicator" id="typingIndicator" style="display: none;"></div>
-
-        <div class="message-input">
-            <input type="text" id="messageInput" placeholder="Type a message..." disabled />
-            <button onclick="sendMessage()" disabled id="sendButton">Send</button>
+    <div class="container chat-container">
+        <div class="row">
+            <div class="col-md-9">
+                <h2>Chat Room</h2>
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="input-group">
+                    <input type="text" id="message" class="form-control" placeholder="Type your message...">
+                    <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <h3>Online Users</h3>
+                <div class="online-users" id="online-users"></div>
+            </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script>
         let stompClient = null;
-        let currentUserId = null;
-        let currentUserName = null;
-        let currentReceiverId = null;
-        let typingTimer = null;
+        const userId = generateUserId(); // In real app, this would come from authentication
+        const username = 'User-' + userId.substring(0, 4); // Simple username generation
 
         function connect() {
-            currentUserId = document.getElementById('userId').value.trim();
-            currentUserName = document.getElementById('userName').value.trim();
-            currentReceiverId = document.getElementById('receiverId').value.trim();
-
-            if (!currentUserId || !currentUserName) {
-                alert('Please enter both User ID and Name');
-                return;
-            }
-
-            const socket = new SockJS('http://localhost:8080/ws');
+            const socket = new SockJS('/ws');
             stompClient = Stomp.over(socket);
-
-            stompClient.connect({}, function (frame) {
+            
+            stompClient.connect({
+                userId: userId,
+                username: username
+            }, function(frame) {
                 console.log('Connected: ' + frame);
-                document.getElementById('connectionStatus').textContent = 'Connected';
-                document.getElementById('messageInput').disabled = false;
-                document.getElementById('sendButton').disabled = false;
-
+                
+                // Subscribe to public messages
+                stompClient.subscribe('/topic/public', onMessageReceived);
+                
                 // Subscribe to private messages
-                stompClient.subscribe('/user/topic/messages', function (message) {
-                    showMessage(JSON.parse(message.body), 'received');
-                });
-
-                // Subscribe to message status updates
-                stompClient.subscribe('/user/topic/message-status', function (message) {
-                    updateMessageStatus(JSON.parse(message.body));
-                });
-
-                // Subscribe to typing indicators
-                stompClient.subscribe('/user/topic/typing', function (message) {
-                    showTypingIndicator(JSON.parse(message.body));
-                });
-
-                // Subscribe to public messages (join/leave)
-                stompClient.subscribe('/topic/public', function (message) {
-                    showMessage(JSON.parse(message.body), 'system');
-                });
-
+                stompClient.subscribe('/user/' + userId + '/topic/messages', onPrivateMessageReceived);
+                
                 // Subscribe to user status updates
-                stompClient.subscribe('/topic/user-status', function (message) {
-                    updateUserStatus(JSON.parse(message.body));
-                });
-
-                // Add user to chat
-                stompClient.send("/app/chat.addUser", {}, JSON.stringify({
-                    senderId: currentUserId,
-                    senderName: currentUserName,
-                    type: 'JOIN'
-                }));
-
-                // Load chat history
-                loadChatHistory();
+                stompClient.subscribe('/topic/user-status', onUserStatusReceived);
+                
+                // Send join message
+                sendJoinMessage();
+                
+                // Load online users
+                loadOnlineUsers();
             });
         }
 
-        function disconnect() {
-            if (stompClient !== null) {
-                stompClient.disconnect();
-            }
-            document.getElementById('connectionStatus').textContent = 'Disconnected';
-            document.getElementById('messageInput').disabled = true;
-            document.getElementById('sendButton').disabled = true;
-            console.log("Disconnected");
-        }
-
         function sendMessage() {
-            const messageInput = document.getElementById('messageInput');
+            const messageInput = document.getElementById('message');
             const messageContent = messageInput.value.trim();
-
-            if (messageContent && stompClient && currentReceiverId) {
+            
+            if(messageContent && stompClient) {
                 const chatMessage = {
-                    senderId: currentUserId,
-                    senderName: currentUserName,
-                    receiverId: currentReceiverId,
+                    senderId: userId,
+                    senderName: username,
                     content: messageContent,
-                    type: 'CHAT'
+                    type: 'CHAT',
+                    timestamp: new Date()
                 };
-
+                
                 stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
-                showMessage(chatMessage, 'sent');
                 messageInput.value = '';
-            } else if (!currentReceiverId) {
-                alert('Please enter a Receiver ID');
             }
         }
 
-        function showMessage(message, type) {
-            const chatMessages = document.getElementById('chatMessages');
+        function onMessageReceived(payload) {
+            const message = JSON.parse(payload.body);
+            displayMessage(message);
+        }
+
+        function onPrivateMessageReceived(payload) {
+            const message = JSON.parse(payload.body);
+            displayMessage(message, true);
+        }
+
+        function onUserStatusReceived(payload) {
+            const status = JSON.parse(payload.body);
+            updateUserStatus(status);
+        }
+
+        function displayMessage(message, isPrivate = false) {
+            const messagesContainer = document.getElementById('chat-messages');
             const messageElement = document.createElement('div');
-
-            if (message.type === 'JOIN' || message.type === 'LEAVE') {
-                messageElement.className = 'message system';
-                messageElement.textContent = message.senderName + (message.type === 'JOIN' ? ' joined the chat' : ' left the chat');
+            
+            const isOwnMessage = message.senderId === userId;
+            messageElement.classList.add('message', isOwnMessage ? 'sent' : 'received');
+            
+            let content = '';
+            if (message.type === 'JOIN') {
+                content = `<strong>${message.senderName}</strong> joined the chat`;
+            } else if (message.type === 'LEAVE') {
+                content = `<strong>${message.senderName}</strong> left the chat`;
             } else {
-                messageElement.className = 'message ' + type;
-                const timestamp = new Date(message.timestamp).toLocaleTimeString();
-                messageElement.innerHTML = `
-                    <strong>${message.senderName}:</strong> ${message.content}
-                    <div class="status">${timestamp} ${message.status || ''}</div>
-                `;
+                content = `<strong>${message.senderName}</strong>: ${message.content}<br>
+                          <span class="timestamp">${new Date(message.timestamp).toLocaleString()}</span>`;
             }
-
-            chatMessages.appendChild(messageElement);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            messageElement.innerHTML = content;
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        function updateMessageStatus(statusUpdate) {
-            console.log('Message status updated:', statusUpdate);
-            // You can implement visual status indicators here (like WhatsApp's checkmarks)
-        }
-
-        function showTypingIndicator(typingMessage) {
-            const typingIndicator = document.getElementById('typingIndicator');
-
-            if (typingMessage.type === 'TYPING') {
-                typingIndicator.textContent = `${typingMessage.senderName} is typing...`;
-                typingIndicator.style.display = 'block';
-            } else if (typingMessage.type === 'STOP_TYPING') {
-                typingIndicator.style.display = 'none';
-            }
-        }
-
-        function updateUserStatus(userStatus) {
-            console.log('User status updated:', userStatus);
-            // Update online users list
-            loadOnlineUsers();
-        }
-
-        function loadChatHistory() {
-            if (!currentReceiverId) return;
-
-            fetch(`http://localhost:8080/api/public/chat/history?user1=${currentUserId}&user2=${currentReceiverId}`)
-                .then(response => response.json())
-                .then(messages => {
-                    const chatMessages = document.getElementById('chatMessages');
-                    chatMessages.innerHTML = '';
-
-                    messages.forEach(message => {
-                        const type = message.senderId === currentUserId ? 'sent' : 'received';
-                        showMessage(message, type);
-                    });
-                })
-                .catch(error => console.error('Error loading chat history:', error));
+        function updateUserStatus(status) {
+            const usersContainer = document.getElementById('online-users');
+            const userElement = document.createElement('div');
+            userElement.innerHTML = `${status.userName} - ${status.status.toLowerCase()}`;
+            usersContainer.appendChild(userElement);
         }
 
         function loadOnlineUsers() {
-            fetch('http://localhost:8080/api/public/chat/online-users')
+            fetch('/api/public/chat/online-users')
                 .then(response => response.json())
                 .then(users => {
-                    const onlineUsersElement = document.getElementById('onlineUsers');
-                    if (users.length > 0) {
-                        onlineUsersElement.textContent = users.map(user => user.userName).join(', ');
-                    } else {
-                        onlineUsersElement.textContent = 'None';
-                    }
+                    const usersContainer = document.getElementById('online-users');
+                    usersContainer.innerHTML = '';
+                    users.forEach(user => {
+                        updateUserStatus(user);
+                    });
                 })
                 .catch(error => console.error('Error loading online users:', error));
         }
 
-        // Handle typing indicators
-        document.getElementById('messageInput').addEventListener('input', function () {
-            if (currentReceiverId && stompClient) {
-                // Send typing indicator
-                stompClient.send("/app/chat.typing", {}, JSON.stringify({
-                    senderId: currentUserId,
-                    senderName: currentUserName,
-                    receiverId: currentReceiverId,
-                    type: 'TYPING'
-                }));
-
-                // Clear previous timer
-                clearTimeout(typingTimer);
-
-                // Stop typing after 2 seconds of inactivity
-                typingTimer = setTimeout(() => {
-                    stompClient.send("/app/chat.stopTyping", {}, JSON.stringify({
-                        senderId: currentUserId,
-                        senderName: currentUserName,
-                        receiverId: currentReceiverId,
-                        type: 'STOP_TYPING'
-                    }));
-                }, 2000);
+        function sendJoinMessage() {
+            if(stompClient) {
+                const joinMessage = {
+                    senderId: userId,
+                    senderName: username,
+                    type: 'JOIN',
+                    timestamp: new Date()
+                };
+                stompClient.send("/app/chat.addUser", {}, JSON.stringify(joinMessage));
             }
-        });
+        }
 
-        // Handle Enter key for sending messages
-        document.getElementById('messageInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
+        function generateUserId() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Add event listener for enter key
+        document.getElementById('message').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
                 sendMessage();
             }
         });
 
-        // Handle receiver change
-        document.getElementById('receiverId').addEventListener('change', function () {
-            currentReceiverId = this.value.trim();
-            if (currentReceiverId && currentUserId) {
-                loadChatHistory();
-            }
-        });
-
-        // Load online users periodically
-        setInterval(loadOnlineUsers, 10000);
+        // Connect when page loads
+        connect();
     </script>
 </body>
-
 </html>
