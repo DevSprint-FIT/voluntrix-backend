@@ -18,7 +18,7 @@ public class AuthResponseDTO {
     // User basic information
     private Long userId;
     private String email;
-    private String username;
+    private String handle;
     private String fullName;
     
     // User status information

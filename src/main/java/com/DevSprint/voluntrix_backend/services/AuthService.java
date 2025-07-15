@@ -53,8 +53,8 @@ public class AuthService {
             throw new IllegalArgumentException("Email already registered.");
         }
 
-        if(userRepository.existsByUsername(request.getUsername())) {
-            throw new IllegalArgumentException("Username already taken.");
+        if(userRepository.existsByHandle(request.getHandle())) {
+            throw new IllegalArgumentException("Handle already taken.");
         }
 
         UserEntity user = userMapper.toEntity(request);
@@ -82,7 +82,7 @@ public class AuthService {
             .token(token)
             .userId(user.getUserId())
             .email(user.getEmail())
-            .username(user.getUsername())
+            .handle(user.getHandle())
             .fullName(user.getFullName())
             .role(user.getRole() != null ? user.getRole().name() : null)
             .isEmailVerified(user.getIsVerified())
@@ -147,7 +147,7 @@ public class AuthService {
             .token(token)
             .userId(user.getUserId())
             .email(user.getEmail())
-            .username(user.getUsername())
+            .handle(user.getHandle())
             .fullName(user.getFullName())
             .role(user.getRole() != null ? user.getRole().name() : null)
             .isEmailVerified(user.getIsVerified())

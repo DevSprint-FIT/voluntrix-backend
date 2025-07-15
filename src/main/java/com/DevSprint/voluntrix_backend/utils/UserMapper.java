@@ -23,7 +23,7 @@ public class UserMapper {
     public UserEntity toEntity(SignupRequestDTO dto) {
         UserEntity user = new UserEntity();
         user.setEmail(dto.getEmail());
-        user.setUsername(dto.getUsername());
+        user.setHandle(dto.getHandle());
         user.setFullName(dto.getFullName());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setAuthProvider(AuthProvider.EMAIL);
@@ -37,7 +37,7 @@ public class UserMapper {
             : "ROLE_UNASSIGNED";
             
         return new User(
-            user.getUsername(), // Use actual username instead of email
+            user.getEmail(), // Use email as username identifier
             user.getPassword(),
             Collections.singleton(new SimpleGrantedAuthority(authority))
         );

@@ -43,7 +43,7 @@ public class UserEntity implements UserDetails{
     private String email;
 
     @Column(unique = true, nullable = false)
-    private String username;
+    private String handle; // User's display handle/username
 
     @Column(nullable = false)
     private String fullName;
@@ -83,7 +83,12 @@ public class UserEntity implements UserDetails{
 
     @Override
     public String getUsername() {
-        return this.username; // Use the actual username field, not email
+        return this.email; // Spring Security requires this method name, but we use email as username
+    }
+
+    // Getter for the display handle
+    public String getHandle() {
+        return this.handle;
     }
 
     @Override
