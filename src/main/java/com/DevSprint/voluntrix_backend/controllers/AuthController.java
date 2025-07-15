@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.DevSprint.voluntrix_backend.dtos.AuthResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.LoginRequestDTO;
+import com.DevSprint.voluntrix_backend.dtos.ResendVerificationRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.SignupRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.UserProfileStatusDTO;
 import com.DevSprint.voluntrix_backend.dtos.VerifyEmailRequestDTO;
@@ -62,7 +63,7 @@ public class AuthController {
     }
 
     @PostMapping("/resend-verification")
-    public ResponseEntity<ApiResponse<String>> resendVerificationEmail(@RequestBody @Valid VerifyEmailRequestDTO request) {
+    public ResponseEntity<ApiResponse<String>> resendVerificationEmail(@RequestBody @Valid ResendVerificationRequestDTO request) {
         return ResponseEntity.ok(authService.resendVerificationEmailByEmail(request.getEmail()));
     }
 }
