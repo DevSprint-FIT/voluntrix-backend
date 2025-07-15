@@ -40,8 +40,12 @@ public class SecurityConfig {
                             "/swagger-ui/**",
                             "/v3/api-docs/**",
                             "/swagger-ui.html",
-                            "/api/auth/**"
+                            "/api/auth/signup",
+                            "/api/auth/login", 
+                            "/api/auth/verify-email",
+                            "/api/auth/resend-verification"
                     ).permitAll()
+                    .requestMatchers("/api/auth/**").authenticated() // Other auth endpoints need auth
                     .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
                     .anyRequest().authenticated() // Require authentication for everything else
             )

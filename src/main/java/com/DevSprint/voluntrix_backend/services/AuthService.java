@@ -194,4 +194,40 @@ public class AuthService {
             "Please check your email for the new verification code"
         );
     }
+
+    // Email-based verification methods (no authentication required)
+    public ApiResponse<EmailVerificationResponseDTO> verifyEmailWithEmailAndOtp(String email, String otp) {
+        UserEntity user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+
+        boolean isVerified = emailVerificationService.verifyOTP(user, otp);
+        
+        if (isVerified) {
+            return new ApiResponse<>(
+                "Email verified successfully",
+                new EmailVerificationResponseDTO(true, "Email verified successfully")
+            );
+        } else {
+            return new ApiResponse<>(
+                "Invalid or expired OTP",
+                new EmailVerificationResponseDTO(false, "Invalid or expired OTP")
+            );
+        }
+    }
+
+    public ApiResponse<String> resendVerificationEmailByEmail(String email) {
+        UserEntity user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+
+        if (user.getIsVerified()) {
+            throw new IllegalArgumentException("Email is already verified");
+        }
+
+        emailVerificationService.sendVerificationEmail(user);
+        
+        return new ApiResponse<>(
+            "Verification email sent successfully",
+            "Please check your email for the new verification code"
+        );
+    }
 }

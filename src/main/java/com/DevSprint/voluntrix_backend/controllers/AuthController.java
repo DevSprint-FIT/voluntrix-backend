@@ -58,13 +58,11 @@ public class AuthController {
 
     @PostMapping("/verify-email")
     public ResponseEntity<ApiResponse<EmailVerificationResponseDTO>> verifyEmail(@RequestBody @Valid VerifyEmailRequestDTO request) {
-        Long userId = currentUserService.getCurrentUserId();
-        return ResponseEntity.ok(authService.verifyEmail(userId, request.getOtp()));
+        return ResponseEntity.ok(authService.verifyEmailWithEmailAndOtp(request.getEmail(), request.getOtp()));
     }
 
     @PostMapping("/resend-verification")
-    public ResponseEntity<ApiResponse<String>> resendVerificationEmail() {
-        Long userId = currentUserService.getCurrentUserId();
-        return ResponseEntity.ok(authService.resendVerificationEmail(userId));
+    public ResponseEntity<ApiResponse<String>> resendVerificationEmail(@RequestBody @Valid VerifyEmailRequestDTO request) {
+        return ResponseEntity.ok(authService.resendVerificationEmailByEmail(request.getEmail()));
     }
 }
