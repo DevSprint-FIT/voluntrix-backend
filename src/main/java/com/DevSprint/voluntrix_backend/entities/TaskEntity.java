@@ -1,5 +1,6 @@
 package com.DevSprint.voluntrix_backend.entities;
 
+import com.DevSprint.voluntrix_backend.enums.ContributionArea;
 import com.DevSprint.voluntrix_backend.enums.TaskDifficulty;
 import com.DevSprint.voluntrix_backend.enums.TaskStatus;
 
@@ -56,6 +57,10 @@ public class TaskEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskDifficulty taskDifficulty; // EASY, MEDIUM, HARD, EXTREME
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ContributionArea taskCategory; // DESIGN, EDITORIAL, LOGISTICS, PROGRAMMING
 
     @Column(length = 1000)
     private String resourceUrl;

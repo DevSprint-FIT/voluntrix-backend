@@ -1,5 +1,6 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
+import com.DevSprint.voluntrix_backend.enums.ContributionArea;
 import com.DevSprint.voluntrix_backend.enums.TaskDifficulty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -30,6 +31,9 @@ public class TaskCreateDTO {
 
     @NotNull(message = "Task difficulty is required")
     private TaskDifficulty taskDifficulty; // EASY, MEDIUM, HARD, EXTREME
+
+    @NotNull(message = "Task category is required")
+    private ContributionArea taskCategory; // DESIGN, EDITORIAL, LOGISTICS, PROGRAMMING
 
     @NotNull(message = "Assignee ID is required")
     private Long assigneeId;

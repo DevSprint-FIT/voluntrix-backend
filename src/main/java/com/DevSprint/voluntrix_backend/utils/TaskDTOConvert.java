@@ -50,6 +50,7 @@ public class TaskDTOConvert {
         task.setDueDate(taskCreateDTO.getDueDate());
         task.setTaskStatus(TaskStatus.TO_DO); // Automatically set to TO_DO for new tasks
         task.setTaskDifficulty(taskCreateDTO.getTaskDifficulty());
+        task.setTaskCategory(taskCreateDTO.getTaskCategory());
         task.setTaskRewardPoints(10);
         return task;
     }

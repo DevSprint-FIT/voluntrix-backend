@@ -1,5 +1,6 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
+import com.DevSprint.voluntrix_backend.enums.ContributionArea;
 import com.DevSprint.voluntrix_backend.enums.TaskStatus;
 import com.DevSprint.voluntrix_backend.enums.TaskDifficulty;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -30,6 +31,7 @@ public class TaskDTO {
     
     private TaskStatus taskStatus; // TO_DO, IN_PROGRESS, DONE
     private TaskDifficulty taskDifficulty; // EASY, MEDIUM, HARD, EXTREME
+    private ContributionArea taskCategory; // DESIGN, EDITORIAL, LOGISTICS, PROGRAMMING
     private String resourceUrl;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
