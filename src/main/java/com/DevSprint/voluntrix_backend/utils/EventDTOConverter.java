@@ -11,9 +11,12 @@ import com.DevSprint.voluntrix_backend.dtos.EventApplicationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventInvitationCreateDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventInvitationDTO;
 import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventApplicationEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
+import com.DevSprint.voluntrix_backend.entities.EventInvitationEntity;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
@@ -126,6 +129,37 @@ public class EventDTOConverter {
     public List<EventApplicationDTO> toEventApplicationDTOList(
             List<EventApplicationEntity> eventEntityApplicationList) {
         return eventEntityApplicationList.stream().map(entity -> modelMapper.map(entity, EventApplicationDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    // Event Invitation Mapping
+
+    // EventInvitationEntity to EventInvitationDTO
+    public EventInvitationDTO toEventInvitationDTO(EventInvitationEntity eventInvitationEntity) {
+        return modelMapper.map(eventInvitationEntity, EventInvitationDTO.class);
+    }
+
+    // EventInvitationCreateDTO to EventInvitationEntity
+    public EventInvitationEntity toEventInvitationEntity(EventInvitationCreateDTO eventInvitationCreateDTO,
+            EventEntity eventEntity, OrganizationEntity organizationEntity) {
+        EventInvitationEntity eventInvitationEntity = new EventInvitationEntity();
+
+        eventInvitationEntity.setApplicationStatus(eventInvitationCreateDTO.getApplicationStatus());
+
+        // Set event
+        eventInvitationEntity.setEvent(eventEntity);
+
+        // Set organization
+        eventInvitationEntity.setOrganization(organizationEntity);
+
+        return eventInvitationEntity;
+    }
+
+    // List<EventInvitationEntity> to List<EventInvitationDTO>
+    public List<EventInvitationDTO> toEventInvitationDTOList(
+            List<EventInvitationEntity> eventInvitationEntityList) {
+        return eventInvitationEntityList.stream()
+                .map(entity -> modelMapper.map(entity, EventInvitationDTO.class))
                 .collect(Collectors.toList());
     }
 }

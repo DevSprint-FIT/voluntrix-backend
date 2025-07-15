@@ -130,6 +130,18 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("EVENT_APPLICATION_ALREADY_EXISTS", ex.getMessage()));
     }
 
+    @ExceptionHandler(EventInvitationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEventInvitationNotFoundException(EventInvitationNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("EVENT_INVITATION_NOT_FOUND", ex.getMessage()));
+    }
+
+    @ExceptionHandler(DuplicateInvitationException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateInvitationException(DuplicateInvitationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("EVENT_INVITATION_ALREADY_EXISTS", ex.getMessage()));
+    }
+
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
