@@ -15,20 +15,10 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolunteerCreateDTO {
-    @NotBlank(message = "Username is required")
-    private String username;
-
-    @NotBlank(message = "First name is required")
-    private String firstName;
-
-    @NotBlank(message = "Last name is required")
-    private String lastName;
-
-    @Email(message = "Email should be valid")
-    @NotBlank(message = "Email is required")
-    private String email;
-
     private String institute;
+    
+    @Email(message = "Institute email should be valid")
+    private String instituteEmail;
 
     @NotNull(message = "Availability status is required")
     private Boolean isAvailable;

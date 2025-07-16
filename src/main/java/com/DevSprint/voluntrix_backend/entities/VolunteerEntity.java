@@ -32,19 +32,11 @@ public class VolunteerEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long volunteerId;
 
-    @Column(nullable = false, unique = true)
-    private String username;
-
-    @Column(nullable = false)
-    private String firstName;
-
-    @Column(nullable = false)
-    private String lastName;
-
-    @Column(nullable = false, unique = true)
-    private String email;
-    @Column
+    @Column(nullable = true)
     private String institute;
+
+    @Column(unique = true, nullable = true)
+    private String instituteEmail;
 
     @Column(nullable = false)
     private Boolean isAvailable = false;
