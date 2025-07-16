@@ -12,14 +12,10 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolunteerUpdateDTO {
-    private String firstName;
-
-    private String lastName;
-
-    @Email(message = "Email should be valid")
-    private String email;
-
     private String institute;
+
+    @Email(message = "Institute email should be valid")
+    private String instituteEmail;
 
     private Boolean isAvailable;
 

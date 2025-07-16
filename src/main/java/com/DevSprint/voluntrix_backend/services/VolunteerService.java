@@ -65,8 +65,13 @@ public class VolunteerService {
     public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerUpdateDTO volunteerUpdateDTO) {
         VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
             .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
+        
+        // Update only the volunteer-specific fields provided in the DTO
         if (volunteerUpdateDTO.getInstitute() != null) {
             volunteer.setInstitute(volunteerUpdateDTO.getInstitute());
+        }
+        if (volunteerUpdateDTO.getInstituteEmail() != null) {
+            volunteer.setInstituteEmail(volunteerUpdateDTO.getInstituteEmail());
         }
         if (volunteerUpdateDTO.getIsAvailable() != null) {
             volunteer.setIsAvailable(volunteerUpdateDTO.getIsAvailable());
