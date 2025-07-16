@@ -4,6 +4,7 @@ import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerUpdateDTO;
 import com.DevSprint.voluntrix_backend.services.VolunteerService;
+import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import jakarta.validation.Valid; 
+import com.DevSprint.voluntrix_backend.validation.RequiresRole;
+import com.DevSprint.voluntrix_backend.enums.UserType;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -27,6 +30,7 @@ import java.util.List;
 public class VolunteerController {
 
     private final VolunteerService volunteerService;
+    private final CurrentUserService currentUserService;
 
     @GetMapping
     public ResponseEntity<List<VolunteerDTO>> getAllVolunteers() {
@@ -34,16 +38,18 @@ public class VolunteerController {
         return ResponseEntity.ok(volunteers);
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<VolunteerDTO> getVolunteerByUsername(@PathVariable String username) {
-        // Fetches a volunteer by username. Throws VolunteerNotFoundException if not found.
-        VolunteerDTO volunteer = volunteerService.getVolunteerByUsername(username);
-        return ResponseEntity.ok(volunteer);
-    }
+    // @GetMapping("/{username}")
+    // public ResponseEntity<VolunteerDTO> getVolunteerByUsername(@PathVariable String username) {
+    //     // Fetches a volunteer by username. Throws VolunteerNotFoundException if not found.
+    //     VolunteerDTO volunteer = volunteerService.getVolunteerByUsername(username);
+    //     return ResponseEntity.ok(volunteer);
+    // }
 
     @PostMapping
+    @RequiresRole(UserType.VOLUNTEER)
     public ResponseEntity<VolunteerDTO> createVolunteer(@Valid @RequestBody VolunteerCreateDTO volunteerCreateDTO) {
-        VolunteerDTO createdVolunteer = volunteerService.createVolunteer(volunteerCreateDTO);
+        Long userId = currentUserService.getCurrentUserId();
+        VolunteerDTO createdVolunteer = volunteerService.createVolunteer(volunteerCreateDTO, userId);
         return ResponseEntity.status(201).body(createdVolunteer);
     }
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerUpdateDTO;
+import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,13 @@ public class VolunteerDTOConvert {
     // Converts a VolunteerCreateDTO to a VolunteerEntity
     public VolunteerEntity toVolunteerEntity(VolunteerCreateDTO volunteerCreateDTO) {
         return modelMapper.map(volunteerCreateDTO, VolunteerEntity.class);
+    }
+
+    // Converts a VolunteerCreateDTO to a VolunteerEntity with UserEntity
+    public VolunteerEntity toVolunteerEntity(VolunteerCreateDTO volunteerCreateDTO, UserEntity user) {
+        VolunteerEntity volunteer = modelMapper.map(volunteerCreateDTO, VolunteerEntity.class);
+        volunteer.setUser(user);
+        return volunteer;
     }
 
     // Converts a VolunteerUpdateDTO to a VolunteerEntity

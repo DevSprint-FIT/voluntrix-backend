@@ -3,8 +3,10 @@ package com.DevSprint.voluntrix_backend.services;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerUpdateDTO;
+import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
+import com.DevSprint.voluntrix_backend.repositories.UserRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.utils.VolunteerDTOConvert;
 
@@ -20,25 +22,26 @@ import java.util.Optional;
 public class VolunteerService {
 
     private final VolunteerRepository volunteerRepository;
+    private final UserRepository userRepository;
     private final VolunteerDTOConvert entityDTOConvert;
 
-    public VolunteerDTO createVolunteer(VolunteerCreateDTO volunteerCreateDTO) {
-        // Check for existing username
-        if (volunteerRepository.findByUsername(volunteerCreateDTO.getUsername()).isPresent()) {
-            throw new IllegalArgumentException("Username already exists");
+    public VolunteerDTO createVolunteer(VolunteerCreateDTO volunteerCreateDTO, Long userId) {
+        // Get user entity by ID
+        UserEntity user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+        
+        // Check if user already has a volunteer profile
+        if (volunteerRepository.findByUser(user).isPresent()) {
+            throw new IllegalArgumentException("User already has a volunteer profile");
         }
-    
-        // Check for existing email
-        if (volunteerRepository.findByEmail(volunteerCreateDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
-        }
-    
-        // Check for existing phone number
-        if (volunteerRepository.findByPhoneNumber(volunteerCreateDTO.getPhoneNumber()).isPresent()) {
+        
+        // Check for existing phone number (if provided)
+        if (volunteerCreateDTO.getPhoneNumber() != null && 
+            volunteerRepository.findByPhoneNumber(volunteerCreateDTO.getPhoneNumber()).isPresent()) {
             throw new IllegalArgumentException("Phone number already exists");
         }
     
-        VolunteerEntity volunteer = entityDTOConvert.toVolunteerEntity(volunteerCreateDTO);
+        VolunteerEntity volunteer = entityDTOConvert.toVolunteerEntity(volunteerCreateDTO, user);
         VolunteerEntity savedVolunteer = volunteerRepository.save(volunteer);
         return entityDTOConvert.toVolunteerDTO(savedVolunteer);
     }
@@ -48,11 +51,11 @@ public class VolunteerService {
         return entityDTOConvert.toVolunteerDTOList(volunteers);
     }
 
-    public VolunteerDTO getVolunteerByUsername(String username) {
-        Optional<VolunteerEntity> volunteer = volunteerRepository.findByUsername(username);
-        return volunteer.map(entityDTOConvert::toVolunteerDTO)
-            .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with username: " + username));
-    }
+    // public VolunteerDTO getVolunteerByUsername(String username) {
+    //     Optional<VolunteerEntity> volunteer = volunteerRepository.findByUsername(username);
+    //     return volunteer.map(entityDTOConvert::toVolunteerDTO)
+    //         .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with username: " + username));
+    // }
 
     public VolunteerEntity getVolunteerById(Long volunteerId) {
         return volunteerRepository.findById(volunteerId)
@@ -62,17 +65,6 @@ public class VolunteerService {
     public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerUpdateDTO volunteerUpdateDTO) {
         VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
             .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
-    
-        // Update only the fields provided in the DTO
-        if (volunteerUpdateDTO.getFirstName() != null) {
-            volunteer.setFirstName(volunteerUpdateDTO.getFirstName());
-        }
-        if (volunteerUpdateDTO.getLastName() != null) {
-            volunteer.setLastName(volunteerUpdateDTO.getLastName());
-        }
-        if (volunteerUpdateDTO.getEmail() != null) {
-            volunteer.setEmail(volunteerUpdateDTO.getEmail());
-        }
         if (volunteerUpdateDTO.getInstitute() != null) {
             volunteer.setInstitute(volunteerUpdateDTO.getInstitute());
         }
