@@ -55,7 +55,7 @@ public class EmailVerificationService {
             
         } catch (Exception e) {
             System.err.println("Error in sendVerificationEmail: " + e.getMessage());
-            e.printStackTrace();
+            // e.printStackTrace();
             throw new RuntimeException("Failed to send verification email: " + e.getMessage(), e);
         }
     }
