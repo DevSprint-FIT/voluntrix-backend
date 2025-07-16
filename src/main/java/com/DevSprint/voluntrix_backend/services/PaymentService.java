@@ -41,6 +41,9 @@ public class PaymentService {
     @Value("${PAYHERE_MERCHANT_SECRET}")
     private String merchantSecret;
 
+    @Value("${PAYHERE_HASH_ALGORITHM}")
+    private String hashAlgorithm;
+
     private String md5(String input) {
         return generateHash(input);
     }
@@ -71,7 +74,7 @@ public class PaymentService {
 
     private String generateHash(String data) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
             byte[] hashBytes = md.digest(data.getBytes());
             StringBuilder sb = new StringBuilder();
             for (byte b : hashBytes) {
