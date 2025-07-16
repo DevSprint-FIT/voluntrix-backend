@@ -18,4 +18,3 @@ public interface FollowedOrganizationRepository extends JpaRepository<FollowedOr
             "GROUP BY MONTH(f.followedAt) ORDER BY MONTH(f.followedAt)")
     List<Object[]> countMonthlyFollowers(@Param("year") int year, @Param("orgId") Long orgId);
 }
-

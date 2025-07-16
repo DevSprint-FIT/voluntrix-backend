@@ -2,6 +2,18 @@ spring:
   application:
     name: voluntrix-backend
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH2_CLIENT_ID}
+            client-secret: ${OAUTH2_CLIENT_SECRET}
+            scope:
+              - openid
+              - email
+              - profile
+
   jpa:
     properties:
       hibernate:
@@ -26,6 +38,10 @@ spring:
   
   swagger-ui:
     path: /swagger-ui.html
+
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: 900000
   
 
 

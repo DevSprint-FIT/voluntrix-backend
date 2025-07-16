@@ -11,4 +11,3 @@ public class MonthlyFollowCountDTO {
     private String month;
     private Long count;
 }
-
