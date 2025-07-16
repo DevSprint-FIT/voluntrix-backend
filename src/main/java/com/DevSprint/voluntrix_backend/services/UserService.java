@@ -22,6 +22,7 @@ public class UserService {
     private final VolunteerRepository volunteerRepository;
     private final SponsorRepository sponsorRepository;
     private final OrganizationRepository organizationRepository;
+    private final JwtService jwtService;
 
     public AuthResponseDTO setUserRole(UserType role) {
         Long userId = currentUserService.getCurrentUserId();
@@ -38,6 +39,9 @@ public class UserService {
 
         user.setRole(role);
         userRepository.save(user);
+
+        // Generate a new JWT token with the updated role
+        String newToken = jwtService.generateToken(user);
 
         String nextStep = "COMPLETE_PROFILE";
         String redirectUrl = "/complete-profile";
@@ -63,7 +67,7 @@ public class UserService {
         }
 
         return AuthResponseDTO.builder()
-            .token(null)
+            .token(newToken)
             .userId(user.getUserId())
             .email(user.getEmail())
             .handle(user.getHandle())
