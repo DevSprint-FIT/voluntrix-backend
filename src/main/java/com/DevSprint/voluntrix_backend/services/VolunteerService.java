@@ -60,6 +60,11 @@ public class VolunteerService {
         // Create volunteer entity with validated institute information
         VolunteerEntity volunteer = entityDTOConvert.toVolunteerEntity(volunteerCreateDTO, user, finalInstitute, finalInstituteEmail);
         VolunteerEntity savedVolunteer = volunteerRepository.save(volunteer);
+        
+        // Update user's profile completion status
+        user.setIsProfileCompleted(true);
+        userRepository.save(user);
+        
         return entityDTOConvert.toVolunteerDTO(savedVolunteer);
     }
 
