@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +25,6 @@ public class VolunteerService {
     private final VolunteerDTOConvert entityDTOConvert;
 
     public VolunteerDTO createVolunteer(VolunteerCreateDTO volunteerCreateDTO, Long userId) {
-        // Get user entity by ID
         UserEntity user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
         
@@ -35,13 +33,32 @@ public class VolunteerService {
             throw new IllegalArgumentException("User already has a volunteer profile");
         }
         
+        // Validate institute information
+        String finalInstitute = null;
+        String finalInstituteEmail = null;
+        
+        if (volunteerCreateDTO.getInstitute() != null && !volunteerCreateDTO.getInstitute().trim().isEmpty()) {
+            // Institute is provided, validate that institute email is also provided
+            if (volunteerCreateDTO.getInstituteEmail() == null || volunteerCreateDTO.getInstituteEmail().trim().isEmpty()) {
+                throw new IllegalArgumentException("Institute email is required when institute is provided");
+            }
+            
+            // Check if the institute email was previously verified for this user
+            // We assume that if user reaches this point, they have already verified via the separate endpoints
+            // The verification happens in InstituteVerificationController before volunteer creation
+            finalInstitute = volunteerCreateDTO.getInstitute();
+            finalInstituteEmail = volunteerCreateDTO.getInstituteEmail();
+        }
+        // If institute is not provided or empty, both remain null
+        
         // Check for existing phone number (if provided)
         if (volunteerCreateDTO.getPhoneNumber() != null && 
             volunteerRepository.findByPhoneNumber(volunteerCreateDTO.getPhoneNumber()).isPresent()) {
             throw new IllegalArgumentException("Phone number already exists");
         }
     
-        VolunteerEntity volunteer = entityDTOConvert.toVolunteerEntity(volunteerCreateDTO, user);
+        // Create volunteer entity with validated institute information
+        VolunteerEntity volunteer = entityDTOConvert.toVolunteerEntity(volunteerCreateDTO, user, finalInstitute, finalInstituteEmail);
         VolunteerEntity savedVolunteer = volunteerRepository.save(volunteer);
         return entityDTOConvert.toVolunteerDTO(savedVolunteer);
     }

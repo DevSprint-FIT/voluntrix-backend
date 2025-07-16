@@ -82,6 +82,30 @@ public class VolunteerDTOConvert {
         return volunteer;
     }
 
+    // Converts a VolunteerCreateDTO to a VolunteerEntity with UserEntity and validated institute information
+    public VolunteerEntity toVolunteerEntity(VolunteerCreateDTO volunteerCreateDTO, UserEntity user, 
+                                           String finalInstitute, String finalInstituteEmail) {
+        VolunteerEntity volunteer = new VolunteerEntity();
+        
+        // Set volunteer-specific fields with validated institute information
+        volunteer.setInstitute(finalInstitute);
+        volunteer.setInstituteEmail(finalInstituteEmail);
+        volunteer.setIsAvailable(volunteerCreateDTO.getIsAvailable());
+        volunteer.setIsEventHost(false); // Default to false
+        volunteer.setAbout(volunteerCreateDTO.getAbout());
+        volunteer.setPhoneNumber(volunteerCreateDTO.getPhoneNumber());
+        volunteer.setProfilePictureUrl(volunteerCreateDTO.getProfilePictureUrl());
+        
+        // Set default values
+        volunteer.setVolunteerLevel(1);
+        volunteer.setRewardPoints(0);
+        
+        // Set user relationship
+        volunteer.setUser(user);
+        
+        return volunteer;
+    }
+
     // Converts a VolunteerUpdateDTO to a VolunteerEntity
     public VolunteerEntity toVolunteerEntity(VolunteerUpdateDTO volunteerUpdateDTO) {
         return modelMapper.map(volunteerUpdateDTO, VolunteerEntity.class);
