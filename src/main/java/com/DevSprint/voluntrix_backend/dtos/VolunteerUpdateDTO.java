@@ -19,8 +19,6 @@ public class VolunteerUpdateDTO {
 
     private Boolean isAvailable;
 
-    private Boolean isEventHost;
-
     @Size(max = 255, message = "About section can have at most 255 characters")
     private String about;
 }

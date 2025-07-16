@@ -61,6 +61,14 @@ public class VolunteerController {
         return ResponseEntity.ok(updatedVolunteer); 
     }
 
+    @PatchMapping("/promote-to-event-host")
+    @RequiresRole(UserType.VOLUNTEER)
+    public ResponseEntity<VolunteerDTO> promoteToEventHost() {
+        Long userId = currentUserService.getCurrentUserId();
+        VolunteerDTO updatedVolunteer = volunteerService.promoteToEventHost(userId);
+        return ResponseEntity.ok(updatedVolunteer);
+    }
+
     // Used a common delete endpoint for all users usign JWT token
     // @DeleteMapping("/{volunteerId}")
     // public ResponseEntity<Void> deleteVolunteer(@PathVariable Long volunteerId) {

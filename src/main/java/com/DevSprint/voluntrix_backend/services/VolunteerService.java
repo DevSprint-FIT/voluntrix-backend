@@ -98,9 +98,6 @@ public class VolunteerService {
         if (volunteerUpdateDTO.getIsAvailable() != null) {
             volunteer.setIsAvailable(volunteerUpdateDTO.getIsAvailable());
         }
-        if (volunteerUpdateDTO.getIsEventHost() != null && !volunteer.getIsEventHost() && volunteerUpdateDTO.getIsEventHost()) {
-            volunteer.setIsEventHost(true); // Promote to host if not already
-        }
         if (volunteerUpdateDTO.getAbout() != null) {
             volunteer.setAbout(volunteerUpdateDTO.getAbout());
         }
@@ -128,9 +125,6 @@ public class VolunteerService {
         if (volunteerUpdateDTO.getIsAvailable() != null) {
             volunteer.setIsAvailable(volunteerUpdateDTO.getIsAvailable());
         }
-        if (volunteerUpdateDTO.getIsEventHost() != null && !volunteer.getIsEventHost() && volunteerUpdateDTO.getIsEventHost()) {
-            volunteer.setIsEventHost(true); // Promote to host if not already
-        }
         if (volunteerUpdateDTO.getAbout() != null) {
             volunteer.setAbout(volunteerUpdateDTO.getAbout());
         }
@@ -145,4 +139,23 @@ public class VolunteerService {
     //     }
     //     volunteerRepository.deleteById(volunteerId);
     // }
+
+    // This is a separate endpoint since it's a privilege change
+    public VolunteerDTO promoteToEventHost(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+        
+        VolunteerEntity volunteer = volunteerRepository.findByUser(user)
+            .orElseThrow(() -> new VolunteerNotFoundException("Volunteer profile not found for user"));
+        
+        // Promote to event host
+        if (!volunteer.getIsEventHost()) {
+            volunteer.setIsEventHost(true);
+            VolunteerEntity updatedVolunteer = volunteerRepository.save(volunteer);
+            return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
+        } else {
+            // Already an event host, just return current state
+            return entityDTOConvert.toVolunteerDTO(volunteer);
+        }
+    }
 }
