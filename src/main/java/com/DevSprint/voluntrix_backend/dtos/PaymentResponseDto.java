@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PaymentResponseDto {
+public class PaymentResponseDTO {
     private String hash;
     private String merchantId;
 }

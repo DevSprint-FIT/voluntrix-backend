@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.DevSprint.voluntrix_backend.dtos.MonthlyDonationDto;
+import com.DevSprint.voluntrix_backend.dtos.MonthlyDonationDTO;
 import com.DevSprint.voluntrix_backend.services.VolunteerPaymentAnalyticsService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,8 +22,8 @@ public class VolunteerPaymentAnalyticsController {
     private final VolunteerPaymentAnalyticsService volunteerPaymentAnalyticsService;
 
     @GetMapping("/{volunteerId}/donations/monthly")
-    public ResponseEntity<List<MonthlyDonationDto>> getMonthlyDonationsByYear(@PathVariable Long volunteerId, @RequestParam int year) {
-        List<MonthlyDonationDto> monthlyDonation = volunteerPaymentAnalyticsService.getMonthlyDonations(volunteerId, year);
+    public ResponseEntity<List<MonthlyDonationDTO>> getMonthlyDonationsByYear(@PathVariable Long volunteerId, @RequestParam int year) {
+        List<MonthlyDonationDTO> monthlyDonation = volunteerPaymentAnalyticsService.getMonthlyDonations(volunteerId, year);
         return ResponseEntity.ok(monthlyDonation);
     }
     

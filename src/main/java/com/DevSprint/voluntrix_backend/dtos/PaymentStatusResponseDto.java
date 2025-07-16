@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PaymentStatusResponseDto {
+public class PaymentStatusResponseDTO {
     private String orderId;
     private PaymentStatus status;
 }
