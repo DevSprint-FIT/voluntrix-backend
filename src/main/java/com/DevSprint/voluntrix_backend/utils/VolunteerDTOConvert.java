@@ -114,7 +114,7 @@ public class VolunteerDTOConvert {
     // Converts a list of VolunteerEntity to a list of VolunteerDTO
     public List<VolunteerDTO> toVolunteerDTOList(List<VolunteerEntity> volunteers) {
         return volunteers.stream()
-                .map(entity -> modelMapper.map(entity, VolunteerDTO.class))
+                .map(this::toVolunteerDTO)  // Use the proper conversion method
                 .collect(Collectors.toList());
     }
 }

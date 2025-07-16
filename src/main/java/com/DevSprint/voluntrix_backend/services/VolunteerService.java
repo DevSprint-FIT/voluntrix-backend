@@ -64,7 +64,7 @@ public class VolunteerService {
     }
 
     public List<VolunteerDTO> getAllVolunteers() {
-        List<VolunteerEntity> volunteers = volunteerRepository.findAll();
+        List<VolunteerEntity> volunteers = volunteerRepository.findAllWithUsers();
         return entityDTOConvert.toVolunteerDTOList(volunteers);
     }
 
