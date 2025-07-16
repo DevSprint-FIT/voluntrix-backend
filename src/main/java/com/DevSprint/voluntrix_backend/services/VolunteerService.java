@@ -109,6 +109,36 @@ public class VolunteerService {
         return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
     }
 
+    // Update volunteer profile using JWT credentials 
+    public VolunteerDTO patchVolunteerProfile(Long userId, VolunteerUpdateDTO volunteerUpdateDTO) {
+        UserEntity user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+        
+        // Find volunteer profile for this user
+        VolunteerEntity volunteer = volunteerRepository.findByUser(user)
+            .orElseThrow(() -> new VolunteerNotFoundException("Volunteer profile not found for user"));
+        
+        // Update only the volunteer-specific fields provided in the DTO
+        if (volunteerUpdateDTO.getInstitute() != null) {
+            volunteer.setInstitute(volunteerUpdateDTO.getInstitute());
+        }
+        if (volunteerUpdateDTO.getInstituteEmail() != null) {
+            volunteer.setInstituteEmail(volunteerUpdateDTO.getInstituteEmail());
+        }
+        if (volunteerUpdateDTO.getIsAvailable() != null) {
+            volunteer.setIsAvailable(volunteerUpdateDTO.getIsAvailable());
+        }
+        if (volunteerUpdateDTO.getIsEventHost() != null && !volunteer.getIsEventHost() && volunteerUpdateDTO.getIsEventHost()) {
+            volunteer.setIsEventHost(true); // Promote to host if not already
+        }
+        if (volunteerUpdateDTO.getAbout() != null) {
+            volunteer.setAbout(volunteerUpdateDTO.getAbout());
+        }
+    
+        VolunteerEntity updatedVolunteer = volunteerRepository.save(volunteer);
+        return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
+    }
+
     // public void deleteVolunteer(Long volunteerId) {
     //     if (!volunteerRepository.existsById(volunteerId)) {
     //         throw new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId);

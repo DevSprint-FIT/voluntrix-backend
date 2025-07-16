@@ -10,7 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+// import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +25,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/public/volunteers")
+@RequestMapping("/api/volunteers")
 @SecurityRequirement(name = "bearerAuth")
 public class VolunteerController {
 
@@ -53,10 +53,11 @@ public class VolunteerController {
         return ResponseEntity.status(201).body(createdVolunteer);
     }
 
-    @PatchMapping("/{volunteerId}")
-    public ResponseEntity<VolunteerDTO> updateVolunteer(@PathVariable Long volunteerId, @Valid @RequestBody VolunteerUpdateDTO volunteerUpdateDTO) {
-        // Updates volunteer details by ID. Throws VolunteerNotFoundException if not found.
-        VolunteerDTO updatedVolunteer = volunteerService.patchVolunteer(volunteerId, volunteerUpdateDTO);
+    @PatchMapping("/profile")
+    @RequiresRole(UserType.VOLUNTEER)
+    public ResponseEntity<VolunteerDTO> updateVolunteerProfile(@Valid @RequestBody VolunteerUpdateDTO volunteerUpdateDTO) {
+        Long userId = currentUserService.getCurrentUserId();
+        VolunteerDTO updatedVolunteer = volunteerService.patchVolunteerProfile(userId, volunteerUpdateDTO);
         return ResponseEntity.ok(updatedVolunteer); 
     }
 
