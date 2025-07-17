@@ -1,0 +1,75 @@
+name: Deploy to Amazon ECR
+
+on:
+  push:
+    branches:
+      - main
+    
+    tags:
+     - 'v*'
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR_REPOSITORY: voluntrix-backend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # Build the application with Maven
+      - name: Build with Maven
+        env:
+          SPRING_PROFILES_ACTIVE: prod
+        run: mvn clean package -DskipTests
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Extract version tag or fallback to ubuntu-latest
+        id: extract-tag
+        run: | 
+          TAG=${GITHUB_REF##*/}
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=latest" >> $GITHUB_OUTPUT
+          fi
+          
+          # Get the current date in ISO 8601 format
+          echo "build_date=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        
+      - name: Build Docker image
+        run: | 
+          docker build \
+            --build-arg APP_VERSION=${{ steps.extract-tag.outputs.tag }} \
+            --build-arg BUILD_DATE=${{ steps.extract-tag.outputs.build_date }} \
+            --build-arg COMMIT_SHA=${{ github.sha }} \
+            -t $ECR_REPOSITORY:${{ steps.extract-tag.outputs.tag }} .
+        
+      - name: Tag & Push Docker image to ECR
+        run: | 
+          IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.extract-tag.outputs.tag }}
+          docker tag $ECR_REPOSITORY:${{ steps.extract-tag.outputs.tag }} $IMAGE_URI
+          docker push $IMAGE_URI
