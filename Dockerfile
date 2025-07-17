@@ -1,4 +1,14 @@
-# Build stage no longer needed - we build with Maven in GitHub Actions
+# Build the application
+FROM maven:3.9.4-eclipse-temurin-17 AS builder
+
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+
+# Build the Spring Boot application
+RUN mvn clean package -DskipTests
+
+# Run the app with JRE (smaller than JDK)
 FROM eclipse-temurin:17-jre-alpine
 
 # Build-time arguments for metadata
@@ -22,8 +32,8 @@ RUN addgroup -g 1001 -S appuser && \
     adduser -S appuser -u 1001
 
 WORKDIR /app
-# Copy pre-built JAR file from the GitHub Actions runner
-COPY target/voluntrix-backend-*.jar app.jar
+# Copy the JAR file from the builder stage
+COPY --from=builder /app/target/voluntrix-backend-0.0.1-SNAPSHOT.jar app.jar
 
 # Change ownership to non-root user
 RUN chown appuser:appuser app.jar
