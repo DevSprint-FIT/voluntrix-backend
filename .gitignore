@@ -35,10 +35,5 @@ build/
 ### env files (can opt-in for committing if needed) ###
 .env*
 
-
-
-# my files(future use files)
-RoleBasedAccessDemoController.java
-UserServiceTest.java
-AuthServiceJwtTest.java
-JwtRoleTokenAnalysisTest.java
+### env files (can opt-in for committing if needed) ###
+.env*
