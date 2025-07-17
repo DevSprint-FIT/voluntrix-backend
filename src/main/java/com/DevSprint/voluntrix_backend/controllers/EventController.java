@@ -1,7 +1,9 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
+import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.DevSprint.voluntrix_backend.services.EventService;
 
@@ -36,18 +39,15 @@ public class EventController {
     private final EventService eventService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> addEvent(@RequestBody EventCreateDTO eventCreateDTO) {
-
-        if (eventCreateDTO == null) {
+    public ResponseEntity<Map<String, Long>> addEvent(@RequestBody EventCreateDTO eventCreateDTO) {
+        if (eventCreateDTO == null || eventCreateDTO.getEventHostId() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        if (eventCreateDTO.getEventHostId() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        eventService.addEvent(eventCreateDTO);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        EventEntity savedEvent = eventService.addEvent(eventCreateDTO);
+        Map<String, Long> response = new HashMap<>();
+        response.put("eventId", savedEvent.getEventId());
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{eventId}")

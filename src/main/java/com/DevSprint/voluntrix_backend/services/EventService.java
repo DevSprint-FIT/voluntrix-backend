@@ -41,7 +41,7 @@ public class EventService {
     private final VolunteerRepository volunteerRepository;
     private final OrganizationRepository organizationRepository;
 
-    public void addEvent(EventCreateDTO eventCreateDTO) {
+    public EventEntity addEvent(EventCreateDTO eventCreateDTO) {
         VolunteerEntity eventHost = volunteerRepository.findById(eventCreateDTO.getEventHostId())
                 .orElseThrow(() -> new VolunteerNotFoundException(
                         "Event Host not found: " + eventCreateDTO.getEventHostId()));
@@ -55,7 +55,7 @@ public class EventService {
         }
 
         EventEntity eventEntity = entityDTOConvert.toEventEntity(eventCreateDTO, eventHost);
-        eventRepository.save(eventEntity);
+        return eventRepository.save(eventEntity);
     }
 
     public void deleteEvent(Long eventId) {
@@ -71,8 +71,8 @@ public class EventService {
 
     public EventEntity getEventEntityById(Long eventId) {
         return eventRepository.findById(eventId)
-            .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
-    } 
+                .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
+    }
 
     public List<EventDTO> getAllEvents() {
         return entityDTOConvert.toEventDTOList(eventRepository.findAll());
