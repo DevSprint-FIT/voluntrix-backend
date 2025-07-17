@@ -16,4 +16,5 @@ public class VolunteerEventParticipationDTO {
     private Long volunteerId;
     private Long eventId;
     private ContributionArea areaOfContribution;
+    private Integer eventRewardPoints;
 }

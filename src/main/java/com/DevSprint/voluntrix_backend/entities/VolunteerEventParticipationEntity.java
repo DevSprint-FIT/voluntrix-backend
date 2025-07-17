@@ -42,4 +42,7 @@ public class VolunteerEventParticipationEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "area_of_contribution", nullable = false)
     private ContributionArea areaOfContribution;
+
+    @Column
+    private Integer eventRewardPoints = 0;
 }
