@@ -42,6 +42,6 @@ public class EventCreateDTO implements Serializable {
 
     private Long eventHostId;
 
-    private Long organizationId;
+    // private Long organizationId;
 }
 
