@@ -29,11 +29,11 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @PostMapping
-    public ResponseEntity<TaskDTO> createTask(@Valid @RequestBody TaskCreateDTO taskCreateDTO) {
-        TaskDTO createdTask = taskService.createTask(taskCreateDTO);
-        return ResponseEntity.status(201).body(createdTask);
-    }
+    // @PostMapping
+    // public ResponseEntity<TaskDTO> createTask(@Valid @RequestBody TaskCreateDTO taskCreateDTO) {
+    //     TaskDTO createdTask = taskService.createTask(taskCreateDTO);
+    //     return ResponseEntity.status(201).body(createdTask);
+    // }
 
     @GetMapping("/{taskId}")
     public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long taskId) {
@@ -47,21 +47,21 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
-    @GetMapping("/volunteer/{username}")
-    public ResponseEntity<List<TaskDTO>> getTasksByVolunteerUsername(@PathVariable String username) {
-        List<TaskDTO> tasks = taskService.getTasksByVolunteerUsername(username);
-        return ResponseEntity.ok(tasks);
-    }
+    // @GetMapping("/volunteer/{username}")
+    // public ResponseEntity<List<TaskDTO>> getTasksByVolunteerUsername(@PathVariable String username) {
+    //     List<TaskDTO> tasks = taskService.getTasksByVolunteerUsername(username);
+    //     return ResponseEntity.ok(tasks);
+    // }
 
-    @PatchMapping("/{taskId}")
-    public ResponseEntity<TaskDTO> patchTask(@PathVariable Long taskId, @Valid @RequestBody TaskUpdateDTO taskUpdateDTO) {
-        TaskDTO updatedTask = taskService.patchTask(taskId, taskUpdateDTO);
-        return ResponseEntity.ok(updatedTask);
-    }
+    // @PatchMapping("/{taskId}")
+    // public ResponseEntity<TaskDTO> patchTask(@PathVariable Long taskId, @Valid @RequestBody TaskUpdateDTO taskUpdateDTO) {
+    //     TaskDTO updatedTask = taskService.patchTask(taskId, taskUpdateDTO);
+    //     return ResponseEntity.ok(updatedTask);
+    // }
 
-    @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
-        taskService.deleteTask(taskId);
-        return ResponseEntity.noContent().build();
-    }
+    // @DeleteMapping("/{taskId}")
+    // public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
+    //     taskService.deleteTask(taskId);
+    //     return ResponseEntity.noContent().build();
+    // }
 }
