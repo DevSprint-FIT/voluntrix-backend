@@ -1,9 +1,3 @@
-# For production deployments, you should use GitHub Secrets instead of hardcoded test values
-# Example:
-# SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
-# SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
-# SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-
 name: Build and Push Docker Image
 
 on:
@@ -51,6 +45,8 @@ jobs:
           IMAGEKIT_URL_ENDPOINT: https://test.example.com
           OAUTH2_CLIENT_ID: test-client-id
           OAUTH2_CLIENT_SECRET: test-client-secret
+          PAYHERE_MERCHANT_ID: test-merchant-id
+          PAYHERE_MERCHANT_SECRET: test-merchant-secret
           PAYHERE_HASH_ALGORITHM: SHA-256
         run: mvn clean test -Dspring.profiles.active=test
 
@@ -98,6 +94,8 @@ jobs:
           IMAGEKIT_URL_ENDPOINT: https://test.example.com
           OAUTH2_CLIENT_ID: test-client-id
           OAUTH2_CLIENT_SECRET: test-client-secret
+          PAYHERE_MERCHANT_ID: test-merchant-id
+          PAYHERE_MERCHANT_SECRET: test-merchant-secret
           PAYHERE_HASH_ALGORITHM: SHA-256
         run: mvn clean package -DskipTests -Dspring.profiles.active=test
 
