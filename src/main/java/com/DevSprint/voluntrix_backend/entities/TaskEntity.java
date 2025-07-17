@@ -70,4 +70,10 @@ public class TaskEntity {
     @ManyToOne
     @JoinColumn(name = "event_id")
     private EventEntity event;
+
+    @Column
+    private Integer taskRewardPoints ;
+
+    @Column
+    private LocalDateTime taskReviewedDate;
 }
