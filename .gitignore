@@ -34,8 +34,3 @@ build/
 
 ### env files (can opt-in for committing if needed) ###
 .env*
-
-
-
-# my files(future use files)
-UserServiceTest.java
