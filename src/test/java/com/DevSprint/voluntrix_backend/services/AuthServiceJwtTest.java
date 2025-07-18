@@ -55,7 +55,7 @@ class AuthServiceJwtTest {
     @BeforeEach
     void setUp() {
         signupRequest = new SignupRequestDTO();
-        signupRequest.setEmail("harinu@example.com");
+        signupRequest.setEmail("harinu@test.com");
         signupRequest.setHandle("harindu");
         signupRequest.setFullName("Harindu Hadithya");
         signupRequest.setPassword("123456789");
@@ -63,7 +63,7 @@ class AuthServiceJwtTest {
         // Initialize a test user with default values
         testUser = new UserEntity();
         testUser.setUserId(1L);
-        testUser.setEmail("harinu@example.com");
+        testUser.setEmail("harinu@test.com");
         testUser.setHandle("harindu");
         testUser.setFullName("Harindu Hadithya");
         testUser.setRole(null); 
@@ -76,7 +76,8 @@ class AuthServiceJwtTest {
     @Test
     void signup_ShouldGenerateTokenWithUnassignedRole() {
         /*
-           Purpose: Tests whether a JWT token is generated when a new user signs up, and the user's role is unassigned.
+           Purpose: Tests whether a JWT token is generated when a new user signs up, and 
+                    the user's role is unassigned.
         */
 
         // Given - user does not exist in the DB

@@ -38,6 +38,4 @@ build/
 
 
 # my files(future use files)
-RoleBasedAccessDemoController.java
 UserServiceTest.java
-JwtRoleTokenAnalysisTest.java
