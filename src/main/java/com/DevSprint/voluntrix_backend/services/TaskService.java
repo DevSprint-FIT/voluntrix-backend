@@ -95,6 +95,34 @@ public class TaskService {
         return taskDTOConvert.toTaskDTOList(tasks);
     }
 
+    // New methods for filtered task retrieval
+    public List<TaskDTO> getTasksByEventIdAndStatus(Long eventId, TaskStatus taskStatus) {
+        List<TaskEntity> tasks = taskRepository.findByEvent_EventIdAndTaskStatus(eventId, taskStatus);
+        return taskDTOConvert.toTaskDTOList(tasks);
+    }
+
+    public List<TaskDTO> getTasksByAssigneeIdAndEventIdAndStatus(Long assigneeId, Long eventId, TaskStatus taskStatus) {
+        List<TaskEntity> tasks = taskRepository.findByAssignee_VolunteerIdAndEvent_EventIdAndTaskStatus(assigneeId, eventId, taskStatus);
+        return taskDTOConvert.toTaskDTOList(tasks);
+    }
+
+    // New methods for task status counts
+    public Map<String, Long> getTaskStatusCountsByEventId(Long eventId) {
+        Map<String, Long> statusCounts = new HashMap<>();
+        statusCounts.put("TO_DO", taskRepository.countByEvent_EventIdAndTaskStatus(eventId, TaskStatus.TO_DO));
+        statusCounts.put("IN_PROGRESS", taskRepository.countByEvent_EventIdAndTaskStatus(eventId, TaskStatus.IN_PROGRESS));
+        statusCounts.put("DONE", taskRepository.countByEvent_EventIdAndTaskStatus(eventId, TaskStatus.DONE));
+        return statusCounts;
+    }
+
+    public Map<String, Long> getTaskStatusCountsByAssigneeIdAndEventId(Long assigneeId, Long eventId) {
+        Map<String, Long> statusCounts = new HashMap<>();
+        statusCounts.put("TO_DO", taskRepository.countByAssignee_VolunteerIdAndEvent_EventIdAndTaskStatus(assigneeId, eventId, TaskStatus.TO_DO));
+        statusCounts.put("IN_PROGRESS", taskRepository.countByAssignee_VolunteerIdAndEvent_EventIdAndTaskStatus(assigneeId, eventId, TaskStatus.IN_PROGRESS));
+        statusCounts.put("DONE", taskRepository.countByAssignee_VolunteerIdAndEvent_EventIdAndTaskStatus(assigneeId, eventId, TaskStatus.DONE));
+        return statusCounts;
+    }
+
     public TaskDTO patchTask(Long taskId, TaskUpdateDTO taskUpdateDTO) {
         TaskEntity task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + taskId));

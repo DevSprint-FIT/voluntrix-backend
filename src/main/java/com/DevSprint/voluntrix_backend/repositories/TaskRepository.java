@@ -1,6 +1,7 @@
 package com.DevSprint.voluntrix_backend.repositories;
 
 import com.DevSprint.voluntrix_backend.entities.TaskEntity;
+import com.DevSprint.voluntrix_backend.enums.TaskStatus;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.*;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,14 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
     List<TaskEntity> findByAssignee_VolunteerId(Long assigneeId);
     List<TaskEntity> findByEvent_EventId(Long eventId);
     List<TaskEntity> findByAssignee_VolunteerIdAndEvent_EventId(Long assigneeId, Long eventId);
+    
+    // New methods for task status filtering
+    List<TaskEntity> findByEvent_EventIdAndTaskStatus(Long eventId, TaskStatus taskStatus);
+    List<TaskEntity> findByAssignee_VolunteerIdAndEvent_EventIdAndTaskStatus(Long assigneeId, Long eventId, TaskStatus taskStatus);
+    
+    // New methods for task status counting
+    Long countByEvent_EventIdAndTaskStatus(Long eventId, TaskStatus taskStatus);
+    Long countByAssignee_VolunteerIdAndEvent_EventIdAndTaskStatus(Long assigneeId, Long eventId, TaskStatus taskStatus);
 
     @Query("SELECT t FROM TaskEntity t " +
             "JOIN t.assignee v " +
