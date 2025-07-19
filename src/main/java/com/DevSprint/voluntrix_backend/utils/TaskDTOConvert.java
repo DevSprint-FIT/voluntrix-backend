@@ -47,7 +47,8 @@ public class TaskDTOConvert {
     public TaskEntity toTaskEntity(TaskCreateDTO taskCreateDTO) {
         TaskEntity task = new TaskEntity();
         task.setDescription(taskCreateDTO.getDescription());
-        task.setDueDate(taskCreateDTO.getDueDate());
+        // Convert LocalDate to LocalDateTime with time set to 11:59:59 PM
+        task.setDueDate(taskCreateDTO.getDueDate().atTime(23, 59, 59));
         task.setTaskStatus(TaskStatus.TO_DO); // Automatically set to TO_DO for new tasks
         task.setTaskDifficulty(taskCreateDTO.getTaskDifficulty());
         task.setTaskCategory(taskCreateDTO.getTaskCategory());

@@ -108,7 +108,8 @@ public class TaskService {
             task.setDescription(taskUpdateDTO.getDescription());
         }
         if (taskUpdateDTO.getDueDate() != null) {
-            task.setDueDate(taskUpdateDTO.getDueDate());
+            // Convert LocalDate to LocalDateTime with time set to 11:59:59 PM
+            task.setDueDate(taskUpdateDTO.getDueDate().atTime(23, 59, 59));
         }
         if (taskUpdateDTO.getTaskStatus() != null) {
             task.setTaskStatus(taskUpdateDTO.getTaskStatus());
