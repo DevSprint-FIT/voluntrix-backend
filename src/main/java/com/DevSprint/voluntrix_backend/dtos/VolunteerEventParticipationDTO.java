@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 public class VolunteerEventParticipationDTO {
     private Long participationId;
     private Long volunteerId;
+    private String volunteerUsername;
     private Long eventId;
     private ContributionArea areaOfContribution;
     private Integer eventRewardPoints;
