@@ -58,6 +58,12 @@ public class VolunteerEventParticipationController {
         return ResponseEntity.ok(participations);
     }
 
+    @GetMapping("/event/{eventId}/available")
+    public ResponseEntity<List<VolunteerEventParticipationDTO>> getAvailableVolunteersByEvent(@PathVariable Long eventId) {
+        List<VolunteerEventParticipationDTO> participations = participationService.getAvailableParticipationsByEvent(eventId);
+        return ResponseEntity.ok(participations);
+    }
+
     @GetMapping("/volunteer/{volunteerId}/event/{eventId}")
     public ResponseEntity<VolunteerEventParticipationDTO> getByVolunteerAndEvent(@PathVariable Long volunteerId, @PathVariable Long eventId) {
         VolunteerEventParticipationDTO dto = participationService.getParticipationByVolunteerAndEvent(volunteerId, eventId);
