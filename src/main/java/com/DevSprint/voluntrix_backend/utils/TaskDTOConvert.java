@@ -35,6 +35,19 @@ public class TaskDTOConvert {
             dto.setEventTitle(task.getEvent().getEventTitle());
         }
 
+        // Manually map date fields to handle LocalDateTime to LocalDate conversion
+        if (task.getDueDate() != null) {
+            dto.setDueDate(task.getDueDate().toLocalDate());
+        }
+        
+        if (task.getTaskSubmittedDate() != null) {
+            dto.setTaskSubmittedDate(task.getTaskSubmittedDate().toLocalDate());
+        }
+        
+        if (task.getTaskReviewedDate() != null) {
+            dto.setTaskReviewedDate(task.getTaskReviewedDate().toLocalDate());
+        }
+
         return dto;
     }
 
