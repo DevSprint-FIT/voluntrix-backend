@@ -214,4 +214,19 @@ public class EventService {
     public List<EventDTO> searchEvents(String query) {
         return entityDTOConvert.toEventDTOList(eventRepository.findByEventTitleContainingIgnoreCase(query));
     }
+
+    public List<EventDTO> getEventsByHostId(Long hostId) {
+
+        VolunteerEntity eventHost = volunteerRepository.findById(hostId)
+                .orElseThrow(() -> new VolunteerNotFoundException(
+                        "Event Host not found: " + hostId));
+
+        if (!Boolean.TRUE.equals(eventHost.getIsEventHost())) {
+            throw new BadRequestException("Volunteer is not an event host");
+        }
+
+        List<EventEntity> events = eventRepository.findByEventHost(eventHost);
+
+        return entityDTOConvert.toEventDTOList(events);
+    }
 }

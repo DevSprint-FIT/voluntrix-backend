@@ -121,4 +121,20 @@ public class EventController {
 
         return new ResponseEntity<List<EventDTO>>(results, HttpStatus.OK);
     }
+
+    @GetMapping("/host/{hostId}")
+    public ResponseEntity<List<EventDTO>> getEventsByHostId(@PathVariable Long hostId) {
+
+        if (hostId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        List<EventDTO> events = eventService.getEventsByHostId(hostId);
+
+        if (events == null || events.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<List<EventDTO>>(events, HttpStatus.OK);
+    }
 }
