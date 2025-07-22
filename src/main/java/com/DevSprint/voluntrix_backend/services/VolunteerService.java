@@ -73,12 +73,7 @@ public class VolunteerService {
         return entityDTOConvert.toVolunteerDTOList(volunteers);
     }
 
-    // public VolunteerDTO getVolunteerByUsername(String username) {
-    //     Optional<VolunteerEntity> volunteer = volunteerRepository.findByUsername(username);
-    //     return volunteer.map(entityDTOConvert::toVolunteerDTO)
-    //         .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with username: " + username));
-    // }
-
+    
     public VolunteerEntity getVolunteerById(Long volunteerId) {
         return volunteerRepository.findById(volunteerId)
             .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
@@ -133,13 +128,6 @@ public class VolunteerService {
         return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
     }
 
-    // public void deleteVolunteer(Long volunteerId) {
-    //     if (!volunteerRepository.existsById(volunteerId)) {
-    //         throw new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId);
-    //     }
-    //     volunteerRepository.deleteById(volunteerId);
-    // }
-
     // This is a separate endpoint since it's a privilege change
     public VolunteerDTO promoteToEventHost(Long userId) {
         UserEntity user = userRepository.findById(userId)
@@ -157,5 +145,15 @@ public class VolunteerService {
             // Already an event host, just return current state
             return entityDTOConvert.toVolunteerDTO(volunteer);
         }
+    }
+
+    public VolunteerDTO getVolunteerByUserId(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+            .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+        
+        VolunteerEntity volunteer = volunteerRepository.findByUser(user)
+            .orElseThrow(() -> new VolunteerNotFoundException("Volunteer profile not found for user"));
+        
+        return entityDTOConvert.toVolunteerDTO(volunteer);
     }
 }

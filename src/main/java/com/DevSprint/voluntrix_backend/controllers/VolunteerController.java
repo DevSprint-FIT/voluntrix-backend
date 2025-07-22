@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-// import org.springframework.web.bind.annotation.DeleteMapping;
 import jakarta.validation.Valid; 
 import com.DevSprint.voluntrix_backend.validation.RequiresRole;
 import com.DevSprint.voluntrix_backend.enums.UserType;
@@ -38,12 +37,13 @@ public class VolunteerController {
         return ResponseEntity.ok(volunteers);
     }
 
-    // @GetMapping("/{username}")
-    // public ResponseEntity<VolunteerDTO> getVolunteerByUsername(@PathVariable String username) {
-    //     // Fetches a volunteer by username. Throws VolunteerNotFoundException if not found.
-    //     VolunteerDTO volunteer = volunteerService.getVolunteerByUsername(username);
-    //     return ResponseEntity.ok(volunteer);
-    // }
+    @GetMapping("/me")
+    @RequiresRole(UserType.VOLUNTEER)
+    public ResponseEntity<VolunteerDTO> getVolunteerByUsername() {
+        Long userId = currentUserService.getCurrentUserId();
+        VolunteerDTO volunteer = volunteerService.getVolunteerByUserId(userId);
+        return ResponseEntity.ok(volunteer);
+    }
 
     @PostMapping
     @RequiresRole(UserType.VOLUNTEER)
@@ -68,12 +68,4 @@ public class VolunteerController {
         VolunteerDTO updatedVolunteer = volunteerService.promoteToEventHost(userId);
         return ResponseEntity.ok(updatedVolunteer);
     }
-
-    // Used a common delete endpoint for all users usign JWT token
-    // @DeleteMapping("/{volunteerId}")
-    // public ResponseEntity<Void> deleteVolunteer(@PathVariable Long volunteerId) {
-    //     // Deletes a volunteer by ID. Throws VolunteerNotFoundException if not found.
-    //     volunteerService.deleteVolunteer(volunteerId);
-    //     return ResponseEntity.noContent().build(); 
-    // }
 }
