@@ -33,4 +33,11 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
             "AND (p.isInactive IS NULL OR p.isInactive = false)")
     List<TaskEntity> findTasksAssignedMoreThanTwoDaysAgoWithTodoStatus(@Param("twoDaysAgo") LocalDateTime twoDaysAgo);
 
+    // Query to get tasks with submitted dates for a specific assignee
+    @Query("SELECT t FROM TaskEntity t " +
+            "WHERE t.assignee.volunteerId = :assigneeId " +
+            "AND t.taskSubmittedDate IS NOT NULL " +
+            "ORDER BY t.taskSubmittedDate")
+    List<TaskEntity> findTasksWithSubmittedDatesByAssigneeId(@Param("assigneeId") Long assigneeId);
+
 }
