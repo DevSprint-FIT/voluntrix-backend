@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -77,6 +78,12 @@ public class TaskController {
             @PathVariable Long eventId) {
         Map<String, Long> statusCounts = taskService.getTaskStatusCountsByAssigneeIdAndEventId(assigneeId, eventId);
         return ResponseEntity.ok(statusCounts);
+    }
+
+    @GetMapping("/assignee/{assigneeId}/submitted-dates")
+    public ResponseEntity<List<LocalDate>> getTaskSubmittedDatesByAssigneeId(@PathVariable Long assigneeId) {
+        List<LocalDate> submittedDates = taskService.getTaskSubmittedDatesByAssigneeId(assigneeId);
+        return ResponseEntity.ok(submittedDates);
     }
 
     @PatchMapping("/{taskId}")
