@@ -21,8 +21,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
@@ -121,6 +123,14 @@ public class TaskService {
         statusCounts.put("IN_PROGRESS", taskRepository.countByAssignee_VolunteerIdAndEvent_EventIdAndTaskStatus(assigneeId, eventId, TaskStatus.IN_PROGRESS));
         statusCounts.put("DONE", taskRepository.countByAssignee_VolunteerIdAndEvent_EventIdAndTaskStatus(assigneeId, eventId, TaskStatus.DONE));
         return statusCounts;
+    }
+
+    public List<LocalDate> getTaskSubmittedDatesByAssigneeId(Long assigneeId) {
+        List<TaskEntity> tasks = taskRepository.findTasksWithSubmittedDatesByAssigneeId(assigneeId);
+        return tasks.stream()
+                .map(task -> task.getTaskSubmittedDate().toLocalDate())
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     public TaskDTO patchTask(Long taskId, TaskUpdateDTO taskUpdateDTO) {
