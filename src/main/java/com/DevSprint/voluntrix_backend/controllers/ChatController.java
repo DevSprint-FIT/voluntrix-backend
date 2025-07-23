@@ -35,21 +35,37 @@ public class ChatController {
             // Convert back to DTO for sending
             ChatMessageDTO responseMessage = convertToDTO(savedMessage);
             
-            // Send to receiver's private channel
-            messagingTemplate.convertAndSendToUser(
-                chatMessage.getReceiverId(),
-                "/topic/messages",
-                responseMessage
-            );
-            
-            // Send confirmation back to sender
-            messagingTemplate.convertAndSendToUser(
-                chatMessage.getSenderId(),
-                "/topic/message-status",
-                responseMessage
-            );
-            
-            log.info("Message sent successfully with ID: {}", savedMessage.getId());
+            // Check if this is a public group message
+            if ("public-room".equals(chatMessage.getReceiverId()) || chatMessage.getReceiverId() == null) {
+                // For public/group messages, broadcast to all users
+                ChatMessage publicMessage = ChatMessage.builder()
+                    .content(chatMessage.getContent())
+                    .sender(chatMessage.getSenderName())
+                    .senderId(chatMessage.getSenderId())  
+                    .senderName(chatMessage.getSenderName())
+                    .type(ChatMessageDTO.MessageType.CHAT)
+                    .timestamp(savedMessage.getTimestamp())
+                    .messageId(savedMessage.getId().toString())
+                    .build();
+                
+                messagingTemplate.convertAndSend("/topic/public", publicMessage);
+                log.info("Public message broadcasted with ID: {}", savedMessage.getId());
+            } else {
+                // For private messages, send to specific user
+                messagingTemplate.convertAndSendToUser(
+                    chatMessage.getReceiverId(),
+                    "/topic/messages",
+                    responseMessage
+                );
+                
+                // Send confirmation back to sender
+                messagingTemplate.convertAndSendToUser(
+                    chatMessage.getSenderId(),
+                    "/topic/message-status",
+                    responseMessage
+                );
+                log.info("Private message sent successfully with ID: {}", savedMessage.getId());
+            }
             
         } catch (Exception e) {
             log.error("Error sending message: {}", e.getMessage());
@@ -145,6 +161,39 @@ public class ChatController {
             
         } catch (Exception e) {
             log.error("Error marking message as read: {}", e.getMessage());
+        }
+    }
+
+    @MessageMapping("/chat.sendPublicMessage")
+    @SendTo("/topic/public") 
+    public ChatMessage sendPublicMessage(@Payload ChatMessageDTO chatMessage, SimpMessageHeaderAccessor headerAccessor) {
+        try {
+            log.info("Received public message from {}: {}", chatMessage.getSenderId(), chatMessage.getContent());
+            
+            // Set receiver as public-room for database storage
+            chatMessage.setReceiverId("public-room");
+            
+            // Save message to database
+            Message savedMessage = chatService.saveMessage(chatMessage);
+            
+            // Return message for broadcasting
+            return ChatMessage.builder()
+                .content(chatMessage.getContent())
+                .sender(chatMessage.getSenderName())
+                .senderId(chatMessage.getSenderId())  
+                .senderName(chatMessage.getSenderName())
+                .type(ChatMessageDTO.MessageType.CHAT)
+                .timestamp(savedMessage.getTimestamp())
+                .messageId(savedMessage.getId().toString())
+                .build();
+                
+        } catch (Exception e) {
+            log.error("Error sending public message: {}", e.getMessage());
+            return ChatMessage.builder()
+                .content("Error sending message")
+                .sender("System")
+                .type(ChatMessageDTO.MessageType.CHAT)
+                .build();
         }
     }
 

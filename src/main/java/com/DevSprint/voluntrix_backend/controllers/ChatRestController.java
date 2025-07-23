@@ -108,4 +108,17 @@ public class ChatRestController {
             return ResponseEntity.ok(errorStatus);
         }
     }
+    
+    @GetMapping("/public-history")
+    public ResponseEntity<List<ChatMessageDTO>> getPublicChatHistory(@RequestParam(defaultValue = "50") int limit) {
+        try {
+            log.info("Loading public chat history with limit: {}", limit);
+            List<ChatMessageDTO> messages = chatService.getRecentPublicMessages(limit);
+            log.info("Found {} public messages", messages.size());
+            return ResponseEntity.ok(messages);
+        } catch (Exception e) {
+            log.error("Error loading public chat history: {}", e.getMessage());
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+    }
 }

@@ -9,6 +9,7 @@ import com.DevSprint.voluntrix_backend.entities.Message;
 import com.DevSprint.voluntrix_backend.repositories.MessageRepository;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -111,6 +112,25 @@ public class ChatService {
         );
         
         return unreadMessages.stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+    
+    public List<ChatMessageDTO> getPublicChatHistory() {
+        List<Message> messages = messageRepository.findPublicMessages();
+        
+        return messages.stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+    
+    public List<ChatMessageDTO> getRecentPublicMessages(int limit) {
+        List<Message> messages = messageRepository.findRecentPublicMessages(limit);
+        
+        // Reverse the order since we got them in DESC order
+        Collections.reverse(messages);
+        
+        return messages.stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
     }

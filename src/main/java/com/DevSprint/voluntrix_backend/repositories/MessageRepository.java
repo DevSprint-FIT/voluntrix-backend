@@ -30,4 +30,12 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     
     @Query("SELECT COUNT(m) FROM Message m WHERE m.receiverId = :userId AND m.status != 'read'")
     long countUnreadMessagesByReceiverId(@Param("userId") String userId);
+    
+    // Get public chat history for group chat
+    @Query("SELECT m FROM Message m WHERE m.receiverId = 'public-room' ORDER BY m.timestamp ASC")
+    List<Message> findPublicMessages();
+    
+    // Get recent public messages with limit
+    @Query(value = "SELECT * FROM message WHERE receiver_id = 'public-room' ORDER BY timestamp DESC LIMIT :limit", nativeQuery = true)
+    List<Message> findRecentPublicMessages(@Param("limit") int limit);
 }
