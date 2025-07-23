@@ -79,7 +79,7 @@ public class OrganizationDTOConverter {
         organization.setInstitute(organizationDTO.getInstitute());
         organization.setPhone(organizationDTO.getPhone());
         organization.setAccountNumber(organizationDTO.getAccountNumber() != null ? 
-            AESUtil.encrypt(organizationDTO.getAccountNumber()) : null);
+        AESUtil.encrypt(organizationDTO.getAccountNumber()) : null);
         organization.setIsVerified(organizationDTO.getIsVerified());
         organization.setFollowerCount(organizationDTO.getFollowerCount());
         organization.setCreatedAt(organizationDTO.getJoinedDate());
