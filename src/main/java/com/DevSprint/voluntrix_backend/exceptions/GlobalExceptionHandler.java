@@ -167,6 +167,12 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("ACCESS_DENIED", ex.getMessage()));
     }
 
+    @ExceptionHandler(SponsorNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSponsorNotFoundException(SponsorNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("SPONSOR_NOT_FOUND", ex.getMessage()));
+    }
+
     // Catch-all for unknown exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
