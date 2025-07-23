@@ -4,5 +4,6 @@ public enum UserType {
     VOLUNTEER,
     SPONSOR,
     ORGANIZATION,
-    PUBLIC
+    PUBLIC,
+    ADMIN
 }

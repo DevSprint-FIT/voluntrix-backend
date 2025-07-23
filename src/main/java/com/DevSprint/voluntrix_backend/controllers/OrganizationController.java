@@ -7,6 +7,7 @@ import com.DevSprint.voluntrix_backend.services.OrganizationService;
 import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
 import com.DevSprint.voluntrix_backend.validation.RequiresRole;
 import com.DevSprint.voluntrix_backend.enums.UserType;
+import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -14,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,32 +35,32 @@ public class OrganizationController {
     private final CurrentUserService currentUserService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<OrganizationDTO>> getAllOrganizations() {
+    public ResponseEntity<ApiResponse<List<OrganizationDTO>>> getAllOrganizations() {
         List<OrganizationDTO> organizations = organizationService.getAllOrganizations();
-        return ResponseEntity.ok(organizations);
+        return ResponseEntity.ok(new ApiResponse<>("Organizations retrieved successfully", organizations));
     }
 
     @GetMapping("/me")
     @RequiresRole(UserType.ORGANIZATION)
-    public ResponseEntity<OrganizationDTO> getOrganizationByUsername() {
+    public ResponseEntity<ApiResponse<OrganizationDTO>> getOrganizationByUsername() {
         Long userId = currentUserService.getCurrentUserId();
         OrganizationDTO organization = organizationService.getOrganizationByUserId(userId);
-        return ResponseEntity.ok(organization);
+        return ResponseEntity.ok(new ApiResponse<>("Organization retrieved successfully", organization));
     }
 
-    @PostMapping
+    @PostMapping("/")
     @RequiresRole(UserType.ORGANIZATION)
-    public ResponseEntity<OrganizationDTO> createOrganization(@Valid @RequestBody OrganizationCreateDTO organizationCreateDTO) {
+    public ResponseEntity<ApiResponse<OrganizationDTO>> createOrganization(@Valid @RequestBody OrganizationCreateDTO organizationCreateDTO) {
         Long userId = currentUserService.getCurrentUserId();
         OrganizationDTO createdOrganization = organizationService.createOrganization(organizationCreateDTO, userId);
-        return ResponseEntity.status(201).body(createdOrganization);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>("Organization created successfully", createdOrganization));
     }
 
     @PatchMapping("/profile")
     @RequiresRole(UserType.ORGANIZATION)
-    public ResponseEntity<OrganizationDTO> updateOrganizationProfile(@Valid @RequestBody OrganizationUpdateDTO organizationUpdateDTO) {
+    public ResponseEntity<ApiResponse<OrganizationDTO>> updateOrganizationProfile(@Valid @RequestBody OrganizationUpdateDTO organizationUpdateDTO) {
         Long userId = currentUserService.getCurrentUserId();
         OrganizationDTO updatedOrganization = organizationService.updateOrganizationProfile(organizationUpdateDTO, userId);
-        return ResponseEntity.ok(updatedOrganization);
+        return ResponseEntity.ok(new ApiResponse<>("Organization updated successfully", updatedOrganization));
     }
 }

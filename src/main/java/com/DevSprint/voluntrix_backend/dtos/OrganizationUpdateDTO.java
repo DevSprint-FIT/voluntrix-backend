@@ -12,9 +12,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class OrganizationUpdateDTO {
     
-    @Size(max = 100, message = "Organization name can have at most 100 characters")
-    private String name;
-
     @Size(max = 255, message = "Description can have at most 255 characters")
     private String description;
     

@@ -8,6 +8,7 @@ import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.UserRepository;
 import com.DevSprint.voluntrix_backend.utils.OrganizationDTOConverter;
+import com.DevSprint.voluntrix_backend.utils.AESUtil;
 import com.DevSprint.voluntrix_backend.exceptions.OrganizationNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -91,10 +92,7 @@ public class OrganizationService {
         OrganizationEntity organization = organizationRepository.findByUser(user)
             .orElseThrow(() -> new OrganizationNotFoundException("Organization profile not found for user"));
         
-        // Update only the fields provided in the DTO
-        if (organizationUpdateDTO.getName() != null) {
-            organization.setName(organizationUpdateDTO.getName());
-        }
+        // Update only the fields provided in the DTO (name cannot be updated as it comes from UserEntity)
         if (organizationUpdateDTO.getDescription() != null) {
             organization.setDescription(organizationUpdateDTO.getDescription());
         }
@@ -108,7 +106,7 @@ public class OrganizationService {
             organization.setBankName(organizationUpdateDTO.getBankName());
         }
         if (organizationUpdateDTO.getAccountNumber() != null) {
-            organization.setAccountNumber(organizationUpdateDTO.getAccountNumber());
+            organization.setAccountNumber(AESUtil.encrypt(organizationUpdateDTO.getAccountNumber()));
         }
         if (organizationUpdateDTO.getImageUrl() != null) {
             organization.setImageUrl(organizationUpdateDTO.getImageUrl());
