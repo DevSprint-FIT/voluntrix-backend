@@ -55,6 +55,7 @@ public class UserService {
                 case VOLUNTEER -> volunteerRepository.existsById(userId);
                 case SPONSOR -> sponsorRepository.existsById(userId);
                 case ORGANIZATION -> organizationRepository.existsById(userId);
+                case ADMIN -> true;
                 case PUBLIC -> {
                     nextStep = "DASHBOARD";
                     redirectUrl = "/dashboard";
@@ -113,6 +114,8 @@ public class UserService {
                     break;
                 case PUBLIC:
                     // No additional data to delete for PUBLIC users
+                    break;
+                case ADMIN:
                     break;
             }
         }

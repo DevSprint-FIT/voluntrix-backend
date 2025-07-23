@@ -121,6 +121,7 @@ public class AuthService {
                 case SPONSOR -> sponsorRepository.existsById(user.getUserId());
                 case ORGANIZATION -> organizationRepository.existsById(user.getUserId());
                 case PUBLIC -> false;
+                case ADMIN -> true;
             };
         }
 
