@@ -32,7 +32,6 @@ public class VolunteerController {
     private final CurrentUserService currentUserService;
 
     @GetMapping("/all")
-    @RequiresRole(UserType.VOLUNTEER)
     public ResponseEntity<List<VolunteerDTO>> getAllVolunteers() {
         List<VolunteerDTO> volunteers = volunteerService.getAllVolunteers();
         return ResponseEntity.ok(volunteers);
