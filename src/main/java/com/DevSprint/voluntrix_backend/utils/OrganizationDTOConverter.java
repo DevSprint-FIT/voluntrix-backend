@@ -5,6 +5,7 @@ import com.DevSprint.voluntrix_backend.entities.SocialFeedEntity;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
+import com.DevSprint.voluntrix_backend.entities.UserEntity;
 
 import org.springframework.stereotype.Component;
 
@@ -109,6 +110,26 @@ public class OrganizationDTOConverter {
         entity.setDescription(dto.getDescription());
         entity.setWebsite(dto.getWebsite());
         entity.setBankName(dto.getBankName());
+
+        return entity;
+    }
+
+    // OrganizationCreateDTO to OrganizationEntity with User
+    public OrganizationEntity toOrganizationEntity(OrganizationCreateDTO dto, UserEntity user) {
+        OrganizationEntity entity = new OrganizationEntity();
+
+        entity.setName(dto.getName());
+        entity.setUsername(dto.getUsername());
+        entity.setInstitute(dto.getInstitute());
+        entity.setEmail(dto.getEmail());
+        entity.setPhone(dto.getPhone());
+        entity.setAccountNumber(AESUtil.encrypt(dto.getAccountNumber())); // encryption logic
+        entity.setIsVerified(dto.getIsVerified());
+        entity.setFollowerCount(dto.getFollowerCount());
+        entity.setDescription(dto.getDescription());
+        entity.setWebsite(dto.getWebsite());
+        entity.setBankName(dto.getBankName());
+        entity.setUser(user); // Set the user relationship
 
         return entity;
     }
