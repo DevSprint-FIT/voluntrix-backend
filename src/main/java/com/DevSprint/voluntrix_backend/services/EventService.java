@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
@@ -213,6 +214,11 @@ public class EventService {
 
     public List<EventDTO> searchEvents(String query) {
         return entityDTOConvert.toEventDTOList(eventRepository.findByEventTitleContainingIgnoreCase(query));
+    }
+
+    public List<EventAndOrgDTO> searchEventsWithOrg(String query) {
+        List<EventEntity> events = eventRepository.findByEventTitleContainingIgnoreCase(query);
+        return entityDTOConvert.toEventAndOrgDTOList(events);
     }
 
     public List<EventDTO> getEventsByHostId(Long hostId) {

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
@@ -120,6 +121,17 @@ public class EventController {
         }
 
         return new ResponseEntity<List<EventDTO>>(results, HttpStatus.OK);
+    }
+
+    @GetMapping("/search-with-org")
+    public ResponseEntity<List<EventAndOrgDTO>> searchEventsWithOrg(@RequestParam String query) {
+        List<EventAndOrgDTO> results = eventService.searchEventsWithOrg(query);
+
+        if (results == null || results.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<List<EventAndOrgDTO>>(results, HttpStatus.OK);
     }
 
     @GetMapping("/host/{hostId}")

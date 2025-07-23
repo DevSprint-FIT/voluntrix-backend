@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
@@ -21,7 +22,6 @@ import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
-
 
 import lombok.RequiredArgsConstructor;
 
@@ -69,10 +69,12 @@ public class EventDTOConverter {
 
         // Set organization
         // if (eventCreateDTO.getOrganizationId() != null) {
-        //     OrganizationEntity organization = organizationRepository.findById(eventCreateDTO.getOrganizationId())
-        //             .orElseThrow(() -> new OrganizationNotFoundException("Organization not found: "
-        //                     + eventCreateDTO.getOrganizationId()));
-        //     eventEntity.setOrganization(organization);
+        // OrganizationEntity organization =
+        // organizationRepository.findById(eventCreateDTO.getOrganizationId())
+        // .orElseThrow(() -> new OrganizationNotFoundException("Organization not found:
+        // "
+        // + eventCreateDTO.getOrganizationId()));
+        // eventEntity.setOrganization(organization);
         // }
 
         return eventEntity;
@@ -84,7 +86,8 @@ public class EventDTOConverter {
         if (eventDTO.getCategories() != null) {
             Set<CategoryEntity> categoryEntities = eventDTO.getCategories().stream()
                     .map(dto -> categoryRepository.findById(dto.getCategoryId())
-                            .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategoryId())))
+                            .orElseThrow(
+                                    () -> new CategoryNotFoundException("Category not found: " + dto.getCategoryId())))
                     .collect(Collectors.toSet());
             eventEntity.setCategories(categoryEntities);
         }
@@ -94,6 +97,24 @@ public class EventDTOConverter {
     // List<EventEntity> to List<EventDTO>
     public List<EventDTO> toEventDTOList(List<EventEntity> eventEntityList) {
         return eventEntityList.stream().map(entity -> modelMapper.map(entity, EventDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    // List<EventEntity> to List<EventAndOrgDTO>
+    public EventAndOrgDTO toEventAndOrgDTO(EventEntity entity) {
+        EventAndOrgDTO dto = modelMapper.map(entity, EventAndOrgDTO.class);
+
+        if (entity.getOrganization() != null) {
+            dto.setOrganizationName(entity.getOrganization().getName());
+            dto.setOrganizationImageUrl(entity.getOrganization().getImageUrl());
+        }
+
+        return dto;
+    }
+
+    public List<EventAndOrgDTO> toEventAndOrgDTOList(List<EventEntity> entities) {
+        return entities.stream()
+                .map(this::toEventAndOrgDTO)
                 .collect(Collectors.toList());
     }
 
