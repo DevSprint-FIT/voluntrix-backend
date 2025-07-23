@@ -6,11 +6,15 @@ import com.DevSprint.voluntrix_backend.validation.RequiresRole;
 import com.DevSprint.voluntrix_backend.enums.UserType;
 import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
@@ -54,5 +58,20 @@ public class AdminController {
     public ResponseEntity<ApiResponse<List<SponsorDTO>>> getAllSponsorsForAdmin() {
         List<SponsorDTO> sponsors = sponsorService.getAllSponsors();
         return ResponseEntity.ok(new ApiResponse<>("All sponsors retrieved successfully", sponsors));
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChangePasswordDTO {
+        @NotBlank(message = "Current password is required")
+        private String currentPassword;
+        
+        @NotBlank(message = "New password is required")
+        @Size(min = 8, message = "New password must be at least 8 characters long")
+        private String newPassword;
+        
+        @NotBlank(message = "Password confirmation is required")
+        private String confirmPassword;
     }
 }
