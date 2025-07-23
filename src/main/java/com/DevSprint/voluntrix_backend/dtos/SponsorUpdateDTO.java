@@ -24,4 +24,13 @@ public class SponsorUpdateDTO {
     
     private String website;
     
+    @Size(max = 500, message = "Sponsorship note can have at most 500 characters")
+    private String sponsorshipNote;
+    
+    private String documentUrl;
+    
+    private String linkedinProfile;
+    
+    @Size(max = 255, message = "Address can have at most 255 characters")
+    private String address;
 }

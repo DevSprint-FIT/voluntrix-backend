@@ -77,6 +77,18 @@ public class SponsorService {
         if (sponsorUpdateDTO.getWebsite() != null) {
             sponsor.setWebsite(sponsorUpdateDTO.getWebsite());
         }
+        if (sponsorUpdateDTO.getSponsorshipNote() != null) {
+            sponsor.setSponsorshipNote(sponsorUpdateDTO.getSponsorshipNote());
+        }
+        if (sponsorUpdateDTO.getDocumentUrl() != null) {
+            sponsor.setDocumentUrl(sponsorUpdateDTO.getDocumentUrl());
+        }
+        if (sponsorUpdateDTO.getLinkedinProfile() != null) {
+            sponsor.setLinkedinProfile(sponsorUpdateDTO.getLinkedinProfile());
+        }
+        if (sponsorUpdateDTO.getAddress() != null) {
+            sponsor.setAddress(sponsorUpdateDTO.getAddress());
+        }
         
         SponsorEntity updatedSponsor = sponsorRepository.save(sponsor);
         return sponsorDTOConverter.toSponsorDTO(updatedSponsor);

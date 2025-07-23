@@ -28,6 +28,11 @@ public class SponsorDTOConverter {
         dto.setJobTitle(sponsor.getJobTitle());
         dto.setMobileNumber(sponsor.getMobileNumber());
         dto.setWebsite(sponsor.getWebsite());
+        dto.setSponsorshipNote(sponsor.getSponsorshipNote());
+        dto.setDocumentUrl(sponsor.getDocumentUrl());
+        dto.setLinkedinProfile(sponsor.getLinkedinProfile());
+        dto.setAddress(sponsor.getAddress());
+        dto.setAppliedAt(sponsor.getAppliedAt());
         
         return dto;
     }
@@ -43,6 +48,10 @@ public class SponsorDTOConverter {
         entity.setJobTitle(dto.getJobTitle());
         entity.setMobileNumber(dto.getMobileNumber());
         entity.setWebsite(dto.getWebsite());
+        entity.setSponsorshipNote(dto.getSponsorshipNote());
+        entity.setDocumentUrl(dto.getDocumentUrl());
+        entity.setLinkedinProfile(dto.getLinkedinProfile());
+        entity.setAddress(dto.getAddress());
         
         // Set default values
         entity.setVerified(false);
