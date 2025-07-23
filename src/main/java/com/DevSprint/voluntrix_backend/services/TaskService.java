@@ -34,24 +34,24 @@ public class TaskService {
         this.eventRepository = eventRepository;
     }
 
-    // public TaskDTO createTask(TaskCreateDTO taskCreateDTO) {
-    //     TaskEntity task = taskDTOConvert.toTaskEntity(taskCreateDTO);
+    public TaskDTO createTask(TaskCreateDTO taskCreateDTO) {
+        TaskEntity task = taskDTOConvert.toTaskEntity(taskCreateDTO);
 
-    //     // Set the related Event entity
-    //     EventEntity event = eventRepository.findById(taskCreateDTO.getEventId())
-    //             .orElseThrow(() -> new ResourceNotFoundException("Event not found with ID: " + taskCreateDTO.getEventId()));
-    //     task.setEvent(event);
+        // Set the related Event entity
+        EventEntity event = eventRepository.findById(taskCreateDTO.getEventId())
+                .orElseThrow(() -> new ResourceNotFoundException("Event not found with ID: " + taskCreateDTO.getEventId()));
+        task.setEvent(event);
 
-    //     // Set the related Volunteer (assignee) entity if present
-    //     if (taskCreateDTO.getAssigneeId() != null) {
-    //         VolunteerEntity assignee = volunteerRepository.findById(taskCreateDTO.getAssigneeId())
-    //                 .orElseThrow(() -> new ResourceNotFoundException("Volunteer not found with ID: " + taskCreateDTO.getAssigneeId()));
-    //         task.setAssignee(assignee);
-    //     }
+        // Set the related Volunteer (assignee) entity if present
+        if (taskCreateDTO.getAssigneeId() != null) {
+            VolunteerEntity assignee = volunteerRepository.findById(taskCreateDTO.getAssigneeId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Volunteer not found with ID: " + taskCreateDTO.getAssigneeId()));
+            task.setAssignee(assignee);
+        }
 
-    //     TaskEntity savedTask = taskRepository.save(task);
-    //     return taskDTOConvert.toTaskDTO(savedTask);
-    // }
+        TaskEntity savedTask = taskRepository.save(task);
+        return taskDTOConvert.toTaskDTO(savedTask);
+    }
 
 
     public TaskDTO getTaskById(Long taskId) {
@@ -68,43 +68,43 @@ public class TaskService {
         return taskDTOConvert.toTaskDTOList(tasks);
     }
     
-    // public List<TaskDTO> getTasksByVolunteerUsername(String username) {
-    //     List<TaskEntity> tasks = taskRepository.findByAssignee_Username(username);
-    //     if (tasks.isEmpty()) {
-    //         throw new TaskNotFoundException("No tasks found for volunteer with username: " + username);
-    //     }
-    //     return taskDTOConvert.toTaskDTOList(tasks);
-    // }
+    public List<TaskDTO> getTasksByVolunteerUsername(String username) {
+        List<TaskEntity> tasks = taskRepository.findByAssignee_Username(username);
+        if (tasks.isEmpty()) {
+            throw new TaskNotFoundException("No tasks found for volunteer with username: " + username);
+        }
+        return taskDTOConvert.toTaskDTOList(tasks);
+    }
 
-    // public TaskDTO patchTask(Long taskId, TaskUpdateDTO taskUpdateDTO) {
-    //     TaskEntity task = taskRepository.findById(taskId)
-    //             .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + taskId));
+    public TaskDTO patchTask(Long taskId, TaskUpdateDTO taskUpdateDTO) {
+        TaskEntity task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + taskId));
 
-    //     // Update only the fields provided in the DTO
-    //     if (taskUpdateDTO.getDescription() != null) {
-    //         task.setDescription(taskUpdateDTO.getDescription());
-    //     }
-    //     if (taskUpdateDTO.getDueDate() != null) {
-    //         task.setDueDate(taskUpdateDTO.getDueDate());
-    //     }
-    //     if (taskUpdateDTO.getTaskStatus() != null) {
-    //         task.setTaskStatus(taskUpdateDTO.getTaskStatus());
-    //     }
-    //     if (taskUpdateDTO.getResourceUrl() != null) {
-    //         task.setResourceUrl(taskUpdateDTO.getResourceUrl());
-    //     }
-    //     if (taskUpdateDTO.getTaskSubmittedDate() != null) {
-    //         task.setTaskSubmittedDate(taskUpdateDTO.getTaskSubmittedDate());
-    //     }
-    //     if (taskUpdateDTO.getAssigneeId() != null) {
-    //         VolunteerEntity assignee = volunteerRepository.findById(taskUpdateDTO.getAssigneeId())
-    //                 .orElseThrow(() -> new VolunteerNotFoundException("Assignee not found with ID: " + taskUpdateDTO.getAssigneeId()));
-    //         task.setAssignee(assignee);
-    //     }
+        // Update only the fields provided in the DTO
+        if (taskUpdateDTO.getDescription() != null) {
+            task.setDescription(taskUpdateDTO.getDescription());
+        }
+        if (taskUpdateDTO.getDueDate() != null) {
+            task.setDueDate(taskUpdateDTO.getDueDate());
+        }
+        if (taskUpdateDTO.getTaskStatus() != null) {
+            task.setTaskStatus(taskUpdateDTO.getTaskStatus());
+        }
+        if (taskUpdateDTO.getResourceUrl() != null) {
+            task.setResourceUrl(taskUpdateDTO.getResourceUrl());
+        }
+        if (taskUpdateDTO.getTaskSubmittedDate() != null) {
+            task.setTaskSubmittedDate(taskUpdateDTO.getTaskSubmittedDate());
+        }
+        if (taskUpdateDTO.getAssigneeId() != null) {
+            VolunteerEntity assignee = volunteerRepository.findById(taskUpdateDTO.getAssigneeId())
+                    .orElseThrow(() -> new VolunteerNotFoundException("Assignee not found with ID: " + taskUpdateDTO.getAssigneeId()));
+            task.setAssignee(assignee);
+        }
 
-    //     TaskEntity updatedTask = taskRepository.save(task);
-    //     return taskDTOConvert.toTaskDTO(updatedTask);
-    // }
+        TaskEntity updatedTask = taskRepository.save(task);
+        return taskDTOConvert.toTaskDTO(updatedTask);
+    }
 
     public void deleteTask(Long taskId) {
         if (!taskRepository.existsById(taskId)) {
