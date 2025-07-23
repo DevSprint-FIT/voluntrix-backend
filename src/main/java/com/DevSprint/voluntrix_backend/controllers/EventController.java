@@ -107,6 +107,24 @@ public class EventController {
         return new ResponseEntity<List<EventDTO>>(filteredEventList, HttpStatus.OK);
     }
 
+    @GetMapping("/filter-with-org")
+    public ResponseEntity<List<EventAndOrgDTO>> getFilteredEventWithOrg(
+            @RequestParam(value = "eventLocation", required = false) String eventLocation,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(value = "eventVisibility", required = false) EventVisibility eventVisibility,
+            @RequestParam(value = "categoryIds", required = false) List<Long> categoryIds) {
+
+        if (eventLocation == null && startDate == null && endDate == null && eventVisibility == null
+                && categoryIds == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        List<EventAndOrgDTO> filteredEventList = eventService.getFilterEventWithOrg(eventLocation, startDate, endDate,
+                eventVisibility, categoryIds);
+        return new ResponseEntity<List<EventAndOrgDTO>>(filteredEventList, HttpStatus.OK);
+    }
+
     @GetMapping("/names")
     public ResponseEntity<List<EventNameDTO>> getAllEventNames() {
         return new ResponseEntity<List<EventNameDTO>>(eventService.getAllEventNames(), HttpStatus.OK);

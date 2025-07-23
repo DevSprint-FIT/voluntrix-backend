@@ -208,6 +208,55 @@ public class EventService {
         return entityDTOConvert.toEventDTOList(eventRepository.findAll(spec));
     }
 
+    public List<EventAndOrgDTO> getFilterEventWithOrg(String eventLocation, LocalDate startDate, LocalDate endDate,
+            EventVisibility eventVisibility, List<Long> categoryIds) {
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Start date must be before or equal to end date.");
+        }
+
+        Specification<EventEntity> spec = Specification.where(null);
+
+        if (eventVisibility != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("eventVisibility"),
+                    eventVisibility));
+        }
+
+        if (eventLocation != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("eventLocation"),
+                    "%" + eventLocation + "%"));
+        }
+
+        if (startDate != null && endDate != null) {
+            spec = spec.and(
+                    (root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("eventStartDate"), startDate,
+                            endDate));
+        } else if (startDate != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder
+                    .greaterThanOrEqualTo(root.get("eventStartDate"), startDate));
+        } else if (endDate != null) {
+            spec = spec
+                    .and((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("eventStartDate"),
+                            endDate));
+        }
+
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+
+            for (Long id : categoryIds) {
+                categoryRepository.findById(id)
+                        .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + id));
+            }
+
+            spec = spec.and((root, query, criteriaBuilder) -> {
+                if (query != null) {
+                    query.distinct(true);
+                }
+                return root.join("categories").get("categoryId").in(categoryIds);
+            });
+        }
+
+        return entityDTOConvert.toEventAndOrgDTOList(eventRepository.findAll(spec));
+    }
+
     public List<EventNameDTO> getAllEventNames() {
         return eventRepository.findAllEventIdAndTitle();
     }
