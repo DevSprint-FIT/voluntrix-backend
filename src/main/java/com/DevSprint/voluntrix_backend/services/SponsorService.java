@@ -93,4 +93,18 @@ public class SponsorService {
         SponsorEntity updatedSponsor = sponsorRepository.save(sponsor);
         return sponsorDTOConverter.toSponsorDTO(updatedSponsor);
     }
+
+    public SponsorDTO verifySponsor(Long sponsorId, boolean verified) {
+        SponsorEntity sponsor = sponsorRepository.findById(sponsorId)
+            .orElseThrow(() -> new SponsorNotFoundException("Sponsor not found with ID: " + sponsorId));
+        
+        sponsor.setVerified(verified);
+        SponsorEntity updatedSponsor = sponsorRepository.save(sponsor);
+        return sponsorDTOConverter.toSponsorDTO(updatedSponsor);
+    }
+
+    public List<SponsorDTO> getUnverifiedSponsors() {
+        List<SponsorEntity> unverifiedSponsors = sponsorRepository.findByVerifiedFalse();
+        return sponsorDTOConverter.toSponsorDTOList(unverifiedSponsors);
+    }
 }
