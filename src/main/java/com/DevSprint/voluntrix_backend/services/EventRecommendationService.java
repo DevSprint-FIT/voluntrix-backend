@@ -2,11 +2,13 @@ package com.DevSprint.voluntrix_backend.services;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
+import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
@@ -37,6 +39,8 @@ public class EventRecommendationService {
         VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
                 .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
 
+        Set<CategoryEntity> volunteerCategories = volunteer.getFollowedCategories();
+
         List<EventEntity> allEvents = eventRepository.findAll();
 
         List<EventEntity> filteredEvents = allEvents.stream()
@@ -44,6 +48,7 @@ public class EventRecommendationService {
                 .filter(event -> !hasAppliedOrParticipated(volunteer, event))
                 .filter(event -> isEventVisibleToVolunteer(volunteer, event))
                 .filter(event -> !event.getEventStartDate().isBefore(LocalDate.now()))
+                .filter(event -> hasMatchingCategory(event.getCategories(), volunteerCategories))
                 .collect(Collectors.toList());
 
         return entityDTOConvert.toEventDTOList(filteredEvents);
@@ -63,5 +68,11 @@ public class EventRecommendationService {
                     && org.getInstitute().equalsIgnoreCase(volunteer.getInstitute());
         }
         return false;
+    }
+
+    private boolean hasMatchingCategory(Set<CategoryEntity> eventCategories, Set<CategoryEntity> volunteerCategories) {
+        if (eventCategories == null || volunteerCategories == null)
+            return false;
+        return eventCategories.stream().anyMatch(volunteerCategories::contains);
     }
 }
