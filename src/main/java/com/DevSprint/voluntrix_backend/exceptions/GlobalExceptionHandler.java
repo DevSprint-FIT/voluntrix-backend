@@ -173,6 +173,12 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("SPONSOR_NOT_FOUND", ex.getMessage()));
     }
 
+    @ExceptionHandler(OTPVerificationException.class)
+    public ResponseEntity<ErrorResponse> handleOTPVerificationException(OTPVerificationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("OTP_VERIFICATION_FAILED", ex.getMessage()));
+    }
+
     // Catch-all for unknown exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
