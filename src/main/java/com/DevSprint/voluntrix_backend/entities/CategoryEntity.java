@@ -1,14 +1,13 @@
 package com.DevSprint.voluntrix_backend.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,4 +22,7 @@ public class CategoryEntity {
     private Long categoryId;
 
     private String categoryName;
+
+    @ManyToMany(mappedBy = "followedCategories")
+    private Set<VolunteerEntity> followers = new HashSet<>();
 }
