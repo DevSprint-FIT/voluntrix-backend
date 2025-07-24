@@ -1,18 +1,24 @@
 package com.DevSprint.voluntrix_backend.services;
 
-import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCreateDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerUpdateDTO;
+import com.DevSprint.voluntrix_backend.dtos.CategoryDTO;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
+import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
+import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
+import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
 import com.DevSprint.voluntrix_backend.utils.VolunteerDTOConvert;
+import com.DevSprint.voluntrix_backend.utils.VolunteerCategoryEntityDTOConverter;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.Optional;
 
 @Service
@@ -21,6 +27,9 @@ public class VolunteerService {
 
     private final VolunteerRepository volunteerRepository;
     private final VolunteerDTOConvert entityDTOConvert;
+    private final VolunteerCategoryEntityDTOConverter volunteerCategoryEntityDTOConverter;
+    private final CategoryRepository categoryRepository;
+
 
     public VolunteerDTO createVolunteer(VolunteerCreateDTO volunteerCreateDTO) {
         // Check for existing username
@@ -95,5 +104,24 @@ public class VolunteerService {
             throw new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId);
         }
         volunteerRepository.deleteById(volunteerId);
+    }
+
+    public Set<CategoryDTO> getVolunteerCategories(Long volunteerId) {
+        VolunteerEntity volunteer = volunteerRepository.findByIdWithCategories(volunteerId)
+                .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with id: " + volunteerId));
+        return volunteerCategoryEntityDTOConverter.convertVolunteerCategoriesToCategoryDTOs(volunteer);
+    }
+
+    public VolunteerDTO followCategory(Long volunteerId, Long categoryId) {
+        VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
+                .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
+
+        CategoryEntity category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found with ID: " + categoryId));
+
+        volunteer.getFollowedCategories().add(category);
+        VolunteerEntity updatedVolunteer = volunteerRepository.save(volunteer);
+
+        return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
     }
 }
