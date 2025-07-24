@@ -47,6 +47,12 @@ public class EventService {
                 .orElseThrow(() -> new VolunteerNotFoundException(
                         "Event Host not found: " + eventCreateDTO.getEventHostId()));
 
+        if (eventCreateDTO.getOrganizationId() != null) {
+            organizationRepository.findById(eventCreateDTO.getOrganizationId())
+                    .orElseThrow(() -> new OrganizationNotFoundException(
+                            "Organization not found: " + eventCreateDTO.getOrganizationId()));
+        }
+
         if (eventCreateDTO.getEventStartDate().isAfter(eventCreateDTO.getEventEndDate())) {
             throw new BadRequestException("Event start date cannot be after the event end date.");
         }
