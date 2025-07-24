@@ -121,4 +121,17 @@ public class ChatRestController {
             return ResponseEntity.ok(new ArrayList<>());
         }
     }
+    
+    @GetMapping("/all-users")
+    public ResponseEntity<List<Map<String, Object>>> getAllUsers() {
+        try {
+            log.info("Loading all registered users for chat");
+            List<Map<String, Object>> allUsers = chatService.getAllChatUsers();
+            log.info("Found {} registered users", allUsers.size());
+            return ResponseEntity.ok(allUsers);
+        } catch (Exception e) {
+            log.error("Error loading all users: {}", e.getMessage());
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+    }
 }
