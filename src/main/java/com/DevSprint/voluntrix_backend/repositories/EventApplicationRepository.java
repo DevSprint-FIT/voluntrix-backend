@@ -31,4 +31,6 @@ public interface EventApplicationRepository extends JpaRepository<EventApplicati
       "JOIN ea.event e " +
       "WHERE ea.volunteer.id = :volunteerId AND ea.applicationStatus = 'PENDING'")
    List<VolunteerAppliedEventDTO> findAppliedEventsByVolunteerId(@Param("volunteerId") Long volunteerId);
+
+   List<EventApplicationEntity> findByEvent(EventEntity event);
 }

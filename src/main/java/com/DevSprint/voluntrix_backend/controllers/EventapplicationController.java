@@ -76,4 +76,14 @@ public class EventapplicationController {
         eventApplicationService.deleteEventApplication(eventApplicationId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/event/{eventId}")
+    public ResponseEntity<List<EventApplicationDTO>> getEventApplicationsByEventId(@PathVariable Long eventId) {
+        if (eventId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        var selectedApplications = eventApplicationService.getEventApplicationsByEventId(eventId);
+        return new ResponseEntity<>(selectedApplications, HttpStatus.OK);
+    }
 }

@@ -127,4 +127,12 @@ public class EventApplicationService {
                 .orElseThrow(() -> new EventApplicationNotFoundException("Event application not found"));
         eventApplicationRepository.deleteById(id);
     }
+
+    public List<EventApplicationDTO> getEventApplicationsByEventId(Long eventId) {
+        EventEntity event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
+
+        List<EventApplicationEntity> applications = eventApplicationRepository.findByEvent(event);
+        return entityDTOConvert.toEventApplicationDTOList(applications);
+    }
 }
