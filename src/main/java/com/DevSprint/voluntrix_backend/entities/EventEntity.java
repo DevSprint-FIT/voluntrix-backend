@@ -77,7 +77,7 @@ public class EventEntity {
     @JoinColumn(name = "event_host_id", nullable = false)
     private VolunteerEntity eventHost;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EventApplicationEntity> applications;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

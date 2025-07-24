@@ -25,6 +25,7 @@ import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
+import com.DevSprint.voluntrix_backend.services.EventRecommendationService;
 import com.DevSprint.voluntrix_backend.services.EventService;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -38,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 public class EventController {
 
     private final EventService eventService;
+    private final EventRecommendationService eventRecommendationService;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Long>> addEvent(@RequestBody EventCreateDTO eventCreateDTO) {
@@ -166,5 +168,20 @@ public class EventController {
         }
 
         return new ResponseEntity<List<EventDTO>>(events, HttpStatus.OK);
+    }
+
+    @GetMapping("/recommended/{volunteerId}")
+    public ResponseEntity<List<EventDTO>> getRecommendedEvents(@PathVariable Long volunteerId) {
+        if (volunteerId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        List<EventDTO> recommendedEvents = eventRecommendationService.getRecommendedEvents(volunteerId);
+
+        if (recommendedEvents == null || recommendedEvents.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<List<EventDTO>>(recommendedEvents, HttpStatus.OK);
     }
 }

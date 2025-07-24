@@ -33,4 +33,6 @@ public interface EventApplicationRepository extends JpaRepository<EventApplicati
    List<VolunteerAppliedEventDTO> findAppliedEventsByVolunteerId(@Param("volunteerId") Long volunteerId);
 
    List<EventApplicationEntity> findByEvent(EventEntity event);
+
+   boolean existsByVolunteerAndEvent(VolunteerEntity volunteer, EventEntity event);
 }

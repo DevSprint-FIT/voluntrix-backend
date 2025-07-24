@@ -9,6 +9,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Table(name = "volunteer")
@@ -79,5 +83,9 @@ public class VolunteerEntity {
 
     @OneToMany(mappedBy = "volunteer")
     private Set<EventApplicationEntity> applications;
+
+    @ManyToMany
+    @JoinTable(name = "volunteer_category", joinColumns = @JoinColumn(name = "volunteer_id", referencedColumnName = "volunteerId"), inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "categoryId"))
+    private Set<CategoryEntity> followedCategories = new HashSet<>();
 }
 
