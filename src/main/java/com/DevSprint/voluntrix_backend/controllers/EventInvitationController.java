@@ -76,4 +76,14 @@ public class EventInvitationController {
         eventInvitationService.deleteEventInvitation(eventInvitationId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/organization/{organizationId}")
+    public ResponseEntity<List<EventInvitationDTO>> getEventInvitationsByOrganizationId(@PathVariable Long organizationId) {
+        if (organizationId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        var selectedInvitations = eventInvitationService.getEventInvitationsByOrganizationId(organizationId);
+        return new ResponseEntity<>(selectedInvitations, HttpStatus.OK);
+    }
 }

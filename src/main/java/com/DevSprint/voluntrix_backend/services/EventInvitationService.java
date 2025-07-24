@@ -131,4 +131,12 @@ public class EventInvitationService {
 
         eventInvitationRepository.deleteById(id);
     }
+
+    public List<EventInvitationDTO> getEventInvitationsByOrganizationId(Long organizationId) {
+        OrganizationEntity organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with ID: " + organizationId));
+
+        List<EventInvitationEntity> invitations = eventInvitationRepository.findByOrganization(organization);
+        return entityDTOConvert.toEventInvitationDTOList(invitations);
+    }
 }
