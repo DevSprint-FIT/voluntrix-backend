@@ -38,4 +38,18 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     // Get recent public messages with limit
     @Query(value = "SELECT * FROM message WHERE receiver_id = 'public-room' ORDER BY timestamp DESC LIMIT :limit", nativeQuery = true)
     List<Message> findRecentPublicMessages(@Param("limit") int limit);
+    
+    // Session-based privacy queries
+    @Query("SELECT m FROM Message m WHERE m.chatSessionId = :sessionId ORDER BY m.timestamp ASC")
+    List<Message> findBySessionId(@Param("sessionId") String sessionId);
+    
+    @Query("SELECT m FROM Message m WHERE m.receiverId = 'public-room' AND m.chatSessionId = :sessionId ORDER BY m.timestamp ASC")
+    List<Message> findPublicMessagesBySession(@Param("sessionId") String sessionId);
+    
+    @Query(value = "SELECT * FROM message WHERE receiver_id = 'public-room' AND chat_session_id = :sessionId ORDER BY timestamp DESC LIMIT :limit", nativeQuery = true)
+    List<Message> findRecentPublicMessagesBySession(@Param("sessionId") String sessionId, @Param("limit") int limit);
+    
+    // For private room chat history
+    @Query("SELECT m FROM Message m WHERE m.chatSessionId = :chatSessionId ORDER BY m.timestamp ASC")
+    List<Message> findByChatSessionIdOrderByTimestampAsc(@Param("chatSessionId") String chatSessionId);
 }

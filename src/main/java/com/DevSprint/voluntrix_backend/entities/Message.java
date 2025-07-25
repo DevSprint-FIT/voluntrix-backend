@@ -32,6 +32,9 @@ public class Message {
     
     private String senderName;
     
+    @Column(nullable = true)
+    private String chatSessionId; // Track which chat session this message belongs to
+    
     @Enumerated(EnumType.STRING)
     private MessageType type = MessageType.CHAT;
     

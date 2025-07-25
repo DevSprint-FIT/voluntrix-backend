@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.ChatMessageDTO;
 import com.DevSprint.voluntrix_backend.entities.Message;
+import com.DevSprint.voluntrix_backend.entities.PrivateRoom;
 import com.DevSprint.voluntrix_backend.repositories.MessageRepository;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -20,15 +22,39 @@ import java.util.stream.Collectors;
 public class ChatService {
 
     private final MessageRepository messageRepository;
+    private final PrivateRoomService privateRoomService;
 
-    public Message saveMessage(ChatMessageDTO chatMessageDTO) {
+    public Message saveMessage(ChatMessageDTO chatMessageDTO, String roomId) {
+        log.info("Saving message to room: {}", roomId);
+        
+        // Get the private room to determine the receiver
+        Optional<PrivateRoom> roomOpt = privateRoomService.getRoomById(roomId);
+        if (!roomOpt.isPresent()) {
+            throw new RuntimeException("Private room not found: " + roomId);
+        }
+        
+        PrivateRoom room = roomOpt.get();
+        
+        // Determine receiver ID based on sender
+        String receiverId = null;
+        if (room.getUser1().equals(chatMessageDTO.getSenderName())) {
+            receiverId = "user_" + room.getUser2();
+        } else if (room.getUser2().equals(chatMessageDTO.getSenderName())) {
+            receiverId = "user_" + room.getUser1();
+        } else {
+            throw new RuntimeException("Sender not authorized for room: " + roomId);
+        }
+        
         Message message = new Message();
         message.setSenderId(chatMessageDTO.getSenderId());
-        message.setReceiverId(chatMessageDTO.getReceiverId());
+        message.setReceiverId(receiverId); // Set the receiver ID
         message.setContent(chatMessageDTO.getContent());
         message.setSenderName(chatMessageDTO.getSenderName());
         message.setTimestamp(chatMessageDTO.getTimestamp() != null ? 
             chatMessageDTO.getTimestamp() : LocalDateTime.now());
+        
+        // Use the specific room ID for this private conversation
+        message.setChatSessionId(roomId);
         
         // Convert DTO enum to Entity enum
         if (chatMessageDTO.getType() != null) {
@@ -60,7 +86,7 @@ public class ChatService {
         }
 
         Message savedMessage = messageRepository.save(message);
-        log.info("Message saved with ID: {}", savedMessage.getId());
+        log.info("Message saved with ID: {} for private room: {}", savedMessage.getId(), roomId);
         return savedMessage;
     }
 
@@ -117,6 +143,7 @@ public class ChatService {
     }
     
     public List<ChatMessageDTO> getPublicChatHistory() {
+        // Simple approach - get all public messages
         List<Message> messages = messageRepository.findPublicMessages();
         
         return messages.stream()
@@ -125,10 +152,23 @@ public class ChatService {
     }
     
     public List<ChatMessageDTO> getRecentPublicMessages(int limit) {
+        // Simple approach - get recent public messages
         List<Message> messages = messageRepository.findRecentPublicMessages(limit);
         
         // Reverse the order since we got them in DESC order
         Collections.reverse(messages);
+        
+        return messages.stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+    
+    public List<ChatMessageDTO> getUserAccessibleChatHistory(String userName, int limit) {
+        // Simple approach - get all public messages (no session filtering)
+        List<Message> messages = messageRepository.findRecentPublicMessages(limit);
+        Collections.reverse(messages);
+        
+        log.info("Loaded {} messages for user: {}", messages.size(), userName);
         
         return messages.stream()
             .map(this::convertToDTO)
@@ -172,5 +212,41 @@ public class ChatService {
         }
 
         return dto;
+    }
+    
+    /**
+     * Get chat history for a specific private room
+     */
+    public List<ChatMessageDTO> getPrivateRoomHistory(String roomId, String username) {
+        log.info("Loading private room history for room: {} and user: {}", roomId, username);
+        
+        // Verify user has access to this room
+        if (!privateRoomService.canUserAccessRoom(roomId, username)) {
+            log.warn("User {} does not have access to room: {}", username, roomId);
+            return Collections.emptyList();
+        }
+        
+        List<Message> messages = messageRepository.findByChatSessionIdOrderByTimestampAsc(roomId);
+        
+        log.info("Loaded {} messages for private room: {}", messages.size(), roomId);
+        
+        return messages.stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+    
+    /**
+     * Create or get private room for two users
+     */
+    public String createOrGetPrivateRoom(String user1, String user2) {
+        PrivateRoom room = privateRoomService.createOrGetPrivateRoom(user1, user2);
+        return room.getRoomId();
+    }
+    
+    /**
+     * Check if user can access a private room
+     */
+    public boolean canAccessPrivateRoom(String roomId, String username) {
+        return privateRoomService.canUserAccessRoom(roomId, username);
     }
 }

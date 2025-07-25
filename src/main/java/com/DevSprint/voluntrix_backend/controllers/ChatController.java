@@ -29,8 +29,8 @@ public class ChatController {
         try {
             log.info("Received message from {} to {}: {}", chatMessage.getSenderId(), chatMessage.getReceiverId(), chatMessage.getContent());
             
-            // Save message to database
-            Message savedMessage = chatService.saveMessage(chatMessage);
+            // Save message to database (using global-chat for public messages)
+            Message savedMessage = chatService.saveMessage(chatMessage, "global-chat");
             
             // Convert back to DTO for sending
             ChatMessageDTO responseMessage = convertToDTO(savedMessage);
@@ -78,7 +78,7 @@ public class ChatController {
         try {
             String sessionId = headerAccessor.getSessionId();
             
-            // Add user session
+            // Simple user management - no room restrictions
             userSessionService.addUserSession(chatMessage.getSenderId(), sessionId, chatMessage.getSenderName());
             
             // Store in WebSocket session attributes
@@ -89,11 +89,19 @@ public class ChatController {
             
             // Broadcast user status update
             messagingTemplate.convertAndSend("/topic/user-status", 
-                java.util.Map.of("userId", chatMessage.getSenderId(), "status", "online", "userName", chatMessage.getSenderName())
+                java.util.Map.of(
+                    "userId", chatMessage.getSenderId(), 
+                    "status", "online", 
+                    "userName", chatMessage.getSenderName(),
+                    "onlineCount", userSessionService.getOnlineUserCount()
+                )
             );
             
+            // Simple join message
+            String joinMessage = chatMessage.getSenderName() + " joined the chat";
+            
             return ChatMessage.builder()
-                .content(chatMessage.getSenderName() + " joined the chat")
+                .content(joinMessage)
                 .sender(chatMessage.getSenderName())
                 .type(chatMessage.getType())
                 .build();
@@ -173,8 +181,8 @@ public class ChatController {
             // Set receiver as public-room for database storage
             chatMessage.setReceiverId("public-room");
             
-            // Save message to database
-            Message savedMessage = chatService.saveMessage(chatMessage);
+            // Save message to database (using global-chat for public messages)
+            Message savedMessage = chatService.saveMessage(chatMessage, "global-chat");
             
             // Return message for broadcasting
             return ChatMessage.builder()

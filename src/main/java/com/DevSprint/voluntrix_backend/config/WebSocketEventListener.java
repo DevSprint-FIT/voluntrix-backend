@@ -31,14 +31,16 @@ public class WebSocketEventListener {
         if (userId != null && username != null && sessionId != null) {
             // Remove user session
             userSessionService.removeUserSession(userId, sessionId);
+            userSessionService.removeUserFromCurrentSession(userId);
             
-            log.info("User {} disconnected with session {}", userId, sessionId);
+            log.info("User {} disconnected with session {}. Remaining online users: {}", 
+                userId, sessionId, userSessionService.getOnlineUserCount());
             
-            // Create disconnect message
+            // Create disconnect message with user count
             var chatMessage = ChatMessage.builder()
                 .type(MessageType.LEAVE)
                 .sender(username)
-                .content(username + " left the chat")
+                .content(username + " left the private chat (" + userSessionService.getOnlineUserCount() + "/2 users)")
                 .build();
 
             // Broadcast disconnect message
@@ -49,7 +51,9 @@ public class WebSocketEventListener {
                 java.util.Map.of(
                     "userId", userId, 
                     "status", userSessionService.isUserOnline(userId) ? "online" : "offline", 
-                    "userName", username
+                    "userName", username,
+                    "onlineCount", userSessionService.getOnlineUserCount(),
+                    "sessionId", userSessionService.getCurrentSessionId()
                 )
             );
         }

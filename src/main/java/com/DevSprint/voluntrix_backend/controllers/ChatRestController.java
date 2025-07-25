@@ -121,4 +121,41 @@ public class ChatRestController {
             return ResponseEntity.ok(new ArrayList<>());
         }
     }
+    
+    @GetMapping("/user-history/{userName}")
+    public ResponseEntity<List<ChatMessageDTO>> getUserChatHistory(
+            @PathVariable String userName,
+            @RequestParam(defaultValue = "50") int limit) {
+        try {
+            log.info("Loading chat history for user: {} with limit: {}", userName, limit);
+            List<ChatMessageDTO> messages = chatService.getUserAccessibleChatHistory(userName, limit);
+            log.info("Found {} messages for user: {}", messages.size(), userName);
+            return ResponseEntity.ok(messages);
+        } catch (Exception e) {
+            log.error("Error loading chat history for user {}: {}", userName, e.getMessage());
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+    }
+    
+    @GetMapping("/room-status")
+    public ResponseEntity<Map<String, Object>> getChatRoomStatus() {
+        try {
+            Map<String, Object> status = new HashMap<>();
+            status.put("onlineUserCount", userSessionService.getOnlineUserCount());
+            status.put("maxUsers", 2);
+            status.put("isFull", userSessionService.isChatRoomFull());
+            status.put("canJoin", userSessionService.canAddNewUser());
+            status.put("onlineUsers", userSessionService.getOnlineUsers());
+            
+            return ResponseEntity.ok(status);
+        } catch (Exception e) {
+            log.error("Error getting chat room status: {}", e.getMessage());
+            Map<String, Object> errorStatus = new HashMap<>();
+            errorStatus.put("onlineUserCount", 0);
+            errorStatus.put("maxUsers", 2);
+            errorStatus.put("isFull", false);
+            errorStatus.put("canJoin", true);
+            return ResponseEntity.ok(errorStatus);
+        }
+    }
 }
