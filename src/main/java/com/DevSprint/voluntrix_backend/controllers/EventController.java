@@ -75,6 +75,17 @@ public class EventController {
         return new ResponseEntity<EventDTO>(selectedEvent, HttpStatus.OK);
     }
 
+    @GetMapping("/with-org/{eventId}")
+    public ResponseEntity<EventAndOrgDTO> getEventAndOrgById(@PathVariable Long eventId) {
+
+        if (eventId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        var selectedEvent = eventService.getEventAndOrgById(eventId);
+        return new ResponseEntity<EventAndOrgDTO>(selectedEvent, HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<List<EventDTO>> getAllEvents() {
         return new ResponseEntity<List<EventDTO>>(eventService.getAllEvents(), HttpStatus.OK);
