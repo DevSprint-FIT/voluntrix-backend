@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.DevSprint.voluntrix_backend.dtos.EventDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
 import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
@@ -35,7 +35,7 @@ public class EventRecommendationService {
     private final VolunteerRepository volunteerRepository;
     private final EventDTOConverter entityDTOConvert;
 
-    public List<EventDTO> getRecommendedEvents(Long volunteerId) {
+    public List<EventAndOrgDTO> getRecommendedEvents(Long volunteerId) {
         VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
                 .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
 
@@ -51,7 +51,7 @@ public class EventRecommendationService {
                 .filter(event -> hasMatchingCategory(event.getCategories(), volunteerCategories))
                 .collect(Collectors.toList());
 
-        return entityDTOConvert.toEventDTOList(filteredEvents);
+        return entityDTOConvert.toEventAndOrgDTOList(filteredEvents);
     }
 
     private boolean hasAppliedOrParticipated(VolunteerEntity volunteer, EventEntity event) {

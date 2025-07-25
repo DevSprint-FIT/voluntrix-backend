@@ -171,17 +171,17 @@ public class EventController {
     }
 
     @GetMapping("/recommended/{volunteerId}")
-    public ResponseEntity<List<EventDTO>> getRecommendedEvents(@PathVariable Long volunteerId) {
+    public ResponseEntity<List<EventAndOrgDTO>> getRecommendedEvents(@PathVariable Long volunteerId) {
         if (volunteerId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<EventDTO> recommendedEvents = eventRecommendationService.getRecommendedEvents(volunteerId);
+        List<EventAndOrgDTO> recommendedEvents = eventRecommendationService.getRecommendedEvents(volunteerId);
 
         if (recommendedEvents == null || recommendedEvents.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
-        return new ResponseEntity<List<EventDTO>>(recommendedEvents, HttpStatus.OK);
+        return new ResponseEntity<List<EventAndOrgDTO>>(recommendedEvents, HttpStatus.OK);
     }
 }
