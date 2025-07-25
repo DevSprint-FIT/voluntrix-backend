@@ -86,4 +86,7 @@ public class EventEntity {
 
     @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private EventInvitationEntity invitation;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SponsorshipEntity> sponsorships;
 }
