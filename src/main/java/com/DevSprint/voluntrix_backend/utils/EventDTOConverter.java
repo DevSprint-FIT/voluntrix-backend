@@ -56,6 +56,8 @@ public class EventDTOConverter {
         eventEntity.setEventStatus(eventCreateDTO.getEventStatus());
         eventEntity.setSponsorshipEnabled(eventCreateDTO.getSponsorshipEnabled());
         eventEntity.setDonationEnabled(eventCreateDTO.getDonationEnabled());
+        eventEntity.setSponsorshipProposalUrl(eventCreateDTO.getSponsorshipProposalUrl());
+        eventEntity.setDonationGoal(eventCreateDTO.getDonationGoal());
 
         // Set categories
         if (eventCreateDTO.getCategories() != null) {

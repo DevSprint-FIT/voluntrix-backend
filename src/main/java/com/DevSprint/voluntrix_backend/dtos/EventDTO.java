@@ -41,10 +41,13 @@ public class EventDTO implements Serializable {
     private Boolean sponsorshipEnabled;
     private Boolean donationEnabled;
 
+    private String sponsorshipProposalUrl;
+    private Integer donationGoal;
+    private Integer donations;
+
     private Set<CategoryDTO> categories;
 
     private Long eventHostId;
 
     private Long organizationId;
 }
-

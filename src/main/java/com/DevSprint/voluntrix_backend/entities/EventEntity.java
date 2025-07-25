@@ -69,6 +69,12 @@ public class EventEntity {
     private Boolean sponsorshipEnabled;
     private Boolean donationEnabled;
 
+    private String sponsorshipProposalUrl;
+    private Integer donationGoal;
+
+    @Builder.Default
+    private Integer donations = 0;
+
     @ManyToMany
     @JoinTable(name = "event_category", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<CategoryEntity> categories;

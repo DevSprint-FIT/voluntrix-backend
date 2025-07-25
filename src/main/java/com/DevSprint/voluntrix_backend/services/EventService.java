@@ -136,6 +136,12 @@ public class EventService {
         if (eventDTO.getDonationEnabled() != null) {
             selectedEvent.setDonationEnabled(eventDTO.getDonationEnabled());
         }
+        if (eventDTO.getSponsorshipProposalUrl() != null) {
+            selectedEvent.setSponsorshipProposalUrl(eventDTO.getSponsorshipProposalUrl());
+        }
+        if (eventDTO.getDonationGoal() != null) {
+            selectedEvent.setDonationGoal(eventDTO.getDonationGoal());
+        }
         if (eventDTO.getCategories() != null) {
             Set<CategoryEntity> categoryEntities = eventDTO.getCategories().stream()
                     .map(dto -> categoryRepository.findById(dto.getCategoryId())
