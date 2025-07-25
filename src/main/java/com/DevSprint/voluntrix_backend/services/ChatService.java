@@ -6,20 +6,11 @@ import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.ChatMessageDTO;
 import com.DevSprint.voluntrix_backend.entities.Message;
-import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
-import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
-import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
 import com.DevSprint.voluntrix_backend.repositories.MessageRepository;
-import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
-import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
-import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,9 +20,6 @@ import java.util.stream.Collectors;
 public class ChatService {
 
     private final MessageRepository messageRepository;
-    private final VolunteerRepository volunteerRepository;
-    private final OrganizationRepository organizationRepository;
-    private final SponsorRepository sponsorRepository;
 
     public Message saveMessage(ChatMessageDTO chatMessageDTO) {
         Message message = new Message();
@@ -145,51 +133,6 @@ public class ChatService {
         return messages.stream()
             .map(this::convertToDTO)
             .collect(Collectors.toList());
-    }
-
-    public List<Map<String, Object>> getAllChatUsers() {
-        List<Map<String, Object>> allUsers = new ArrayList<>();
-        
-        // Add all volunteers
-        List<VolunteerEntity> volunteers = volunteerRepository.findAll();
-        for (VolunteerEntity volunteer : volunteers) {
-            Map<String, Object> userInfo = new HashMap<>();
-            userInfo.put("userId", "volunteer_" + volunteer.getVolunteerId().toString());
-            userInfo.put("userName", volunteer.getFirstName() + " " + volunteer.getLastName());
-            userInfo.put("handle", volunteer.getUsername());
-            userInfo.put("email", volunteer.getEmail());
-            userInfo.put("userType", "volunteer");
-            userInfo.put("isOnline", false); // Default offline, will be updated by frontend
-            allUsers.add(userInfo);
-        }
-        
-        // Add all organizations
-        List<OrganizationEntity> organizations = organizationRepository.findAll();
-        for (OrganizationEntity organization : organizations) {
-            Map<String, Object> userInfo = new HashMap<>();
-            userInfo.put("userId", "organization_" + organization.getId().toString());
-            userInfo.put("userName", organization.getName());
-            userInfo.put("handle", organization.getUsername());
-            userInfo.put("email", organization.getEmail());
-            userInfo.put("userType", "organization");
-            userInfo.put("isOnline", false); // Default offline, will be updated by frontend
-            allUsers.add(userInfo);
-        }
-        
-        // Add all sponsors
-        List<SponsorEntity> sponsors = sponsorRepository.findAll();
-        for (SponsorEntity sponsor : sponsors) {
-            Map<String, Object> userInfo = new HashMap<>();
-            userInfo.put("userId", "sponsor_" + sponsor.getSponsorId().toString());
-            userInfo.put("userName", "Sponsor " + sponsor.getSponsorId()); // No name field in SponsorEntity
-            userInfo.put("handle", "sponsor_" + sponsor.getSponsorId());
-            userInfo.put("email", ""); // No email field in SponsorEntity
-            userInfo.put("userType", "sponsor");
-            userInfo.put("isOnline", false); // Default offline, will be updated by frontend
-            allUsers.add(userInfo);
-        }
-        
-        return allUsers;
     }
 
     private ChatMessageDTO convertToDTO(Message message) {

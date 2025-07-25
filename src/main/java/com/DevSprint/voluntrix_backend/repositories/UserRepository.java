@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, Long>{
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByEmail(String email);
-    Optional<UserEntity> findByHandle(String handle);
+    Optional<UserEntity> findByUsername(String username);
     boolean existsByEmail(String email);
-    boolean existsByHandle(String handle);
+    boolean existsByUsername(String username);
 }
