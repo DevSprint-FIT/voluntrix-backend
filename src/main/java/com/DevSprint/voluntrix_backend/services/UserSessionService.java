@@ -75,7 +75,10 @@ public class UserSessionService {
     }
     
     public String getUserLatestSessionByName(String userName) {
-        return userNameToSessionMap.get(userName);
+        String session = userNameToSessionMap.get(userName);
+        log.info("Looking for session for userName: {}, found: {}, current userNameToSessionMap: {}", 
+                userName, session, userNameToSessionMap);
+        return session;
     }
     
     public boolean shouldStartNewSession(String newUserId) {
@@ -84,11 +87,7 @@ public class UserSessionService {
         // 2. The new user wasn't part of the previous session
         // 3. All previous users have left and this is a different user joining
         
-        if (currentSessionId == null || currentSessionUsers.isEmpty()) {
-            return true;
-        }
-        
-        // Get the username of the new user
+        // Get the username of the new user first
         String newUserName = getUserName(newUserId);
         if (newUserName == null) {
             // Extract username from userId (format: user_username)
@@ -102,7 +101,22 @@ public class UserSessionService {
             return true; // Start new session if we can't identify the user
         }
         
-        // If the user was part of the current session users (by name), don't start new session
+        // FIRST: Check if this user has an existing session - this takes priority
+        String userPreviousSession = userNameToSessionMap.get(newUserName);
+        if (userPreviousSession != null) {
+            // If the user has a previous session, continue it instead of starting new
+            log.info("User {} has previous session {}, continuing it instead of starting new", newUserName, userPreviousSession);
+            currentSessionId = userPreviousSession; // Continue the previous session
+            return false;
+        }
+        
+        // SECOND: If no current session exists, start a new one
+        if (currentSessionId == null || currentSessionUsers.isEmpty()) {
+            log.info("No current session or session is empty, starting new session for user {}", newUserName);
+            return true;
+        }
+        
+        // THIRD: Check if the user was part of the current session users (by name)
         for (String currentUser : currentSessionUsers) {
             String currentUserName = getUserName(currentUser);
             if (currentUserName == null && currentUser.startsWith("user_")) {
@@ -115,10 +129,17 @@ public class UserSessionService {
             }
         }
         
-        // If there are currently online users and this is a new user, start new session
+        // FOURTH: For a 2-user chat system, allow new users to join existing session if room isn't full
+        // Only start new session if room is full (privacy protection)
         if (!getOnlineUsers().isEmpty()) {
-            log.info("Starting new session because {} is a new user joining existing session", newUserName);
-            return true;
+            if (getOnlineUsers().size() >= 2) {
+                log.info("Starting new session because chat room is full and {} is trying to join", newUserName);
+                return true;
+            } else {
+                // Room has space for one more user - let them join the existing session
+                log.info("Allowing {} to join existing session {} (room has space)", newUserName, currentSessionId);
+                return false;
+            }
         }
         
         return false;
@@ -138,8 +159,20 @@ public class UserSessionService {
         
         // Map username to session
         String userName = getUserName(userId);
+        if (userName == null) {
+            // Extract username from userId if not found in userNames map
+            if (userId.startsWith("user_")) {
+                userName = userId.substring(5);
+                log.info("Extracted username '{}' from userId '{}'", userName, userId);
+            }
+        }
+        
+        log.info("Adding user {} (userId: {}) to session {}", userName, userId, currentSessionId);
         if (userName != null) {
             userNameToSessionMap.put(userName, currentSessionId);
+            log.info("Updated userNameToSessionMap: {}", userNameToSessionMap);
+        } else {
+            log.warn("Could not find userName for userId: {}", userId);
         }
         
         log.info("Added user {} to session {}", userId, currentSessionId);
