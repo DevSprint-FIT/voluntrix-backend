@@ -102,6 +102,7 @@ public class GlobalExceptionHandler {
     // Catch-all for unknown exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        System.out.println(ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse("INTERNAL_SERVER_ERROR", "An unexpected error occurred."));
     }
@@ -153,7 +154,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse("SPONSORSHIP_NOT_FOUND", ex.getMessage()));
     }
-    
+
+    @ExceptionHandler(SponsorshipIsNotAvailableException.class)
+    public ResponseEntity<ErrorResponse> handleSponsorshipIsNotAvailableException(SponsorshipIsNotAvailableException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("SPONSORSHIP_NOT_AVAILABLE", ex.getMessage()));
+    }
+
+    @ExceptionHandler(SponsorshipRequestNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSponsorshipRequestNotFoundException(SponsorshipRequestNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("SPONSORSHIP_REQUEST_NOT_FOUND", ex.getMessage()));
+    }
+
     @ExceptionHandler(TaskNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Map<String, String>> handleTaskNotFound(TaskNotFoundException ex) {
