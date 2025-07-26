@@ -11,11 +11,13 @@ import com.DevSprint.voluntrix_backend.repositories.TaskRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerEventParticipationRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -323,6 +325,155 @@ public class RewardService {
                 currentPoints = 0;
             }
             participation.setEventRewardPoints(currentPoints + pointsToAdd);
+            volunteerEventParticipationRepository.save(participation);
+        }
+    }
+
+    //  When task is deleted - deduct points from host and assignee
+    public void processTaskDeletion(TaskEntity task) {
+        EventEntity event = task.getEvent();
+
+        // Deduct 2 points from event host for task creation
+        if (event.getEventHost() != null) {
+            VolunteerEntity eventHost = event.getEventHost();
+
+            Integer currentEventPoints = event.getEventHostRewardPoints();
+            if (currentEventPoints == null) {
+                currentEventPoints = 0;
+            }
+
+            Integer currentHostPoints = eventHost.getRewardPoints();
+            if (currentHostPoints == null) {
+                currentHostPoints = 0;
+            }
+
+            // Deduct 2 points for task creation
+            event.setEventHostRewardPoints(currentEventPoints - 2);
+            eventHost.setRewardPoints(currentHostPoints - 2);
+            updateVolunteerLevel(eventHost);
+
+            // Update participation table for host (deduct points)
+            updateParticipationPoints(eventHost.getVolunteerId(), event.getEventId(), -2);
+
+            eventRepository.save(event);
+            volunteerRepository.save(eventHost);
+        }
+
+        // Deduct 10 points from assigned volunteer if task was assigned
+        if (task.getAssignee() != null) {
+            VolunteerEntity volunteer = task.getAssignee();
+
+            Integer currentPoints = volunteer.getRewardPoints();
+            if (currentPoints == null) {
+                currentPoints = 0;
+            }
+
+            volunteer.setRewardPoints(currentPoints - 10);
+            updateVolunteerLevel(volunteer);
+
+            // Update participation table for volunteer (deduct points)
+            updateParticipationPoints(volunteer.getVolunteerId(), event.getEventId(), -10);
+            volunteerRepository.save(volunteer);
+        }
+    }
+
+    /**
+     * Scheduled method to check for inactive volunteers
+     * Runs daily to identify volunteers who became unavailable after task assignment
+     */
+    @Scheduled(cron = "0 0 9 * * ?") // Run daily at 9 AM
+    public void checkForInactiveVolunteers() {
+        LocalDateTime twoDaysAgo = LocalDateTime.now().minus(2, ChronoUnit.DAYS);
+
+        // Find all tasks assigned (created) more than 2 days ago with TO_DO status
+        // where the assigned volunteer is now unavailable
+        List<TaskEntity> tasksToCheck = taskRepository.findTasksAssignedMoreThanTwoDaysAgoWithTodoStatus(twoDaysAgo);
+
+        for (TaskEntity task : tasksToCheck) {
+            // Double-check that volunteer is unavailable (query should already filter this)
+            if (task.getAssignee() != null && !task.getAssignee().getIsAvailable()) {
+                processInactiveVolunteer(task);
+            }
+        }
+    }
+
+    /**
+     * Process a volunteer who became inactive after task assignment
+     */
+    private void processInactiveVolunteer(TaskEntity task) {
+        VolunteerEntity inactiveVolunteer = task.getAssignee();
+        EventEntity event = task.getEvent();
+
+        // Check if already marked as inactive for this event
+        VolunteerEventParticipationEntity participation =
+                volunteerEventParticipationRepository.findByVolunteer_VolunteerIdAndEvent_EventId(
+                        inactiveVolunteer.getVolunteerId(), event.getEventId());
+
+        if (participation != null && !participation.getIsInactive()) {
+            // Mark as inactive
+            participation.setIsInactive(true);
+            volunteerEventParticipationRepository.save(participation);
+
+            // Deduct 10 points from inactive volunteer
+            Integer currentPoints = inactiveVolunteer.getRewardPoints();
+            if (currentPoints == null) {
+                currentPoints = 0;
+            }
+
+            inactiveVolunteer.setRewardPoints(Math.max(0, currentPoints - 10)); // Prevent negative points
+            updateVolunteerLevel(inactiveVolunteer);
+            volunteerRepository.save(inactiveVolunteer);
+
+            // Update participation table (deduct points)
+            Integer currentParticipationPoints = participation.getEventRewardPoints();
+            if (currentParticipationPoints == null) {
+                currentParticipationPoints = 0;
+            }
+            participation.setEventRewardPoints(Math.max(0, currentParticipationPoints - 10));
+            volunteerEventParticipationRepository.save(participation);
+
+            // Remove assignee so event host can reassign to someone else
+            task.setAssignee(null);
+            taskRepository.save(task);
+
+            // TODO: Trigger notification to event host that task is now unassigned and needs reassignment
+
+        }
+    }
+
+    //  Handle reassignment to new volunteers
+
+    public void processTaskAssignmentAndReactivate(TaskEntity task) {
+        if (task.getAssignee() != null) {
+            VolunteerEntity volunteer = task.getAssignee();
+
+            Integer currentPoints = volunteer.getRewardPoints();
+            if (currentPoints == null) {
+                currentPoints = 0;
+            }
+
+            volunteer.setRewardPoints(currentPoints + 10);
+            updateVolunteerLevel(volunteer);
+
+            // Update participation table for assigned volunteer
+            updateParticipationPoints(volunteer.getVolunteerId(), task.getEvent().getEventId(), 10);
+
+            // If this volunteer was previously inactive for this event, reactivate them
+            reactivateVolunteer(volunteer.getVolunteerId(), task.getEvent().getEventId());
+
+            volunteerRepository.save(volunteer);
+        }
+    }
+
+    /**
+     * Reactivate an inactive volunteer for a specific event
+     */
+    public void reactivateVolunteer(Long volunteerId, Long eventId) {
+        VolunteerEventParticipationEntity participation =
+                volunteerEventParticipationRepository.findByVolunteer_VolunteerIdAndEvent_EventId(volunteerId, eventId);
+
+        if (participation != null && participation.getIsInactive()) {
+            participation.setIsInactive(false);
             volunteerEventParticipationRepository.save(participation);
         }
     }

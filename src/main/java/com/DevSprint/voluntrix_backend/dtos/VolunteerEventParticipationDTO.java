@@ -17,4 +17,5 @@ public class VolunteerEventParticipationDTO {
     private Long eventId;
     private ContributionArea areaOfContribution;
     private Integer eventRewardPoints;
+    private Boolean isInactive = false;
 }

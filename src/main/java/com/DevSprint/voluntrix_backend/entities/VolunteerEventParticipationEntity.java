@@ -45,4 +45,7 @@ public class VolunteerEventParticipationEntity {
 
     @Column
     private Integer eventRewardPoints = 0;
+
+    @Column
+    private Boolean isInactive = false;
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.PostConstruct;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -32,9 +33,25 @@ public class EventDTOConverter {
     private final CategoryRepository categoryRepository;
     private final OrganizationRepository organizationRepository;
 
+    @PostConstruct
+    public void configureModelMapper() {
+        // Simply ignore ambiguous mappings
+        modelMapper.getConfiguration().setAmbiguityIgnored(true);
+    }
+
     // EventEntity to EventDTO
-    public EventDTO toEventDTO(EventEntity eventEntity) {
-        return modelMapper.map(eventEntity, EventDTO.class);
+     public EventDTO toEventDTO(EventEntity eventEntity) {
+        EventDTO eventDTO = modelMapper.map(eventEntity, EventDTO.class);
+        
+        // Manually set the correct eventHostRewardPoints to avoid ambiguity
+        eventDTO.setEventHostRewardPoints(eventEntity.getEventHostRewardPoints());
+        
+        // Manually set eventHostId
+        if (eventEntity.getEventHost() != null) {
+            eventDTO.setEventHostId(eventEntity.getEventHost().getVolunteerId());
+        }
+        
+        return eventDTO;
     }
 
     // EventCreateDTO to EventEntity

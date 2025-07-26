@@ -12,6 +12,4 @@ public class EventLeaderboardDTO {
     private String lastName;
     private Integer eventRewardPoints;
     private String profilePictureUrl;
-
-
 }

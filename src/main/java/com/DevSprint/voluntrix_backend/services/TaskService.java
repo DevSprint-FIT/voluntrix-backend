@@ -159,9 +159,13 @@ public class TaskService {
     }
 
     public void deleteTask(Long taskId) {
-        if (!taskRepository.existsById(taskId)) {
-            throw new TaskNotFoundException("Task not found with ID: " + taskId);
-        }
+        TaskEntity task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + taskId));
+
+        // Process reward deductions before deleting
+        rewardService.processTaskDeletion(task);
+
+        // Now delete the task
         taskRepository.deleteById(taskId);
     }
 
