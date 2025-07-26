@@ -12,4 +12,5 @@ import com.DevSprint.voluntrix_backend.entities.SponsorshipEntity;
 public interface SponsorshipRepository extends JpaRepository<SponsorshipEntity, Long> {
 
     List<SponsorshipEntity> findByEvent(EventEntity event);
+
 }
