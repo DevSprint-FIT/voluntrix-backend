@@ -33,8 +33,8 @@ public class ImageKitController {
         String raw = token + expire;
 
         // HMAC-SHA256 signature
-        Mac hmac = Mac.getInstance("HmacSHA256");
-        SecretKeySpec secretKey = new SecretKeySpec(privateKey.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        Mac hmac = Mac.getInstance("HmacSHA1");
+        SecretKeySpec secretKey = new SecretKeySpec(privateKey.getBytes(StandardCharsets.UTF_8), "HmacSHA1");
         hmac.init(secretKey);
         byte[] signatureBytes = hmac.doFinal(raw.getBytes(StandardCharsets.UTF_8));
         String signature = HexFormat.of().formatHex(signatureBytes);

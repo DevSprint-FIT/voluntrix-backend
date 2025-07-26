@@ -43,6 +43,7 @@ public class VolunteerEntity {
 
     @Column(nullable = false, unique = true)
     private String email;
+  
     @Column
     private String institute;
 
