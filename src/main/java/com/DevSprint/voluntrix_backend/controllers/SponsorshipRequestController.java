@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -60,6 +62,19 @@ public class SponsorshipRequestController {
             @PathVariable Long eventId, @PathVariable String status) {
         List<SponsorshipRequestDTO> requests = sponsorshipRequestService.getSponsorshipRequestsByEventIdAndStatus(eventId, status);
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship requests retrieved successfully", requests));
+    }
+
+    @PatchMapping("/{requestId}/status/{status}")
+    public ResponseEntity<ApiResponse<SponsorshipRequestDTO>> updateSponsorshipRequestStatus(
+            @PathVariable Long requestId, @PathVariable String status) {
+        SponsorshipRequestDTO updatedRequest = sponsorshipRequestService.updateSponsorshipRequestStatus(requestId, status);
+        return ResponseEntity.ok(new ApiResponse<>("Sponsorship request status updated successfully", updatedRequest));
+    }
+
+    @DeleteMapping("/{requestId}")
+    public ResponseEntity<ApiResponse<String>> deleteSponsorshipRequest(@PathVariable Long requestId) {
+        sponsorshipRequestService.deleteSponsorshipRequest(requestId);
+        return ResponseEntity.ok(new ApiResponse<>("Sponsorship request deleted successfully", null));
     }
 
 }

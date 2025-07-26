@@ -10,6 +10,7 @@ import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDTO;
 import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorshipEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorshipRequestEntity;
+import com.DevSprint.voluntrix_backend.enums.SponsorshipRequestStatus;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.SponsorNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.SponsorshipIsNotAvailableException;
@@ -114,5 +115,27 @@ public class SponsorshipRequestService {
         }
 
         return sponsorshipDTOConverter.toSponsorshipRequestDTOList(requests);
+    }
+
+    public SponsorshipRequestDTO updateSponsorshipRequestStatus(Long requestId, String status) {
+        SponsorshipRequestEntity request = sponsorshipRequestRepository.findByRequestId(requestId)
+                .orElseThrow(() -> new SponsorshipRequestNotFoundException("Sponsorship request not found with ID: " + requestId));
+
+        // Validate status
+        if (!"PENDING".equalsIgnoreCase(status) && !"APPROVED".equalsIgnoreCase(status) && !"REJECTED".equalsIgnoreCase(status)) {
+            throw new IllegalArgumentException("Invalid status: " + status);
+        }
+
+        // Update status
+        request.setStatus(SponsorshipRequestStatus.valueOf(status.toUpperCase()));
+        SponsorshipRequestEntity updatedRequest = sponsorshipRequestRepository.save(request);
+
+        return sponsorshipDTOConverter.toSponsorshipRequestDTO(updatedRequest);
+    }
+
+    public void deleteSponsorshipRequest(Long requestId) {
+        SponsorshipRequestEntity request = sponsorshipRequestRepository.findByRequestId(requestId)
+                .orElseThrow(() -> new SponsorshipRequestNotFoundException("Sponsorship request not found with ID: " + requestId));
+        sponsorshipRequestRepository.delete(request);
     }
 }
