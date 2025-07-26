@@ -148,6 +148,12 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("BAD_REQUEST", ex.getMessage()));
     }
 
+    @ExceptionHandler(SponsorshipNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSponsorshipNotFoundException(SponsorshipNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("SPONSORSHIP_NOT_FOUND", ex.getMessage()));
+    }
+    
     @ExceptionHandler(TaskNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Map<String, String>> handleTaskNotFound(TaskNotFoundException ex) {

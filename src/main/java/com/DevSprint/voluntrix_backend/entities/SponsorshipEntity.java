@@ -4,6 +4,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -25,8 +26,14 @@ public class SponsorshipEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long sponsorshipId;
 
-    private String sponsorshipName;
-    private Integer sponsorshipAmount;
+    private String type;
+
+    private Integer price;
+
+    private String benefits;
+
+    @Builder.Default
+    private boolean isAvailable = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)

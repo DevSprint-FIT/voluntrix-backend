@@ -1,11 +1,11 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,37 +16,47 @@ import org.springframework.web.bind.annotation.RestController;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipDTO;
 import com.DevSprint.voluntrix_backend.services.SponsorshipService;
+import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/public/sponsorships")
-@SecurityRequirement(name = "bearerAuth")
+@Validated
 public class SponsorshipController {
 
     private final SponsorshipService sponsorshipService;
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, Long>> addSponsorship(@RequestBody SponsorshipCreateDTO sponsorshipCreateDTO) {
-        if (sponsorshipCreateDTO == null || sponsorshipCreateDTO.getEventId() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        sponsorshipService.addSponsorship(sponsorshipCreateDTO);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<ApiResponse<SponsorshipDTO>> createSponsorship(@Valid @RequestBody SponsorshipCreateDTO sponsorshipCreateDTO) {
+        SponsorshipDTO createdSponsorship = sponsorshipService.createSponsorship(sponsorshipCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>("Sponsorship created successfully", createdSponsorship));
     }
 
-    @GetMapping
-    public ResponseEntity<List<SponsorshipDTO>> getAllSponsorships() {
-        return new ResponseEntity<List<SponsorshipDTO>>(sponsorshipService.getAllSponsorships(), HttpStatus.OK);
+    @GetMapping("/{sponsorshipId}")
+    public ResponseEntity<ApiResponse<SponsorshipDTO>> getSponsorshipById(@PathVariable Long sponsorshipId) {
+        SponsorshipDTO sponsorship = sponsorshipService.getSponsorshipById(sponsorshipId);
+        return ResponseEntity.ok(new ApiResponse<>("Sponsorship retrieved successfully", sponsorship));
     }
 
     @GetMapping("/event/{eventId}")
-    public ResponseEntity<List<SponsorshipDTO>> getAllSponsorshipsByEventId(@PathVariable Long eventId) {
-        List<SponsorshipDTO> sponsorships = sponsorshipService.getAllSponsorshipsByEventId(eventId);
+    public ResponseEntity<ApiResponse<List<SponsorshipDTO>>> getSponsorshipsByEventId(@PathVariable Long eventId) {
+        List<SponsorshipDTO> sponsorships = sponsorshipService.getSponsorshipsByEventId(eventId);
+        return ResponseEntity.ok(new ApiResponse<>("Sponsorships retrieved successfully", sponsorships));
+    }
 
-        return new ResponseEntity<>(sponsorships, HttpStatus.OK);
+    @GetMapping("/event/{eventId}/available")
+    public ResponseEntity<ApiResponse<List<SponsorshipDTO>>> getAvailableSponsorshipsByEventId(@PathVariable Long eventId) {
+        List<SponsorshipDTO> sponsorships = sponsorshipService.getAvailableSponsorshipsByEventId(eventId);
+        return ResponseEntity.ok(new ApiResponse<>("Available sponsorships retrieved successfully", sponsorships));
+    }
+
+    @DeleteMapping("/{sponsorshipId}")
+    public ResponseEntity<ApiResponse<String>> deleteSponsorship(@PathVariable Long sponsorshipId) {
+        sponsorshipService.deleteSponsorship(sponsorshipId);
+        return ResponseEntity.ok(new ApiResponse<>("Sponsorship deleted successfully", null));
     }
 }
