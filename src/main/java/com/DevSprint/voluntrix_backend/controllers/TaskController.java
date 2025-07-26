@@ -47,11 +47,11 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
-    @GetMapping("/volunteer/{username}")
-    public ResponseEntity<List<TaskDTO>> getTasksByVolunteerUsername(@PathVariable String username) {
-        List<TaskDTO> tasks = taskService.getTasksByVolunteerUsername(username);
-        return ResponseEntity.ok(tasks);
-    }
+    // @GetMapping("/volunteer/{username}")
+    // public ResponseEntity<List<TaskDTO>> getTasksByVolunteerUsername(@PathVariable String username) {
+    //     List<TaskDTO> tasks = taskService.getTasksByVolunteerUsername(username);
+    //     return ResponseEntity.ok(tasks);
+    // }
 
     @PatchMapping("/{taskId}")
     public ResponseEntity<TaskDTO> patchTask(@PathVariable Long taskId, @Valid @RequestBody TaskUpdateDTO taskUpdateDTO) {

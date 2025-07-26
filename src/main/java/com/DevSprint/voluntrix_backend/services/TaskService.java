@@ -68,13 +68,13 @@ public class TaskService {
         return taskDTOConvert.toTaskDTOList(tasks);
     }
     
-    public List<TaskDTO> getTasksByVolunteerUsername(String username) {
-        List<TaskEntity> tasks = taskRepository.findByAssignee_Username(username);
-        if (tasks.isEmpty()) {
-            throw new TaskNotFoundException("No tasks found for volunteer with username: " + username);
-        }
-        return taskDTOConvert.toTaskDTOList(tasks);
-    }
+    // public List<TaskDTO> getTasksByVolunteerUsername(String username) {
+    //     List<TaskEntity> tasks = taskRepository.findByAssignee_Username(username);
+    //     if (tasks.isEmpty()) {
+    //         throw new TaskNotFoundException("No tasks found for volunteer with username: " + username);
+    //     }
+    //     return taskDTOConvert.toTaskDTOList(tasks);
+    // }
 
     public TaskDTO patchTask(Long taskId, TaskUpdateDTO taskUpdateDTO) {
         TaskEntity task = taskRepository.findById(taskId)
