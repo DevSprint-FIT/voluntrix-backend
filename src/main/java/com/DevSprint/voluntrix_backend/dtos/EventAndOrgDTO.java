@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class EventDTO implements Serializable {
+public class EventAndOrgDTO implements Serializable {
     private Long eventId;
 
     private String eventTitle;
@@ -41,9 +41,17 @@ public class EventDTO implements Serializable {
     private Boolean sponsorshipEnabled;
     private Boolean donationEnabled;
 
+    private String sponsorshipProposalUrl;
+    private Integer donationGoal;
+    private Integer donations;
+
     private Set<CategoryDTO> categories;
 
     private Long eventHostId;
 
     private Long organizationId;
+
+    private String organizationName;
+
+    private String organizationImageUrl;
 }

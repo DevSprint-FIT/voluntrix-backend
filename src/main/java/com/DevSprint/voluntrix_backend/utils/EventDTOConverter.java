@@ -21,7 +21,6 @@ import com.DevSprint.voluntrix_backend.exceptions.OrganizationNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 
-
 import lombok.RequiredArgsConstructor;
 
 @Component
