@@ -3,6 +3,7 @@ package com.DevSprint.voluntrix_backend.controllers;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerUpdateDTO;
+import com.DevSprint.voluntrix_backend.dtos.CategoryDTO;
 import com.DevSprint.voluntrix_backend.services.VolunteerService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -19,6 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @RestController
@@ -59,5 +61,19 @@ public class VolunteerController {
         // Deletes a volunteer by ID. Throws VolunteerNotFoundException if not found.
         volunteerService.deleteVolunteer(volunteerId);
         return ResponseEntity.noContent().build(); 
+    }
+
+    @GetMapping("/{volunteerId}/categories")
+    public ResponseEntity<Set<CategoryDTO>> getVolunteerCategories(@PathVariable Long volunteerId) {
+        Set<CategoryDTO> categories = volunteerService.getVolunteerCategories(volunteerId);
+        return ResponseEntity.ok(categories);
+    }
+
+    @PostMapping("/{volunteerId}/follow/{categoryId}")
+    public ResponseEntity<VolunteerDTO> followCategory(
+            @PathVariable Long volunteerId,
+            @PathVariable Long categoryId) {
+        VolunteerDTO updatedVolunteer = volunteerService.followCategory(volunteerId, categoryId);
+        return ResponseEntity.ok(updatedVolunteer);
     }
 }

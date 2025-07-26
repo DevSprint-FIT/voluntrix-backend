@@ -40,6 +40,7 @@ public class EventService {
     private final CategoryRepository categoryRepository;
     private final VolunteerRepository volunteerRepository;
     private final OrganizationRepository organizationRepository;
+    private final RewardService rewardService;
 
     public void addEvent(EventCreateDTO eventCreateDTO) {
         VolunteerEntity eventHost = volunteerRepository.findById(eventCreateDTO.getEventHostId())
@@ -56,6 +57,9 @@ public class EventService {
 
         EventEntity eventEntity = entityDTOConvert.toEventEntity(eventCreateDTO, eventHost);
         eventRepository.save(eventEntity);
+
+        // Give 10 points to the event host
+        rewardService.processEventCreation(eventRepository.save(eventEntity));
     }
 
     public void deleteEvent(Long eventId) {

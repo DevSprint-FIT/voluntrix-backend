@@ -2,6 +2,7 @@ package com.DevSprint.voluntrix_backend.repositories;
 
 import com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventLeaderboardDTO;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEventParticipationEntity;
 import com.DevSprint.voluntrix_backend.enums.EventStatus;
 
@@ -43,4 +44,15 @@ public interface VolunteerEventParticipationRepository extends JpaRepository<Vol
       "WHERE vep.volunteer.id = :volunteerId " +
       "AND e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.COMPLETE")
    List<VolunteerCompletedEventDTO> findCompletedEventsByVolunteerId(@Param("volunteerId") Long volunteerId);
+
+   // For event leaderboard - get volunteers ranked by event reward points for a specific event
+   @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.EventLeaderboardDTO(" +
+           "v.firstName, v.lastName,vep.eventRewardPoints, v.profilePictureUrl) " +
+           "FROM VolunteerEventParticipationEntity vep " +
+           "JOIN vep.volunteer v " +
+           "WHERE vep.event.eventId = :eventId " +
+           "ORDER BY vep.eventRewardPoints DESC")
+   List<EventLeaderboardDTO> findEventLeaderboard(@Param("eventId") Long eventId);
+
+
 }

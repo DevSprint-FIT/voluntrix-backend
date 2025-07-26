@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/public/tasks")
@@ -47,9 +48,11 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
-    @GetMapping("/volunteer/{username}")
-    public ResponseEntity<List<TaskDTO>> getTasksByVolunteerUsername(@PathVariable String username) {
-        List<TaskDTO> tasks = taskService.getTasksByVolunteerUsername(username);
+    @GetMapping("/assignee/{assigneeId}/event/{eventId}")
+    public ResponseEntity<List<TaskDTO>> getTasksByAssigneeIdAndEventId(
+            @PathVariable Long assigneeId,
+            @PathVariable Long eventId) {
+        List<TaskDTO> tasks = taskService.getTasksByAssigneeIdAndEventId(assigneeId, eventId);
         return ResponseEntity.ok(tasks);
     }
 
@@ -64,4 +67,11 @@ public class TaskController {
         taskService.deleteTask(taskId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/volunteer/{username}/rewards")
+    public ResponseEntity<Map<String, Object>> getVolunteerRewardStats(@PathVariable String username) {
+        Map<String, Object> rewardStats = taskService.getVolunteerRewardStats(username);
+        return ResponseEntity.ok(rewardStats);
+    }
+
 }

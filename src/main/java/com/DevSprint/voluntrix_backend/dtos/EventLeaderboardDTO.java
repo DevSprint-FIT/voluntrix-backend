@@ -1,17 +1,15 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VolunteerCategoryDTO {
-    private Long volunteerId;
-    private Long categoryId;
-
+public class EventLeaderboardDTO {
+    private String firstName;
+    private String lastName;
+    private Integer eventRewardPoints;
+    private String profilePictureUrl;
 }
-
