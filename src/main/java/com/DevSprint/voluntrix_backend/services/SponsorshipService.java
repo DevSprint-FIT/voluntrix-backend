@@ -1,42 +1,53 @@
 package com.DevSprint.voluntrix_backend.services;
 
-import com.DevSprint.voluntrix_backend.entities.Sponsorship;
-import com.DevSprint.voluntrix_backend.repositories.SponsorshipRepository;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.DevSprint.voluntrix_backend.dtos.SponsorshipCreateDTO;
+import com.DevSprint.voluntrix_backend.dtos.SponsorshipDTO;
+import com.DevSprint.voluntrix_backend.entities.EventEntity;
+import com.DevSprint.voluntrix_backend.entities.SponsorshipEntity;
+import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
+import com.DevSprint.voluntrix_backend.repositories.EventRepository;
+import com.DevSprint.voluntrix_backend.repositories.SponsorshipRepository;
+import com.DevSprint.voluntrix_backend.utils.SponsorshipDTOConverter;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class SponsorshipService {
 
-    private final SponsorshipRepository repository;
+    private final SponsorshipRepository sponsorshipRepository;
+    private final EventRepository eventRepository;
+    private final SponsorshipDTOConverter sponsorshipDTOConvert;
 
-    public SponsorshipService(SponsorshipRepository repository) {
-        this.repository = repository;
+    public void addSponsorship(SponsorshipCreateDTO sponsorshipCreateDTO) {
+        if (sponsorshipCreateDTO.getEventId() == null) {
+            throw new IllegalArgumentException("Event ID cannot be null");
+        }
+
+        EventEntity event = eventRepository.findById(sponsorshipCreateDTO.getEventId())
+                .orElseThrow(() -> new EventNotFoundException(
+                        "Event not found: " + sponsorshipCreateDTO.getEventId()));
+
+        SponsorshipEntity sponsorshipEntity = sponsorshipDTOConvert
+                .toSponsorshipEntity(sponsorshipCreateDTO, event);
+        sponsorshipRepository.save(sponsorshipEntity);
     }
 
-    public List<Sponsorship> getAll() {
-        return repository.findAll();
+    public List<SponsorshipDTO> getAllSponsorships() {
+        return sponsorshipDTOConvert.toSponsorshipDTOList(sponsorshipRepository.findAll());
     }
 
-    public Optional<Sponsorship> getById(Long id) {
-        return repository.findById(id);
-    }
+    public List<SponsorshipDTO> getAllSponsorshipsByEventId(Long eventId) {
+        EventEntity event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found: " + eventId));
 
-    public Sponsorship create(Sponsorship sponsorship) {
-        return repository.save(sponsorship);
-    }
-
-    public Optional<Sponsorship> update(Long id, Sponsorship updated) {
-        return repository.findById(id).map(s -> {
-            s.setPackageName(updated.getPackageName());
-            s.setDescription(updated.getDescription());
-            return repository.save(s);
-        });
-    }
-
-    public void delete(Long id) {
-        repository.deleteById(id);
+        List<SponsorshipEntity> sponsorships = sponsorshipRepository.findByEvent(event);
+        return sponsorshipDTOConvert.toSponsorshipDTOList(sponsorships);
     }
 }
