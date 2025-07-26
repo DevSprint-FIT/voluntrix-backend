@@ -59,4 +59,10 @@ public class SponsorshipController {
         sponsorshipService.deleteSponsorship(sponsorshipId);
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship deleted successfully", null));
     }
+
+    @PostMapping("/{sponsorshipId}/availability")
+    public ResponseEntity<ApiResponse<SponsorshipDTO>> updateSponsorshipAvailability(@PathVariable Long sponsorshipId, @RequestBody boolean isAvailable) {
+        SponsorshipDTO updatedSponsorship = sponsorshipService.updateSponsorshipAvailability(sponsorshipId, isAvailable);
+        return ResponseEntity.ok(new ApiResponse<>("Sponsorship availability updated successfully", updatedSponsorship));
+    }
 }

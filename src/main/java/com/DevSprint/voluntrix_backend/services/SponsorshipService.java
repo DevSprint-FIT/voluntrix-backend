@@ -84,4 +84,13 @@ public class SponsorshipService {
         }
         sponsorshipRepository.deleteById(sponsorshipId);
     }
+
+    public SponsorshipDTO updateSponsorshipAvailability(Long sponsorshipId, boolean isAvailable) {
+        SponsorshipEntity sponsorship = sponsorshipRepository.findById(sponsorshipId)
+                .orElseThrow(() -> new SponsorshipNotFoundException("Sponsorship not found with ID: " + sponsorshipId));
+                
+        sponsorship.setIsAvailable(isAvailable);
+        SponsorshipEntity updatedSponsorship = sponsorshipRepository.save(sponsorship);
+        return sponsorshipDTOConvert.toSponsorshipEntity(updatedSponsorship);
+    }
 }
