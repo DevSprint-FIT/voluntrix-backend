@@ -17,6 +17,8 @@ public class OrganizationCreateDTO {
 
     private String institute;
 
+    private String imageUrl;
+
     private String bankName;
 
     private String accountNumber;

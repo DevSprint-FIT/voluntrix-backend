@@ -134,6 +134,7 @@ public class OrganizationDTOConverter {
         entity.setAccountNumber(dto.getAccountNumber() != null ? AESUtil.encrypt(dto.getAccountNumber()) : null);
         entity.setDescription(dto.getDescription());
         entity.setWebsite(dto.getWebsite());
+        entity.setImageUrl(dto.getImageUrl());
         entity.setBankName(dto.getBankName());
         entity.setFacebookLink(dto.getFacebookLink());
         entity.setLinkedinLink(dto.getLinkedinLink());
@@ -160,6 +161,9 @@ public class OrganizationDTOConverter {
         }
         if (dto.getAccountNumber() != null) {
             entity.setAccountNumber(AESUtil.encrypt(dto.getAccountNumber()));
+        }
+        if (dto.getImageUrl() != null) {
+            entity.setImageUrl(dto.getImageUrl());
         }
         if (dto.getIsVerified() != null) {
             entity.setIsVerified(dto.getIsVerified());
