@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.DevSprint.voluntrix_backend.dtos.EventApplicationAndVolDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationDTO;
 import com.DevSprint.voluntrix_backend.services.EventApplicationService;
@@ -85,5 +86,15 @@ public class EventapplicationController {
 
         var selectedApplications = eventApplicationService.getEventApplicationsByEventId(eventId);
         return new ResponseEntity<>(selectedApplications, HttpStatus.OK);
+    }
+
+    @GetMapping("/event/volunteers/{eventId}")
+    public ResponseEntity<List<EventApplicationAndVolDTO>> getEventApplicationsAndVolunteersByEventId(
+            @PathVariable Long eventId) {
+
+        List<EventApplicationAndVolDTO> selectedApplications = eventApplicationService
+                .getEventApplicationsAndVolunteersByEventId(eventId);
+
+        return ResponseEntity.ok(selectedApplications);
     }
 }

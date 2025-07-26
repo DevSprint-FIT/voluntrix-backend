@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventApplicationAndVolDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
@@ -115,6 +116,7 @@ public class EventDTOConverter {
         return dto;
     }
 
+    // List<EventEntity> to List<EventAndOrgDTO>
     public List<EventAndOrgDTO> toEventAndOrgDTOList(List<EventEntity> entities) {
         return entities.stream()
                 .map(this::toEventAndOrgDTO)
@@ -150,6 +152,33 @@ public class EventDTOConverter {
     public List<EventApplicationDTO> toEventApplicationDTOList(
             List<EventApplicationEntity> eventEntityApplicationList) {
         return eventEntityApplicationList.stream().map(entity -> modelMapper.map(entity, EventApplicationDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    // EventApplicationEntity to EventApplicationAndVolDTO
+    public EventApplicationAndVolDTO toEventApplicationAndVolDTO(EventApplicationEntity entity) {
+        EventApplicationAndVolDTO dto = new EventApplicationAndVolDTO();
+        dto.setId(entity.getId());
+        dto.setDescription(entity.getDescription());
+        dto.setContributionArea(entity.getContributionArea());
+        dto.setApplicationStatus(entity.getApplicationStatus());
+
+        if (entity.getEvent() != null) {
+            dto.setEventId(entity.getEvent().getEventId());
+        }
+
+        if (entity.getVolunteer() != null) {
+            dto.setVolunteerId(entity.getVolunteer().getVolunteerId());
+            dto.setVolunteerName(entity.getVolunteer().getFirstName() + " " + entity.getVolunteer().getLastName());
+        }
+
+        return dto;
+    }
+
+    // List<EventApplicationEntity> to List<EventApplicationAndVolDTO
+    public List<EventApplicationAndVolDTO> toEventApplicationAndVolDTOList(List<EventApplicationEntity> entities) {
+        return entities.stream()
+                .map(this::toEventApplicationAndVolDTO)
                 .collect(Collectors.toList());
     }
 

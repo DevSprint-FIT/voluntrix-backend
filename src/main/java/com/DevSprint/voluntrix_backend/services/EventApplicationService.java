@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.DevSprint.voluntrix_backend.dtos.EventApplicationAndVolDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationDTO;
 import com.DevSprint.voluntrix_backend.entities.EventApplicationEntity;
@@ -134,5 +135,13 @@ public class EventApplicationService {
 
         List<EventApplicationEntity> applications = eventApplicationRepository.findByEvent(event);
         return entityDTOConvert.toEventApplicationDTOList(applications);
+    }
+
+    public List<EventApplicationAndVolDTO> getEventApplicationsAndVolunteersByEventId(Long eventId) {
+        EventEntity event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
+
+        List<EventApplicationEntity> applications = eventApplicationRepository.findByEvent(event);
+        return entityDTOConvert.toEventApplicationAndVolDTOList(applications);
     }
 }
