@@ -26,4 +26,3 @@ public class FollowSystemDTOConverter {
         return entity;
     }
 }
-

@@ -3,10 +3,10 @@ package com.DevSprint.voluntrix_backend.services;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.DevSprint.voluntrix_backend.dtos.PayHereNotificationDto;
-import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
-import com.DevSprint.voluntrix_backend.dtos.PaymentResponseDto;
-import com.DevSprint.voluntrix_backend.dtos.PaymentStatusResponseDto;
+import com.DevSprint.voluntrix_backend.dtos.PayHereNotificationDTO;
+import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDTO;
+import com.DevSprint.voluntrix_backend.dtos.PaymentResponseDTO;
+import com.DevSprint.voluntrix_backend.dtos.PaymentStatusResponseDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.PaymentEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
@@ -35,17 +35,20 @@ public class PaymentService {
     private final VolunteerRepository volunteerRepository;
     private final PaymentMapper paymentMapper;
 
-    @Value("${PAYHERE_MERCHANT_ID}")
+    @Value("${payhere.merchant.id}")
     private String merchantId;
 
-    @Value("${PAYHERE_MERCHANT_SECRET}")
+    @Value("${payhere.merchant.secret}")
     private String merchantSecret;
+
+    @Value("${payhere.hashAlgorithm}")
+    private String hashAlgorithm;
 
     private String md5(String input) {
         return generateHash(input);
     }
 
-    public String generateHashForPayment(PaymentRequestDto paymentRequest) {
+    public String generateHashForPayment(PaymentRequestDTO paymentRequest) {
         return generateHash(merchantId + 
             paymentRequest.getOrderId() + 
             paymentRequest.getAmount() + 
@@ -71,7 +74,7 @@ public class PaymentService {
 
     private String generateHash(String data) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
+            MessageDigest md = MessageDigest.getInstance(hashAlgorithm);
             byte[] hashBytes = md.digest(data.getBytes());
             StringBuilder sb = new StringBuilder();
             for (byte b : hashBytes) {
@@ -84,7 +87,7 @@ public class PaymentService {
     }
 
     // save initial transaction
-    public PaymentResponseDto createPendingPayment(PaymentRequestDto dto) {
+    public PaymentResponseDTO createPendingPayment(PaymentRequestDTO dto) {
         // Validate sponsor
         SponsorEntity sponsor = null;
         if (dto.getSponsorId() != null) {
@@ -116,10 +119,10 @@ public class PaymentService {
         paymentRepository.save(payment);
 
         String hash = generateHashForPayment(dto);
-        return new PaymentResponseDto(hash, merchantId);
+        return new PaymentResponseDTO(hash, merchantId);
     }
 
-    public void saveTransaction(PayHereNotificationDto dto) {
+    public void saveTransaction(PayHereNotificationDTO dto) {
         PaymentEntity payment = paymentRepository.findById(dto.getOrder_id())
             .orElseThrow(() -> new PaymentNotFoundException("Payment not found for order ID: " + dto.getOrder_id()));
 
@@ -127,11 +130,11 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
-    public PaymentStatusResponseDto getPaymentStatusByOrderId(String orderId) {
+    public PaymentStatusResponseDTO getPaymentStatusByOrderId(String orderId) {
         PaymentEntity payment = paymentRepository.findByOrderId(orderId)
             .orElseThrow(() -> new PaymentNotFoundException("Payment not found for order ID: " + orderId));
 
-        return new PaymentStatusResponseDto(orderId, payment.getStatus());
+        return new PaymentStatusResponseDTO(orderId, payment.getStatus());
     }
     
 }

@@ -42,7 +42,6 @@ public class OrganizationService {
         return organizationDTOConverter.toOrganizationDTO(savedOrganization);
     }
 
-
     public OrganizationDTO updateOrganization(Long id, OrganizationDTO organizationDTO) {
         return organizationRepository.findById(id)
                 .map(existingOrg -> {
@@ -52,7 +51,6 @@ public class OrganizationService {
                 })
                 .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with id: " + id));
     }
-
 
     public void deleteOrganization(Long id) {
         if (!organizationRepository.existsById(id)) {

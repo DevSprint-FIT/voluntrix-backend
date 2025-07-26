@@ -1,15 +1,15 @@
 package com.DevSprint.voluntrix_backend.validation;
 
-import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
+import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDTO;
 import com.DevSprint.voluntrix_backend.enums.UserType;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class PaymentRequestValidator implements ConstraintValidator<ValidPaymentRequest, PaymentRequestDto> {
+public class PaymentRequestValidator implements ConstraintValidator<ValidPaymentRequest, PaymentRequestDTO> {
 
     @Override
-    public boolean isValid(PaymentRequestDto dto, ConstraintValidatorContext context) {
+    public boolean isValid(PaymentRequestDTO dto, ConstraintValidatorContext context) {
         boolean valid = true;
 
         // Disable default message

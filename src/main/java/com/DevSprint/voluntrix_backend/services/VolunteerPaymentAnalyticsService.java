@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.MonthlyDonationData;
-import com.DevSprint.voluntrix_backend.dtos.MonthlyDonationDto;
+import com.DevSprint.voluntrix_backend.dtos.MonthlyDonationDTO;
 import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -17,11 +17,11 @@ public class VolunteerPaymentAnalyticsService {
     
     private final PaymentRepository paymentRepository;
 
-    public List<MonthlyDonationDto> getMonthlyDonations(Long volunteerId, int year) {
+    public List<MonthlyDonationDTO> getMonthlyDonations(Long volunteerId, int year) {
         List<MonthlyDonationData> rawData = paymentRepository.findMonthlyDonationsByVolunteerAndYear(volunteerId, year);
 
         return rawData.stream()
-            .map(data -> new MonthlyDonationDto(data.getMonth(), data.getTotal()))
+            .map(data -> new MonthlyDonationDTO(data.getMonth(), data.getTotal()))
             .collect(Collectors.toList());
     }
 

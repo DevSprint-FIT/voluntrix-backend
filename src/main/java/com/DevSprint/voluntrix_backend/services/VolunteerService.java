@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class VolunteerService {
 
     private final VolunteerRepository volunteerRepository;
@@ -31,22 +30,27 @@ public class VolunteerService {
     private final CategoryRepository categoryRepository;
 
 
+    public VolunteerService(VolunteerRepository volunteerRepository, VolunteerDTOConvert entityDTOConvert) {
+        this.volunteerRepository = volunteerRepository;
+        this.entityDTOConvert = entityDTOConvert;
+    }
+
     public VolunteerDTO createVolunteer(VolunteerCreateDTO volunteerCreateDTO) {
         // Check for existing username
         if (volunteerRepository.findByUsername(volunteerCreateDTO.getUsername()).isPresent()) {
             throw new IllegalArgumentException("Username already exists");
         }
-    
+
         // Check for existing email
         if (volunteerRepository.findByEmail(volunteerCreateDTO.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
         }
-    
+
         // Check for existing phone number
         if (volunteerRepository.findByPhoneNumber(volunteerCreateDTO.getPhoneNumber()).isPresent()) {
             throw new IllegalArgumentException("Phone number already exists");
         }
-    
+
         VolunteerEntity volunteer = entityDTOConvert.toVolunteerEntity(volunteerCreateDTO);
         VolunteerEntity savedVolunteer = volunteerRepository.save(volunteer);
         return entityDTOConvert.toVolunteerDTO(savedVolunteer);
@@ -60,7 +64,12 @@ public class VolunteerService {
     public VolunteerDTO getVolunteerByUsername(String username) {
         Optional<VolunteerEntity> volunteer = volunteerRepository.findByUsername(username);
         return volunteer.map(entityDTOConvert::toVolunteerDTO)
-            .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with username: " + username));
+                .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with username: " + username));
+    }
+
+    public VolunteerEntity getVolunteerById(Long volunteerId) {
+        return volunteerRepository.findById(volunteerId)
+                .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
     }
 
     public VolunteerEntity getVolunteerById(Long volunteerId) {
@@ -70,8 +79,8 @@ public class VolunteerService {
 
     public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerUpdateDTO volunteerUpdateDTO) {
         VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
-            .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
-    
+                .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
+
         // Update only the fields provided in the DTO
         if (volunteerUpdateDTO.getFirstName() != null) {
             volunteer.setFirstName(volunteerUpdateDTO.getFirstName());
@@ -94,7 +103,7 @@ public class VolunteerService {
         if (volunteerUpdateDTO.getAbout() != null) {
             volunteer.setAbout(volunteerUpdateDTO.getAbout());
         }
-    
+
         VolunteerEntity updatedVolunteer = volunteerRepository.save(volunteer);
         return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
     }
@@ -125,3 +134,4 @@ public class VolunteerService {
         return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
     }
 }
+

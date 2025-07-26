@@ -14,3 +14,4 @@ public class VolunteerCategoryDTO {
     private Long categoryId;
 
 }
+

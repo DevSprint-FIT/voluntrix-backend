@@ -14,8 +14,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class VolunteerCategoryEntityDTOConverter {
 
-
-    //  method to convert Volunteer's categories to CategoryDTOs
+    // method to convert Volunteer's categories to CategoryDTOs
     public Set<CategoryDTO> convertVolunteerCategoriesToCategoryDTOs(VolunteerEntity volunteer) {
         return volunteer.getFollowedCategories().stream()
                 .map(category -> CategoryDTO.builder()
@@ -25,7 +24,6 @@ public class VolunteerCategoryEntityDTOConverter {
                 .collect(Collectors.toSet());
     }
 
-    
     public Set<VolunteerCategoryDTO> convertVolunteerCategoriesToDTOs(VolunteerEntity volunteer) {
         return volunteer.getFollowedCategories().stream()
                 .map(category -> VolunteerCategoryDTO.builder()
@@ -34,7 +32,8 @@ public class VolunteerCategoryEntityDTOConverter {
                         .build())
                 .collect(Collectors.toSet());
     }
-
+    
+    // This was commented on dev branch
     public Set<VolunteerCategoryDTO> convertCategoryFollowersToDTOs(CategoryEntity category) {
         return category.getFollowers().stream()
                 .map(volunteer -> VolunteerCategoryDTO.builder()
@@ -44,6 +43,7 @@ public class VolunteerCategoryEntityDTOConverter {
                 .collect(Collectors.toSet());
     }
 
+
     public VolunteerCategoryDTO convertToDTO(VolunteerEntity volunteer, CategoryEntity category) {
         return VolunteerCategoryDTO.builder()
                 .volunteerId(volunteer.getVolunteerId())
@@ -51,3 +51,4 @@ public class VolunteerCategoryEntityDTOConverter {
                 .build();
     }
 }
+
