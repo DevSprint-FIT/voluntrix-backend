@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Data
 @ValidPaymentRequest
-public class PaymentRequestDto {
+public class PaymentRequestDTO {
 
     @NotBlank(message = "Order ID is required")
     private String orderId;

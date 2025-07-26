@@ -3,7 +3,7 @@ package com.DevSprint.voluntrix_backend.dtos;
 import lombok.Data;
 
 @Data
-public class PayHereNotificationDto {
+public class PayHereNotificationDTO {
     private String merchant_id;
     private String order_id;
     private String payment_id;
