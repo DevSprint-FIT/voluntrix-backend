@@ -280,7 +280,26 @@ public class ChatService {
             conversations.add(summary);
         }
         
-        log.info("Found {} conversations for user: {}", conversations.size(), username);
+        // Sort conversations by last message timestamp (most recent first)
+        conversations.sort((a, b) -> {
+            ChatMessageDTO lastMessageA = a.getLastMessage();
+            ChatMessageDTO lastMessageB = b.getLastMessage();
+            
+            // If both have last messages, compare timestamps
+            if (lastMessageA != null && lastMessageB != null && 
+                lastMessageA.getTimestamp() != null && lastMessageB.getTimestamp() != null) {
+                return lastMessageB.getTimestamp().compareTo(lastMessageA.getTimestamp()); // DESC order
+            }
+            
+            // If only one has a last message, it should come first
+            if (lastMessageA != null && lastMessageB == null) return -1;
+            if (lastMessageA == null && lastMessageB != null) return 1;
+            
+            // If neither has messages, maintain original order
+            return 0;
+        });
+        
+        log.info("Found {} conversations for user: {}, sorted by last message timestamp", conversations.size(), username);
         return conversations;
     }
 }
