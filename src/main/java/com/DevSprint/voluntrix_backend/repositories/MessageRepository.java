@@ -52,4 +52,12 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     // For private room chat history
     @Query("SELECT m FROM Message m WHERE m.chatSessionId = :chatSessionId ORDER BY m.timestamp ASC")
     List<Message> findByChatSessionIdOrderByTimestampAsc(@Param("chatSessionId") String chatSessionId);
+    
+    // For private room messages ordered by timestamp
+    @Query("SELECT m FROM Message m WHERE m.chatSessionId = :roomId ORDER BY m.timestamp DESC")
+    List<Message> findByRoomIdOrderByTimestampDesc(@Param("roomId") String roomId);
+    
+    // Get latest message for a room
+    @Query("SELECT m FROM Message m WHERE m.chatSessionId = :roomId ORDER BY m.timestamp DESC LIMIT 1")
+    Message findLatestMessageByRoomId(@Param("roomId") String roomId);
 }

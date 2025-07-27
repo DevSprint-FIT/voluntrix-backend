@@ -1,6 +1,7 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
 import com.DevSprint.voluntrix_backend.dtos.ChatMessageDTO;
+import com.DevSprint.voluntrix_backend.dtos.ConversationSummary;
 import com.DevSprint.voluntrix_backend.entities.Message;
 import com.DevSprint.voluntrix_backend.services.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -151,6 +152,22 @@ class PrivateChatRestController {
             return ResponseEntity.ok(history);
         } catch (Exception e) {
             log.error("Error getting private room history", e);
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    /**
+     * Get all conversations for a user
+     */
+    @GetMapping("/conversations/{username}")
+    public ResponseEntity<List<ConversationSummary>> getUserConversations(@PathVariable String username) {
+        log.info("Getting conversations for user: {}", username);
+        
+        try {
+            List<ConversationSummary> conversations = chatService.getUserConversations(username);
+            return ResponseEntity.ok(conversations);
+        } catch (Exception e) {
+            log.error("Error getting user conversations", e);
             return ResponseEntity.status(500).build();
         }
     }

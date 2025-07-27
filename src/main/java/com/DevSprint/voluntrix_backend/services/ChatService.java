@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.ChatMessageDTO;
+import com.DevSprint.voluntrix_backend.dtos.ConversationSummary;
 import com.DevSprint.voluntrix_backend.entities.Message;
 import com.DevSprint.voluntrix_backend.entities.PrivateRoom;
 import com.DevSprint.voluntrix_backend.repositories.MessageRepository;
@@ -248,5 +249,38 @@ public class ChatService {
      */
     public boolean canAccessPrivateRoom(String roomId, String username) {
         return privateRoomService.canUserAccessRoom(roomId, username);
+    }
+    
+    /**
+     * Get all conversations for a user with last message and unread count
+     */
+    public List<ConversationSummary> getUserConversations(String username) {
+        log.info("Getting conversations for user: {}", username);
+        
+        List<PrivateRoom> userRooms = privateRoomService.getUserRooms(username);
+        List<ConversationSummary> conversations = new ArrayList<>();
+        
+        for (PrivateRoom room : userRooms) {
+            ConversationSummary summary = new ConversationSummary();
+            
+            summary.setRoomId(room.getRoomId());
+            summary.setUser1(room.getUser1());
+            summary.setUser2(room.getUser2());
+            
+            // Get last message for this room
+            List<Message> roomMessages = messageRepository.findByRoomIdOrderByTimestampDesc(room.getRoomId());
+            if (!roomMessages.isEmpty()) {
+                Message lastMessage = roomMessages.get(0); // First one is the latest due to DESC order
+                summary.setLastMessage(convertToDTO(lastMessage));
+            }
+            
+            // TODO: Calculate unread count (for now, set to 0)
+            summary.setUnreadCount(0);
+            
+            conversations.add(summary);
+        }
+        
+        log.info("Found {} conversations for user: {}", conversations.size(), username);
+        return conversations;
     }
 }
