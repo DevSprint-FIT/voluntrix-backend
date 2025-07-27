@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
@@ -42,10 +43,16 @@ public class EventService {
     private final OrganizationRepository organizationRepository;
     private final RewardService rewardService;
 
-    public void addEvent(EventCreateDTO eventCreateDTO) {
+    public EventEntity addEvent(EventCreateDTO eventCreateDTO) {
         VolunteerEntity eventHost = volunteerRepository.findById(eventCreateDTO.getEventHostId())
                 .orElseThrow(() -> new VolunteerNotFoundException(
                         "Event Host not found: " + eventCreateDTO.getEventHostId()));
+
+        if (eventCreateDTO.getOrganizationId() != null) {
+            organizationRepository.findById(eventCreateDTO.getOrganizationId())
+                    .orElseThrow(() -> new OrganizationNotFoundException(
+                            "Organization not found: " + eventCreateDTO.getOrganizationId()));
+        }
 
         if (eventCreateDTO.getEventStartDate().isAfter(eventCreateDTO.getEventEndDate())) {
             throw new BadRequestException("Event start date cannot be after the event end date.");
@@ -56,10 +63,12 @@ public class EventService {
         }
 
         EventEntity eventEntity = entityDTOConvert.toEventEntity(eventCreateDTO, eventHost);
-        eventRepository.save(eventEntity);
+        EventEntity savedEvent = eventRepository.save(eventEntity);
 
         // Give 10 points to the event host
-        rewardService.processEventCreation(eventRepository.save(eventEntity));
+        rewardService.processEventCreation(savedEvent);
+
+        return savedEvent;
     }
 
     public void deleteEvent(Long eventId) {
@@ -73,10 +82,16 @@ public class EventService {
         return entityDTOConvert.toEventDTO(eventEntity);
     }
 
+    public EventAndOrgDTO getEventAndOrgById(Long eventId) {
+        EventEntity eventEntity = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+        return entityDTOConvert.toEventAndOrgDTO(eventEntity);
+    }
+
     public EventEntity getEventEntityById(Long eventId) {
         return eventRepository.findById(eventId)
-            .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
-    } 
+                .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
+    }
 
     public List<EventDTO> getAllEvents() {
         return entityDTOConvert.toEventDTOList(eventRepository.findAll());
@@ -132,6 +147,12 @@ public class EventService {
         }
         if (eventDTO.getDonationEnabled() != null) {
             selectedEvent.setDonationEnabled(eventDTO.getDonationEnabled());
+        }
+        if (eventDTO.getSponsorshipProposalUrl() != null) {
+            selectedEvent.setSponsorshipProposalUrl(eventDTO.getSponsorshipProposalUrl());
+        }
+        if (eventDTO.getDonationGoal() != null) {
+            selectedEvent.setDonationGoal(eventDTO.getDonationGoal());
         }
         if (eventDTO.getCategories() != null) {
             Set<CategoryEntity> categoryEntities = eventDTO.getCategories().stream()
@@ -211,11 +232,80 @@ public class EventService {
         return entityDTOConvert.toEventDTOList(eventRepository.findAll(spec));
     }
 
+    public List<EventAndOrgDTO> getFilterEventWithOrg(String eventLocation, LocalDate startDate, LocalDate endDate,
+            EventVisibility eventVisibility, List<Long> categoryIds) {
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Start date must be before or equal to end date.");
+        }
+
+        Specification<EventEntity> spec = Specification.where(null);
+
+        if (eventVisibility != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("eventVisibility"),
+                    eventVisibility));
+        }
+
+        if (eventLocation != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("eventLocation"),
+                    "%" + eventLocation + "%"));
+        }
+
+        if (startDate != null && endDate != null) {
+            spec = spec.and(
+                    (root, query, criteriaBuilder) -> criteriaBuilder.between(root.get("eventStartDate"), startDate,
+                            endDate));
+        } else if (startDate != null) {
+            spec = spec.and((root, query, criteriaBuilder) -> criteriaBuilder
+                    .greaterThanOrEqualTo(root.get("eventStartDate"), startDate));
+        } else if (endDate != null) {
+            spec = spec
+                    .and((root, query, criteriaBuilder) -> criteriaBuilder.lessThanOrEqualTo(root.get("eventStartDate"),
+                            endDate));
+        }
+
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+
+            for (Long id : categoryIds) {
+                categoryRepository.findById(id)
+                        .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + id));
+            }
+
+            spec = spec.and((root, query, criteriaBuilder) -> {
+                if (query != null) {
+                    query.distinct(true);
+                }
+                return root.join("categories").get("categoryId").in(categoryIds);
+            });
+        }
+
+        return entityDTOConvert.toEventAndOrgDTOList(eventRepository.findAll(spec));
+    }
+
     public List<EventNameDTO> getAllEventNames() {
         return eventRepository.findAllEventIdAndTitle();
     }
 
     public List<EventDTO> searchEvents(String query) {
         return entityDTOConvert.toEventDTOList(eventRepository.findByEventTitleContainingIgnoreCase(query));
+    }
+
+    public List<EventAndOrgDTO> searchEventsWithOrg(String query) {
+        List<EventEntity> events = eventRepository.findByEventTitleContainingIgnoreCase(query);
+        return entityDTOConvert.toEventAndOrgDTOList(events);
+    }
+
+    public List<EventDTO> getEventsByHostId(Long hostId) {
+
+        VolunteerEntity eventHost = volunteerRepository.findById(hostId)
+                .orElseThrow(() -> new VolunteerNotFoundException(
+                        "Event Host not found: " + hostId));
+
+        if (!Boolean.TRUE.equals(eventHost.getIsEventHost())) {
+            throw new BadRequestException("Volunteer is not an event host");
+        }
+
+        List<EventEntity> events = eventRepository.findByEventHost(eventHost);
+
+        return entityDTOConvert.toEventDTOList(events);
     }
 }

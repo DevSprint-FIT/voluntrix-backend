@@ -10,8 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolunteerCategoryDTO {
+  
     private Long volunteerId;
     private Long categoryId;
-
 }
-

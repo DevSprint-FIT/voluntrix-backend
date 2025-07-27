@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import jakarta.validation.Valid; 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -38,7 +38,8 @@ public class VolunteerController {
 
     @GetMapping("/{username}")
     public ResponseEntity<VolunteerDTO> getVolunteerByUsername(@PathVariable String username) {
-        // Fetches a volunteer by username. Throws VolunteerNotFoundException if not found.
+        // Fetches a volunteer by username. Throws VolunteerNotFoundException if not
+        // found.
         VolunteerDTO volunteer = volunteerService.getVolunteerByUsername(username);
         return ResponseEntity.ok(volunteer);
     }
@@ -50,17 +51,19 @@ public class VolunteerController {
     }
 
     @PatchMapping("/{volunteerId}")
-    public ResponseEntity<VolunteerDTO> updateVolunteer(@PathVariable Long volunteerId, @Valid @RequestBody VolunteerUpdateDTO volunteerUpdateDTO) {
-        // Updates volunteer details by ID. Throws VolunteerNotFoundException if not found.
+    public ResponseEntity<VolunteerDTO> updateVolunteer(@PathVariable Long volunteerId,
+            @Valid @RequestBody VolunteerUpdateDTO volunteerUpdateDTO) {
+        // Updates volunteer details by ID. Throws VolunteerNotFoundException if not
+        // found.
         VolunteerDTO updatedVolunteer = volunteerService.patchVolunteer(volunteerId, volunteerUpdateDTO);
-        return ResponseEntity.ok(updatedVolunteer); 
+        return ResponseEntity.ok(updatedVolunteer);
     }
 
     @DeleteMapping("/{volunteerId}")
     public ResponseEntity<Void> deleteVolunteer(@PathVariable Long volunteerId) {
         // Deletes a volunteer by ID. Throws VolunteerNotFoundException if not found.
         volunteerService.deleteVolunteer(volunteerId);
-        return ResponseEntity.noContent().build(); 
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{volunteerId}/categories")

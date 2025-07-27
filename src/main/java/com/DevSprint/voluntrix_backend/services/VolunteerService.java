@@ -29,7 +29,6 @@ public class VolunteerService {
     private final VolunteerCategoryEntityDTOConverter volunteerCategoryEntityDTOConverter;
     private final CategoryRepository categoryRepository;
 
-
     public VolunteerService(VolunteerRepository volunteerRepository, VolunteerDTOConvert entityDTOConvert) {
         this.volunteerRepository = volunteerRepository;
         this.entityDTOConvert = entityDTOConvert;
@@ -70,12 +69,13 @@ public class VolunteerService {
     public VolunteerEntity getVolunteerById(Long volunteerId) {
         return volunteerRepository.findById(volunteerId)
                 .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
+
     }
 
     public VolunteerEntity getVolunteerById(Long volunteerId) {
         return volunteerRepository.findById(volunteerId)
-            .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
-    }    
+                .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
+    }
 
     public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerUpdateDTO volunteerUpdateDTO) {
         VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
@@ -97,7 +97,8 @@ public class VolunteerService {
         if (volunteerUpdateDTO.getIsAvailable() != null) {
             volunteer.setIsAvailable(volunteerUpdateDTO.getIsAvailable());
         }
-        if (volunteerUpdateDTO.getIsEventHost() != null && !volunteer.getIsEventHost() && volunteerUpdateDTO.getIsEventHost()) {
+        if (volunteerUpdateDTO.getIsEventHost() != null && !volunteer.getIsEventHost()
+                && volunteerUpdateDTO.getIsEventHost()) {
             volunteer.setIsEventHost(true); // Promote to host if not already
         }
         if (volunteerUpdateDTO.getAbout() != null) {
@@ -134,4 +135,3 @@ public class VolunteerService {
         return entityDTOConvert.toVolunteerDTO(updatedVolunteer);
     }
 }
-

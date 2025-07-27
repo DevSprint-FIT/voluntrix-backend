@@ -1,11 +1,14 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +22,15 @@ import com.DevSprint.voluntrix_backend.services.SponsorshipService;
 import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 
 import jakarta.validation.Valid;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/public/sponsorships")
 @Validated
+@SecurityRequirement(name = "bearerAuth")
 public class SponsorshipController {
 
     private final SponsorshipService sponsorshipService;

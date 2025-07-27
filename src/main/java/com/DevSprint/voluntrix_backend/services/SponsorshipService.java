@@ -1,6 +1,5 @@
 package com.DevSprint.voluntrix_backend.services;
 
-
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -11,6 +10,7 @@ import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorshipEntity;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.SponsorshipNotFoundException;
+
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorshipRepository;
 import com.DevSprint.voluntrix_backend.utils.SponsorshipDTOConverter;

@@ -29,5 +29,6 @@ public class SponsorshipCreateDTO implements Serializable {
     private String benefits;
 
     @NotNull(message = "Event ID is required")
+
     private Long eventId;
 }

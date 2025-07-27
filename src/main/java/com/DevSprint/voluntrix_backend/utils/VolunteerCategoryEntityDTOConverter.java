@@ -43,7 +43,6 @@ public class VolunteerCategoryEntityDTOConverter {
                 .collect(Collectors.toSet());
     }
 
-
     public VolunteerCategoryDTO convertToDTO(VolunteerEntity volunteer, CategoryEntity category) {
         return VolunteerCategoryDTO.builder()
                 .volunteerId(volunteer.getVolunteerId())
@@ -51,4 +50,3 @@ public class VolunteerCategoryEntityDTOConverter {
                 .build();
     }
 }
-

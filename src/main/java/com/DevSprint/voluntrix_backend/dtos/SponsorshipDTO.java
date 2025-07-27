@@ -12,6 +12,7 @@ import lombok.Data;
 @Data
 @Builder
 public class SponsorshipDTO implements Serializable {
+
     private Long sponsorshipId;
 
     private String type;

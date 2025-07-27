@@ -8,13 +8,18 @@ import jakarta.annotation.PostConstruct;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventApplicationAndVolDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventInvitationCreateDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventInvitationDTO;
 import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventApplicationEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
+import com.DevSprint.voluntrix_backend.entities.EventInvitationEntity;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
@@ -69,6 +74,8 @@ public class EventDTOConverter {
         eventEntity.setEventStatus(eventCreateDTO.getEventStatus());
         eventEntity.setSponsorshipEnabled(eventCreateDTO.getSponsorshipEnabled());
         eventEntity.setDonationEnabled(eventCreateDTO.getDonationEnabled());
+        eventEntity.setSponsorshipProposalUrl(eventCreateDTO.getSponsorshipProposalUrl());
+        eventEntity.setDonationGoal(eventCreateDTO.getDonationGoal());
 
         // Set categories
         if (eventCreateDTO.getCategories() != null) {
@@ -86,7 +93,7 @@ public class EventDTOConverter {
         // Set organization
         if (eventCreateDTO.getOrganizationId() != null) {
             OrganizationEntity organization = organizationRepository.findById(eventCreateDTO.getOrganizationId())
-                    .orElseThrow(() -> new OrganizationNotFoundException("Organization not found: "
+                    .orElseThrow(() -> new OrganizationNotFoundException("Organization not found:"
                             + eventCreateDTO.getOrganizationId()));
             eventEntity.setOrganization(organization);
         }
@@ -100,7 +107,8 @@ public class EventDTOConverter {
         if (eventDTO.getCategories() != null) {
             Set<CategoryEntity> categoryEntities = eventDTO.getCategories().stream()
                     .map(dto -> categoryRepository.findById(dto.getCategoryId())
-                            .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + dto.getCategoryId())))
+                            .orElseThrow(
+                                    () -> new CategoryNotFoundException("Category not found: " + dto.getCategoryId())))
                     .collect(Collectors.toSet());
             eventEntity.setCategories(categoryEntities);
         }
@@ -110,6 +118,25 @@ public class EventDTOConverter {
     // List<EventEntity> to List<EventDTO>
     public List<EventDTO> toEventDTOList(List<EventEntity> eventEntityList) {
         return eventEntityList.stream().map(entity -> modelMapper.map(entity, EventDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    // List<EventEntity> to List<EventAndOrgDTO>
+    public EventAndOrgDTO toEventAndOrgDTO(EventEntity entity) {
+        EventAndOrgDTO dto = modelMapper.map(entity, EventAndOrgDTO.class);
+
+        if (entity.getOrganization() != null) {
+            dto.setOrganizationName(entity.getOrganization().getName());
+            dto.setOrganizationImageUrl(entity.getOrganization().getImageUrl());
+        }
+
+        return dto;
+    }
+
+    // List<EventEntity> to List<EventAndOrgDTO>
+    public List<EventAndOrgDTO> toEventAndOrgDTOList(List<EventEntity> entities) {
+        return entities.stream()
+                .map(this::toEventAndOrgDTO)
                 .collect(Collectors.toList());
     }
 
@@ -142,6 +169,64 @@ public class EventDTOConverter {
     public List<EventApplicationDTO> toEventApplicationDTOList(
             List<EventApplicationEntity> eventEntityApplicationList) {
         return eventEntityApplicationList.stream().map(entity -> modelMapper.map(entity, EventApplicationDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    // EventApplicationEntity to EventApplicationAndVolDTO
+    public EventApplicationAndVolDTO toEventApplicationAndVolDTO(EventApplicationEntity entity) {
+        EventApplicationAndVolDTO dto = new EventApplicationAndVolDTO();
+        dto.setId(entity.getId());
+        dto.setDescription(entity.getDescription());
+        dto.setContributionArea(entity.getContributionArea());
+        dto.setApplicationStatus(entity.getApplicationStatus());
+
+        if (entity.getEvent() != null) {
+            dto.setEventId(entity.getEvent().getEventId());
+        }
+
+        if (entity.getVolunteer() != null) {
+            dto.setVolunteerId(entity.getVolunteer().getVolunteerId());
+            dto.setVolunteerName(entity.getVolunteer().getFirstName() + " " + entity.getVolunteer().getLastName());
+        }
+
+        return dto;
+    }
+
+    // List<EventApplicationEntity> to List<EventApplicationAndVolDTO
+    public List<EventApplicationAndVolDTO> toEventApplicationAndVolDTOList(List<EventApplicationEntity> entities) {
+        return entities.stream()
+                .map(this::toEventApplicationAndVolDTO)
+                .collect(Collectors.toList());
+    }
+
+    // Event Invitation Mapping
+
+    // EventInvitationEntity to EventInvitationDTO
+    public EventInvitationDTO toEventInvitationDTO(EventInvitationEntity eventInvitationEntity) {
+        return modelMapper.map(eventInvitationEntity, EventInvitationDTO.class);
+    }
+
+    // EventInvitationCreateDTO to EventInvitationEntity
+    public EventInvitationEntity toEventInvitationEntity(EventInvitationCreateDTO eventInvitationCreateDTO,
+            EventEntity eventEntity, OrganizationEntity organizationEntity) {
+        EventInvitationEntity eventInvitationEntity = new EventInvitationEntity();
+
+        eventInvitationEntity.setApplicationStatus(eventInvitationCreateDTO.getApplicationStatus());
+
+        // Set event
+        eventInvitationEntity.setEvent(eventEntity);
+
+        // Set organization
+        eventInvitationEntity.setOrganization(organizationEntity);
+
+        return eventInvitationEntity;
+    }
+
+    // List<EventInvitationEntity> to List<EventInvitationDTO>
+    public List<EventInvitationDTO> toEventInvitationDTOList(
+            List<EventInvitationEntity> eventInvitationEntityList) {
+        return eventInvitationEntityList.stream()
+                .map(entity -> modelMapper.map(entity, EventInvitationDTO.class))
                 .collect(Collectors.toList());
     }
 }

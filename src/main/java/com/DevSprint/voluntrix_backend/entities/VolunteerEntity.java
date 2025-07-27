@@ -83,7 +83,7 @@ public class VolunteerEntity {
     @OneToMany(mappedBy = "eventHost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventEntity> hostedEvents = new ArrayList<>();
 
-    @OneToMany(mappedBy = "volunteer")
+    @OneToMany(mappedBy = "volunteer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EventApplicationEntity> applications;
 
     @ManyToMany
@@ -98,4 +98,3 @@ public class VolunteerEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 }
-

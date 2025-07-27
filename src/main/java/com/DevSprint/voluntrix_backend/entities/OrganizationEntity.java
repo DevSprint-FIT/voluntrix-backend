@@ -75,7 +75,7 @@ public class OrganizationEntity {
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventEntity> events = new ArrayList<>();
-  
+
     @Column(nullable = true)
     private String facebookLink;
 
@@ -89,4 +89,6 @@ public class OrganizationEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+    @OneToMany(mappedBy = "organization")
+    private List<EventInvitationEntity> invitations;
 }
