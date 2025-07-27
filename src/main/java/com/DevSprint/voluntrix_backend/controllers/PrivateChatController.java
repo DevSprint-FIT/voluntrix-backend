@@ -2,8 +2,10 @@ package com.DevSprint.voluntrix_backend.controllers;
 
 import com.DevSprint.voluntrix_backend.dtos.ChatMessageDTO;
 import com.DevSprint.voluntrix_backend.dtos.ConversationSummary;
+import com.DevSprint.voluntrix_backend.dtos.UserSponsorDTO;
 import com.DevSprint.voluntrix_backend.entities.Message;
 import com.DevSprint.voluntrix_backend.services.ChatService;
+import com.DevSprint.voluntrix_backend.services.UserSponsorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -107,6 +109,7 @@ public class PrivateChatController {
 class PrivateChatRestController {
 
     private final ChatService chatService;
+    private final UserSponsorService userSponsorService;
 
     /**
      * Create or get a private room for two users
@@ -168,6 +171,22 @@ class PrivateChatRestController {
             return ResponseEntity.ok(conversations);
         } catch (Exception e) {
             log.error("Error getting user conversations", e);
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    /**
+     * Get all active sponsors
+     */
+    @GetMapping("/sponsors")
+    public ResponseEntity<List<UserSponsorDTO>> getAllSponsors() {
+        log.info("Getting all active sponsors");
+        
+        try {
+            List<UserSponsorDTO> sponsors = userSponsorService.getAllActiveSponsors();
+            return ResponseEntity.ok(sponsors);
+        } catch (Exception e) {
+            log.error("Error getting sponsors", e);
             return ResponseEntity.status(500).build();
         }
     }
