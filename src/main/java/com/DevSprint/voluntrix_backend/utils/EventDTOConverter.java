@@ -8,13 +8,17 @@ import jakarta.annotation.PostConstruct;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventApplicationDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventInvitationCreateDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventInvitationDTO;
 import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventApplicationEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
+import com.DevSprint.voluntrix_backend.entities.EventInvitationEntity;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
@@ -143,5 +147,30 @@ public class EventDTOConverter {
             List<EventApplicationEntity> eventEntityApplicationList) {
         return eventEntityApplicationList.stream().map(entity -> modelMapper.map(entity, EventApplicationDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    // Temporary Change
+    public List<EventAndOrgDTO> toEventAndOrgDTOList(List<EventEntity> filteredEvents) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'toEventAndOrgDTOList'");
+    }
+
+    // Temporary Change
+    public EventInvitationEntity toEventInvitationEntity(EventInvitationCreateDTO eventInvitationCreateDTO,
+            EventEntity event, OrganizationEntity organization) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'toEventInvitationEntity'");
+    }
+
+    // Temporary Change
+    public List<EventInvitationDTO> toEventInvitationDTOList(List<EventInvitationEntity> all) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'toEventInvitationDTOList'");
+    }
+
+    // Temporary Change
+    public EventInvitationDTO toEventInvitationDTO(EventInvitationEntity eventInvitationEntity) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'toEventInvitationDTO'");
     }
 }

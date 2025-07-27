@@ -3,6 +3,8 @@ package com.DevSprint.voluntrix_backend.repositories;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventLeaderboardDTO;
+import com.DevSprint.voluntrix_backend.entities.EventEntity;
+import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEventParticipationEntity;
 import com.DevSprint.voluntrix_backend.enums.EventStatus;
 
@@ -53,6 +55,9 @@ public interface VolunteerEventParticipationRepository extends JpaRepository<Vol
            "WHERE vep.event.eventId = :eventId " +
            "ORDER BY vep.eventRewardPoints DESC")
    List<EventLeaderboardDTO> findEventLeaderboard(@Param("eventId") Long eventId);
+
+   // Temporary Change
+   boolean existsByVolunteerAndEvent(VolunteerEntity volunteer, EventEntity event);
 
 
 }

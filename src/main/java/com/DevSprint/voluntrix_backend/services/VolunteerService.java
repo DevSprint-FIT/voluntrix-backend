@@ -22,18 +22,13 @@ import java.util.Set;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class VolunteerService {
 
     private final VolunteerRepository volunteerRepository;
     private final VolunteerDTOConvert entityDTOConvert;
     private final VolunteerCategoryEntityDTOConverter volunteerCategoryEntityDTOConverter;
     private final CategoryRepository categoryRepository;
-
-
-    public VolunteerService(VolunteerRepository volunteerRepository, VolunteerDTOConvert entityDTOConvert) {
-        this.volunteerRepository = volunteerRepository;
-        this.entityDTOConvert = entityDTOConvert;
-    }
 
     public VolunteerDTO createVolunteer(VolunteerCreateDTO volunteerCreateDTO) {
         // Check for existing username
@@ -67,15 +62,11 @@ public class VolunteerService {
                 .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with username: " + username));
     }
 
+    // Temporary Change
     public VolunteerEntity getVolunteerById(Long volunteerId) {
         return volunteerRepository.findById(volunteerId)
                 .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
     }
-
-    public VolunteerEntity getVolunteerById(Long volunteerId) {
-        return volunteerRepository.findById(volunteerId)
-            .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
-    }    
 
     public VolunteerDTO patchVolunteer(Long volunteerId, VolunteerUpdateDTO volunteerUpdateDTO) {
         VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)

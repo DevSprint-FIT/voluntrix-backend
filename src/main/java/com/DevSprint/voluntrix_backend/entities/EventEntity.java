@@ -84,5 +84,12 @@ public class EventEntity {
 
     @Builder.Default
     private Integer eventHostRewardPoints = 0;
+
+
+    // Temporary Change
+    public void setInvitation(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setInvitation'");
+    }
 }
 
