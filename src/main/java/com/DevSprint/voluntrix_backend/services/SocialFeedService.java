@@ -106,6 +106,9 @@ public class SocialFeedService {
         if(contentOrMediaChanged){
             post.setUpdatedAt(LocalDateTime.now());
         }
+        if(updateDTO.getShares() != null){
+            post.setShares(post.getShares() + updateDTO.getShares());
+        }
         return socialFeedRepository.save(post);
     }
 

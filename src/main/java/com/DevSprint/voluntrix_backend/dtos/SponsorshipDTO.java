@@ -14,8 +14,14 @@ import lombok.Data;
 public class SponsorshipDTO implements Serializable {
 
     private Long sponsorshipId;
-    private String sponsorshipName;
-    private Integer sponsorshipAmount;
+
+    private String type;
+
+    private Integer price;
+
+    private String benefits;
+
+    private boolean isAvailable;
 
     private Long eventId;
 }

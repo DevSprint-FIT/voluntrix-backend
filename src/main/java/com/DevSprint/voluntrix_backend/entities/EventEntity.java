@@ -90,6 +90,10 @@ public class EventEntity {
     @JoinColumn(name = "organization_id", nullable = true)
     private OrganizationEntity organization;
 
+    @Builder.Default
+    private Integer eventHostRewardPoints = 0;
+}
+
     @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private EventInvitationEntity invitation;
 

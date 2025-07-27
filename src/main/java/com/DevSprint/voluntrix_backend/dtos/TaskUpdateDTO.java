@@ -32,4 +32,9 @@ public class TaskUpdateDTO {
     private LocalDateTime taskSubmittedDate;
 
     private Long assigneeId;
+
+    private Integer taskRewardPoints;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime taskReviewedDate;
 }

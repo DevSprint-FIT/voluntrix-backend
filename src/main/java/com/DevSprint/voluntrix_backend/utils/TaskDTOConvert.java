@@ -3,6 +3,7 @@ package com.DevSprint.voluntrix_backend.utils;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.DevSprint.voluntrix_backend.enums.TaskStatus;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -47,7 +48,7 @@ public class TaskDTOConvert {
         TaskEntity task = new TaskEntity();
         task.setDescription(taskCreateDTO.getDescription());
         task.setDueDate(taskCreateDTO.getDueDate());
-        task.setTaskStatus(taskCreateDTO.getTaskStatus());
+        task.setTaskStatus(TaskStatus.TO_DO); // Automatically set to TO_DO for new tasks
         task.setTaskDifficulty(taskCreateDTO.getTaskDifficulty());
         return task;
     }

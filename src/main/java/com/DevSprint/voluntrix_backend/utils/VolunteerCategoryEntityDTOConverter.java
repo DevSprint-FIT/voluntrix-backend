@@ -32,15 +32,16 @@ public class VolunteerCategoryEntityDTOConverter {
                         .build())
                 .collect(Collectors.toSet());
     }
-
-    // public Set<VolunteerCategoryDTO> convertCategoryFollowersToDTOs(CategoryEntity category) {
-    //     return category.getFollowers().stream()
-    //             .map(volunteer -> VolunteerCategoryDTO.builder()
-    //                     .volunteerId(volunteer.getVolunteerId())
-    //                     .categoryId(category.getCategoryId())
-    //                     .build())
-    //             .collect(Collectors.toSet());
-    // }
+    
+    // This was commented on dev branch
+    public Set<VolunteerCategoryDTO> convertCategoryFollowersToDTOs(CategoryEntity category) {
+        return category.getFollowers().stream()
+                .map(volunteer -> VolunteerCategoryDTO.builder()
+                        .volunteerId(volunteer.getVolunteerId())
+                        .categoryId(category.getCategoryId())
+                        .build())
+                .collect(Collectors.toSet());
+    }
 
     public VolunteerCategoryDTO convertToDTO(VolunteerEntity volunteer, CategoryEntity category) {
         return VolunteerCategoryDTO.builder()

@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class MonthlyDonationDto {
-    private int month;
-    private double total;
+public class EmailVerificationResponseDTO {
+    private boolean success;
+    private String message;
 }

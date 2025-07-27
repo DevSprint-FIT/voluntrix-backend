@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.DevSprint.voluntrix_backend.dtos.PayHereNotificationDto;
-import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDto;
+import com.DevSprint.voluntrix_backend.dtos.PayHereNotificationDTO;
+import com.DevSprint.voluntrix_backend.dtos.PaymentRequestDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.PaymentEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
@@ -17,7 +17,7 @@ import com.DevSprint.voluntrix_backend.enums.PaymentStatus;
 public class PaymentMapper {
     
     // Maps a PaymentRequestDto to a PaymentEntity
-    public PaymentEntity toEntity(PaymentRequestDto dto, SponsorEntity sponsor, VolunteerEntity  volunteer, EventEntity event) {
+    public PaymentEntity toEntity(PaymentRequestDTO dto, SponsorEntity sponsor, VolunteerEntity  volunteer, EventEntity event) {
         PaymentEntity payment = new PaymentEntity();
         payment.setOrderId(dto.getOrderId());
         payment.setAmount(Double.parseDouble(dto.getAmount()));
@@ -35,7 +35,7 @@ public class PaymentMapper {
     }
 
     // Updates a PaymentEntity with notification data
-    public void updateEntityFromNotification(PaymentEntity payment, PayHereNotificationDto dto) {
+    public void updateEntityFromNotification(PaymentEntity payment, PayHereNotificationDTO dto) {
         payment.setPaymentId(dto.getPayment_id());
         payment.setStatusCode(dto.getStatus_code());
         payment.setStatusMessage(dto.getStatus_message());
@@ -44,8 +44,8 @@ public class PaymentMapper {
     }
 
     // Maps request parameters to PayHereNotificationDto
-    public PayHereNotificationDto toNotificationDto(Map<String, String> params) {
-        PayHereNotificationDto dto = new PayHereNotificationDto();
+    public PayHereNotificationDTO toNotificationDto(Map<String, String> params) {
+        PayHereNotificationDTO dto = new PayHereNotificationDTO();
         dto.setMerchant_id(params.get("merchant_id"));
         dto.setOrder_id(params.get("order_id"));
         dto.setPayment_id(params.get("payment_id"));

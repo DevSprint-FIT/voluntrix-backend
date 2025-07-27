@@ -87,12 +87,12 @@ public class ReactionService {
         socialFeedRepository.findById(socialFeedId)
                 .orElseThrow(() -> new ResourceNotFoundException("Social feed post not found with ID: " + socialFeedId));
 
-        // Find the reaction for the user on the post
-        ReactionEntity reaction = reactionRepository.findBySocialFeedIdAndUserIdAndUserType(socialFeedId, userId, userType)
-                .orElseThrow(() -> new ResourceNotFoundException("No reaction found for the user on the given post."));
-
-        return new ReactionStatusDTO(reaction.getUserId(), reaction.isReacted());
+        // Try to find the reaction
+        return reactionRepository.findBySocialFeedIdAndUserIdAndUserType(socialFeedId, userId, userType)
+                .map(reaction -> new ReactionStatusDTO(reaction.getUserId(), reaction.isReacted()))
+                .orElse(new ReactionStatusDTO(userId, false)); // No reaction found
     }
+
 
     // Remove a reaction completely
     @Transactional

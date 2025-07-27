@@ -1,7 +1,6 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
 import com.DevSprint.voluntrix_backend.enums.TaskDifficulty;
-import com.DevSprint.voluntrix_backend.enums.TaskStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.validation.constraints.NotBlank;
@@ -29,9 +28,6 @@ public class TaskCreateDTO {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime dueDate;
 
-    @NotNull(message = "Task status is required")
-    private TaskStatus taskStatus; // TO_DO, IN_PROGRESS, DONE
-
     @NotNull(message = "Task difficulty is required")
     private TaskDifficulty taskDifficulty; // EASY, MEDIUM, HARD, EXTREME
 
@@ -39,5 +35,5 @@ public class TaskCreateDTO {
     private Long assigneeId;
 
     @NotNull(message = "Event ID is required")
-    private Long eventId;          
+    private Long eventId;
 }

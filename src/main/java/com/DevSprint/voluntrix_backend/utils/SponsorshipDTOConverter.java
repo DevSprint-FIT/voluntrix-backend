@@ -1,9 +1,7 @@
 package com.DevSprint.voluntrix_backend.utils;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipCreateDTO;
@@ -11,34 +9,32 @@ import com.DevSprint.voluntrix_backend.dtos.SponsorshipDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorshipEntity;
 
-import lombok.RequiredArgsConstructor;
-
 @Component
-@RequiredArgsConstructor
 public class SponsorshipDTOConverter {
-
-    private final ModelMapper modelMapper;
-
-    // SponsorshipEntity to SponsorshipDTO
-    public SponsorshipDTO toSponsorshipDTO(SponsorshipEntity sponsorshipEntity) {
-        return modelMapper.map(sponsorshipEntity, SponsorshipDTO.class);
-    }
-
-    // SponsorshipCreateDTO to SponsorshipEntity
-    public SponsorshipEntity toSponsorshipEntity(SponsorshipCreateDTO sponsorshipCreateDTO, EventEntity eventEntity) {
+    
+    public SponsorshipEntity toSponsorshipEntity(SponsorshipCreateDTO sponsorshipCreateDTO, EventEntity event) {
         SponsorshipEntity sponsorshipEntity = new SponsorshipEntity();
-
-        sponsorshipEntity.setSponsorshipName(sponsorshipCreateDTO.getSponsorshipName());
-        sponsorshipEntity.setSponsorshipAmount(sponsorshipCreateDTO.getSponsorshipAmount());
-
-        sponsorshipEntity.setEvent(eventEntity);
-
+        sponsorshipEntity.setType(sponsorshipCreateDTO.getType());
+        sponsorshipEntity.setPrice(sponsorshipCreateDTO.getPrice());
+        sponsorshipEntity.setBenefits(sponsorshipCreateDTO.getBenefits());
+        sponsorshipEntity.setEvent(event);
         return sponsorshipEntity;
     }
 
-    // List<SponsorshipEntity> to List<SponsorshipDTO>
-    public List<SponsorshipDTO> toSponsorshipDTOList(List<SponsorshipEntity> sponsorshipEntityList) {
-        return sponsorshipEntityList.stream().map(entity -> modelMapper.map(entity, SponsorshipDTO.class))
-                .collect(Collectors.toList());
+    public SponsorshipDTO toSponsorshipEntity(SponsorshipEntity savedSponsorship) {
+        SponsorshipDTO sponsorshipDTO = new SponsorshipDTO();
+        sponsorshipDTO.setSponsorshipId(savedSponsorship.getSponsorshipId());
+        sponsorshipDTO.setType(savedSponsorship.getType());
+        sponsorshipDTO.setPrice(savedSponsorship.getPrice());
+        sponsorshipDTO.setBenefits(savedSponsorship.getBenefits());
+        sponsorshipDTO.setAvailable(savedSponsorship.isAvailable());
+        sponsorshipDTO.setEventId(savedSponsorship.getEvent().getEventId());
+        return sponsorshipDTO;
+    }
+
+    public List<SponsorshipDTO> toSponsorshipEntityList(List<SponsorshipEntity> sponsorships) {
+        return sponsorships.stream()
+                .map(this::toSponsorshipEntity)
+                .toList();
     }
 }
