@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class EmailRequestDto {
+public class EmailRequestDTO {
 
     @NotBlank(message = "Email recipient is required")
     @Email(message = "A valid email address is required")

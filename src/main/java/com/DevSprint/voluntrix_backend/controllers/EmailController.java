@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
-import com.DevSprint.voluntrix_backend.dtos.EmailRequestDto;
+import com.DevSprint.voluntrix_backend.dtos.EmailRequestDTO;
 import com.DevSprint.voluntrix_backend.services.EmailService;
 
 import jakarta.mail.MessagingException;
@@ -25,7 +25,7 @@ public class EmailController {
     private final EmailService emailService;
 
     @PostMapping("/send-html-email")
-    public ResponseEntity<String> sendEmail(@Valid @RequestBody EmailRequestDto request) {
+    public ResponseEntity<String> sendEmail(@Valid @RequestBody EmailRequestDTO request) {
         try {
             emailService.sendEmailService(
                     request.getTo(),

@@ -1,5 +1,6 @@
 package com.DevSprint.voluntrix_backend.services;
 
+import com.DevSprint.voluntrix_backend.dtos.*;
 import com.DevSprint.voluntrix_backend.entities.FollowedOrganizationEntity;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.exceptions.OrganizationNotFoundException;
@@ -13,13 +14,10 @@ import lombok.RequiredArgsConstructor;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.DevSprint.voluntrix_backend.dtos.MonthlyFollowCountDTO;
 
 import java.time.Month;
 import java.time.format.TextStyle;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -122,5 +120,16 @@ public class FollowedOrganizationService {
                 .collect(Collectors.toList());
     }
 
-}
+    public Map<String, Long> getInstituteDistributionByOrganization(Long organizationId) {
+        List<InstituteCountProjection> result = followedOrganizationRepository.countVolunteersByInstitute(organizationId);
 
+        Map<String, Long> distribution = new HashMap<>();
+        for (InstituteCountProjection item : result) {
+            String institute = item.getInstitute() != null ? item.getInstitute() : "Unknown";
+            distribution.put(institute, item.getCount());
+        }
+        return distribution;
+    }
+
+
+}
