@@ -3,6 +3,7 @@ package com.DevSprint.voluntrix_backend.controllers;
 import com.DevSprint.voluntrix_backend.dtos.VerificationRequestDTO;
 import com.DevSprint.voluntrix_backend.services.RecaptchaService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/public/verify")
+@SecurityRequirement(name = "bearerAuth")
+@RequestMapping("/api/verify/phone")
 public class PhoneVerificationController {
 
     private final RecaptchaService recaptchaService;
