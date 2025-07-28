@@ -16,9 +16,7 @@ import com.DevSprint.voluntrix_backend.repositories.EventApplicationRepository;
 import com.DevSprint.voluntrix_backend.utils.VolunteerEventParticipationDTOConvert;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -169,3 +167,4 @@ public class VolunteerEventParticipationService {
         return leaderboard;
     }
 }
+

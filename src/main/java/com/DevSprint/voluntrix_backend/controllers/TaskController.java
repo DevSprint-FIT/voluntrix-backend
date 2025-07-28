@@ -103,5 +103,5 @@ public class TaskController {
         Map<String, Object> rewardStats = taskService.getVolunteerRewardStats(username);
         return ResponseEntity.ok(rewardStats);
     }
-
 }
+

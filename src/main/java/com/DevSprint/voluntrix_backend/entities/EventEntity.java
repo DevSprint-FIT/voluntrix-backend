@@ -14,6 +14,7 @@ import com.DevSprint.voluntrix_backend.enums.EventType;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -26,6 +27,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @NoArgsConstructor
@@ -67,6 +69,12 @@ public class EventEntity {
     private Boolean sponsorshipEnabled;
     private Boolean donationEnabled;
 
+    private String sponsorshipProposalUrl;
+    private Integer donationGoal;
+
+    @Builder.Default
+    private Integer donations = 0;
+
     @ManyToMany
     @JoinTable(name = "event_category", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<CategoryEntity> categories;
@@ -75,7 +83,7 @@ public class EventEntity {
     @JoinColumn(name = "event_host_id", nullable = false)
     private VolunteerEntity eventHost;
 
-    @OneToMany(mappedBy = "event")
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EventApplicationEntity> applications;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -84,5 +92,10 @@ public class EventEntity {
 
     @Builder.Default
     private Integer eventHostRewardPoints = 0;
-}
 
+    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private EventInvitationEntity invitation;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SponsorshipEntity> sponsorships;
+}

@@ -20,3 +20,4 @@ public class VolunteerEventParticipationDTO {
     private Integer eventRewardPoints;
     private Boolean isInactive = false;
 }
+

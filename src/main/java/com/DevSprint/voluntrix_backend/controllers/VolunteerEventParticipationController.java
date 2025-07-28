@@ -1,11 +1,12 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
-import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationDTO;
-import com.DevSprint.voluntrix_backend.dtos.VolunteerEventStatsDTO;
-import com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO;
-import com.DevSprint.voluntrix_backend.dtos.VolunteerAppliedEventDTO;
-import com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationCreateDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerAppliedEventDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerEventStatsDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventLeaderboardDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.services.EventService;

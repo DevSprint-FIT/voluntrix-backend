@@ -2,6 +2,7 @@ package com.DevSprint.voluntrix_backend.controllers;
 
 import com.DevSprint.voluntrix_backend.dtos.OrganizationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
+import com.DevSprint.voluntrix_backend.dtos.OrganizationNameDTO;
 import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 import com.DevSprint.voluntrix_backend.exceptions.BadRequestException;
 import com.DevSprint.voluntrix_backend.services.OrganizationService;
@@ -52,9 +53,11 @@ public class OrganizationController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<OrganizationDTO>> createOrganization(@Valid @RequestBody OrganizationCreateDTO organizationCreateDTO) {
+    public ResponseEntity<ApiResponse<OrganizationDTO>> createOrganization(
+            @Valid @RequestBody OrganizationCreateDTO organizationCreateDTO) {
         OrganizationDTO created = organizationService.createOrganization(organizationCreateDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>("Organization created successfully", created));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new ApiResponse<>("Organization created successfully", created));
     }
 
     @PatchMapping("/{id}")
@@ -64,7 +67,7 @@ public class OrganizationController {
         if (id == null) {
             throw new BadRequestException("Invalid ID");
         }
-        
+
         OrganizationDTO updatedOrganization = organizationService.updateOrganization(id, organizationDTO);
         return ResponseEntity.ok(new ApiResponse<>("Organization updated successfully", updatedOrganization));
     }
@@ -73,5 +76,10 @@ public class OrganizationController {
     public ResponseEntity<ApiResponse<Void>> deleteOrganization(@PathVariable Long id) {
         organizationService.deleteOrganization(id);
         return ResponseEntity.ok(new ApiResponse<>("Organization deleted successfully", null));
+    }
+
+    @GetMapping("/names")
+    public ResponseEntity<List<OrganizationNameDTO>> getAllOrganizationNames() {
+        return new ResponseEntity<List<OrganizationNameDTO>>(organizationService.getAllOrganizationNames(), HttpStatus.OK);
     }
 }

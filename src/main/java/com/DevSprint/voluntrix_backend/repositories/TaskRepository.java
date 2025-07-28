@@ -2,6 +2,7 @@ package com.DevSprint.voluntrix_backend.repositories;
 
 import com.DevSprint.voluntrix_backend.entities.TaskEntity;
 import com.DevSprint.voluntrix_backend.enums.TaskStatus;
+
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.*;
 import org.springframework.stereotype.Repository;
@@ -39,5 +40,4 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
             "AND t.taskSubmittedDate IS NOT NULL " +
             "ORDER BY t.taskSubmittedDate")
     List<TaskEntity> findTasksWithSubmittedDatesByAssigneeId(@Param("assigneeId") Long assigneeId);
-
 }

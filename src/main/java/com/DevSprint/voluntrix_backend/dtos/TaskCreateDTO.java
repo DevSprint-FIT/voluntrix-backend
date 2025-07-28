@@ -39,5 +39,5 @@ public class TaskCreateDTO {
     private Long assigneeId;
 
     @NotNull(message = "Event ID is required")
-    private Long eventId;          
+    private Long eventId;
 }
