@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/public/imagekit")
 public class ImageKitController {
 
@@ -33,8 +35,8 @@ public class ImageKitController {
         String raw = token + expire;
 
         // HMAC-SHA256 signature
-        Mac hmac = Mac.getInstance("HmacSHA256");
-        SecretKeySpec secretKey = new SecretKeySpec(privateKey.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        Mac hmac = Mac.getInstance("HmacSHA1");
+        SecretKeySpec secretKey = new SecretKeySpec(privateKey.getBytes(StandardCharsets.UTF_8), "HmacSHA1");
         hmac.init(secretKey);
         byte[] signatureBytes = hmac.doFinal(raw.getBytes(StandardCharsets.UTF_8));
         String signature = HexFormat.of().formatHex(signatureBytes);

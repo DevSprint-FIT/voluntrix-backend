@@ -134,10 +134,40 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("EVENT_APPLICATION_ALREADY_EXISTS", ex.getMessage()));
     }
 
+    @ExceptionHandler(EventInvitationNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEventInvitationNotFoundException(EventInvitationNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("EVENT_INVITATION_NOT_FOUND", ex.getMessage()));
+    }
+
+    @ExceptionHandler(DuplicateInvitationException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateInvitationException(DuplicateInvitationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("EVENT_INVITATION_ALREADY_EXISTS", ex.getMessage()));
+    }
+
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse("BAD_REQUEST", ex.getMessage()));
+    }
+
+    @ExceptionHandler(SponsorshipNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSponsorshipNotFoundException(SponsorshipNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("SPONSORSHIP_NOT_FOUND", ex.getMessage()));
+    }
+
+    @ExceptionHandler(SponsorshipIsNotAvailableException.class)
+    public ResponseEntity<ErrorResponse> handleSponsorshipIsNotAvailableException(SponsorshipIsNotAvailableException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("SPONSORSHIP_NOT_AVAILABLE", ex.getMessage()));
+    }
+
+    @ExceptionHandler(SponsorshipRequestNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSponsorshipRequestNotFoundException(SponsorshipRequestNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("SPONSORSHIP_REQUEST_NOT_FOUND", ex.getMessage()));
     }
 
     @ExceptionHandler(TaskNotFoundException.class)
@@ -165,6 +195,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ErrorResponse("ACCESS_DENIED", ex.getMessage()));
+    }
+
+    @ExceptionHandler(SponsorNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSponsorNotFoundException(SponsorNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("SPONSOR_NOT_FOUND", ex.getMessage()));
+    }
+
+    @ExceptionHandler(OTPVerificationException.class)
+    public ResponseEntity<ErrorResponse> handleOTPVerificationException(OTPVerificationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("OTP_VERIFICATION_FAILED", ex.getMessage()));
     }
 
     // Catch-all for unknown exceptions

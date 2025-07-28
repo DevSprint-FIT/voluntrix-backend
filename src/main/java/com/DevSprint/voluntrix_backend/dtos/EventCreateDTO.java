@@ -38,10 +38,10 @@ public class EventCreateDTO implements Serializable {
     private Boolean sponsorshipEnabled;
     private Boolean donationEnabled;
 
-    private Set<CategoryDTO> categories;
+    private String sponsorshipProposalUrl;
+    private Integer donationGoal;
 
-    private Long eventHostId;
+    private Set<CategoryDTO> categories;
 
     private Long organizationId;
 }
-

@@ -2,6 +2,9 @@ package com.DevSprint.voluntrix_backend.repositories;
 
 import com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventLeaderboardDTO;
+import com.DevSprint.voluntrix_backend.entities.EventEntity;
+import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEventParticipationEntity;
 import com.DevSprint.voluntrix_backend.enums.EventStatus;
 
@@ -21,6 +24,9 @@ public interface VolunteerEventParticipationRepository extends JpaRepository<Vol
    // Find all participation records for a given event
    List<VolunteerEventParticipationEntity> findByEvent_EventId(Long eventId);
 
+   // Find all participation records for a given event where volunteers are available
+   List<VolunteerEventParticipationEntity> findByEvent_EventIdAndVolunteer_IsAvailable(Long eventId, Boolean isAvailable);
+
    // Find participation record by both volunteer and event
    VolunteerEventParticipationEntity findByVolunteer_VolunteerIdAndEvent_EventId(Long volunteerId, Long eventId);
 
@@ -30,7 +36,7 @@ public interface VolunteerEventParticipationRepository extends JpaRepository<Vol
 
    // Find all active events for a given volunteer
    @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO(" +
-      "e.eventTitle, e.eventStartDate, e.eventEndDate, e.eventLocation) " +
+      "e.eventId, e.eventTitle, e.eventStartDate, e.eventEndDate, e.eventLocation) " +
       "FROM VolunteerEventParticipationEntity vep " +"JOIN vep.event e " +
       "WHERE vep.volunteer.id = :volunteerId AND e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.ACTIVE")
    List<VolunteerActiveEventDTO> findActiveEventsByVolunteerId(@Param("volunteerId") Long volunteerId);
@@ -43,4 +49,15 @@ public interface VolunteerEventParticipationRepository extends JpaRepository<Vol
       "WHERE vep.volunteer.id = :volunteerId " +
       "AND e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.COMPLETE")
    List<VolunteerCompletedEventDTO> findCompletedEventsByVolunteerId(@Param("volunteerId") Long volunteerId);
+
+   // For event leaderboard - get volunteers ranked by event reward points for a specific event
+   @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.EventLeaderboardDTO(" +
+           "v.user.fullName, vep.eventRewardPoints, v.profilePictureUrl) " +
+           "FROM VolunteerEventParticipationEntity vep " +
+           "JOIN vep.volunteer v " +
+           "WHERE vep.event.eventId = :eventId " +
+           "ORDER BY vep.eventRewardPoints DESC")
+   List<EventLeaderboardDTO> findEventLeaderboard(@Param("eventId") Long eventId);
+
+   boolean existsByVolunteerAndEvent(VolunteerEntity volunteer, EventEntity event);
 }

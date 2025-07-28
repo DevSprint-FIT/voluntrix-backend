@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolunteerAppliedEventDTO {
+    private Long applicationId;
     private String eventName;
     private EventType eventType;
     private ContributionArea contributionArea;

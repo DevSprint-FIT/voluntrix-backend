@@ -4,7 +4,6 @@ import com.DevSprint.voluntrix_backend.dtos.*;
 import com.DevSprint.voluntrix_backend.entities.ReactionEntity;
 import com.DevSprint.voluntrix_backend.entities.SocialFeedEntity;
 import com.DevSprint.voluntrix_backend.enums.UserType;
-import com.DevSprint.voluntrix_backend.exceptions.InvalidUserTypeException;
 import com.DevSprint.voluntrix_backend.exceptions.ResourceNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.ReactionRepository;
 import com.DevSprint.voluntrix_backend.repositories.SocialFeedRepository;
@@ -25,14 +24,12 @@ public class ReactionService {
     private final SocialFeedRepository socialFeedRepository;
 
     @Transactional
-    public ReactionDTO reactToPost(CreateReactionDTO dto) {
+    public ReactionDTO reactToPost(CreateReactionDTO dto, Long userId, UserType userType) {
         SocialFeedEntity feed = socialFeedRepository.findById(dto.getSocialFeedId())
                 .orElseThrow(() -> new ResourceNotFoundException("Social feed post not found with ID: " + dto.getSocialFeedId()));
 
-        UserType userType = parseUserType(dto.getUserType());
-
         Optional<ReactionEntity> existingReaction = reactionRepository.findBySocialFeedIdAndUserIdAndUserType(
-                dto.getSocialFeedId(), dto.getUserId(), userType);
+                dto.getSocialFeedId(), userId, userType);
 
         ReactionEntity savedReaction;
 
@@ -55,7 +52,7 @@ public class ReactionService {
             // First-time like
             ReactionEntity newReaction = new ReactionEntity();
             newReaction.setSocialFeed(feed);
-            newReaction.setUserId(dto.getUserId());
+            newReaction.setUserId(userId);
             newReaction.setUserType(userType);
             newReaction.setReacted(true);
             newReaction.setCreatedAt(LocalDateTime.now());
@@ -80,28 +77,26 @@ public class ReactionService {
     }
 
     // Get a user's reaction on a specific post
-    public ReactionStatusDTO getUserReaction(Long socialFeedId, Long userId, String userTypeStr) {
-        UserType userType = parseUserType(userTypeStr);
+    public ReactionStatusDTO getUserReaction(Long socialFeedId, Long userId, UserType userType) {
 
         // Check if social feed exists
         socialFeedRepository.findById(socialFeedId)
                 .orElseThrow(() -> new ResourceNotFoundException("Social feed post not found with ID: " + socialFeedId));
 
-        // Find the reaction for the user on the post
-        ReactionEntity reaction = reactionRepository.findBySocialFeedIdAndUserIdAndUserType(socialFeedId, userId, userType)
-                .orElseThrow(() -> new ResourceNotFoundException("No reaction found for the user on the given post."));
-
-        return new ReactionStatusDTO(reaction.getUserId(), reaction.isReacted());
+        // Try to find the reaction
+        return reactionRepository.findBySocialFeedIdAndUserIdAndUserType(socialFeedId, userId, userType)
+                .map(reaction -> new ReactionStatusDTO(reaction.getUserId(), reaction.isReacted()))
+                .orElse(new ReactionStatusDTO(userId, false)); // No reaction found
     }
+
 
     // Remove a reaction completely
     @Transactional
-    public void removeReaction(Long socialFeedId, Long userId, String userTypeStr) {
-        UserType userType = parseUserType(userTypeStr);
+    public void removeReaction(Long socialFeedId, Long userId, UserType userType) {
 
         ReactionEntity reactionEntity = reactionRepository.findBySocialFeedIdAndUserIdAndUserType(socialFeedId, userId, userType)
                 .orElseThrow(() -> new ResourceNotFoundException("Reaction not found for socialFeedId: " + socialFeedId +
-                        ", userId: " + userId + ", userType: " + userTypeStr));
+                        ", userId: " + userId + ", userType: " + userType));
 
         SocialFeedEntity feed = reactionEntity.getSocialFeed();
 
@@ -125,12 +120,4 @@ public class ReactionService {
 
     }
 
-    // Utility method for parsing userType safely
-    private UserType parseUserType(String userTypeStr) {
-        try {
-            return UserType.valueOf(userTypeStr.toUpperCase());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new InvalidUserTypeException("Invalid userType: " + userTypeStr);
-        }
-    }
 }

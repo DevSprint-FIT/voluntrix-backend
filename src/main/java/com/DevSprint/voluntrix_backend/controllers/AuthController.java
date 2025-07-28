@@ -1,5 +1,6 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.DevSprint.voluntrix_backend.dtos.AuthResponseDTO;
+import com.DevSprint.voluntrix_backend.dtos.CurrentUserDTO;
 import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.LoginRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.ResendVerificationRequestDTO;
@@ -20,6 +22,8 @@ import com.DevSprint.voluntrix_backend.services.AuthService;
 import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
 import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
@@ -28,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @Validated
 @RequestMapping("/api/auth")
+@SecurityRequirement(name = "bearerAuth")
 public class AuthController {
 
     private final AuthService authService;
@@ -35,7 +40,15 @@ public class AuthController {
     
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<AuthResponseDTO>> signup(@RequestBody @Valid SignupRequestDTO request) {
-        return ResponseEntity.ok(authService.signUp(request));
+        ApiResponse<AuthResponseDTO> response = authService.signUp(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<CurrentUserDTO>> getCurrentUser() {
+        Long userId = currentUserService.getCurrentUserId();
+        CurrentUserDTO currentUser = authService.getCurrentUser(userId);
+        return ResponseEntity.ok(new ApiResponse<>("Current user retrieved successfully", currentUser));
     }
 
     @GetMapping("/profile-status")
@@ -59,11 +72,13 @@ public class AuthController {
 
     @PostMapping("/verify-email")
     public ResponseEntity<ApiResponse<EmailVerificationResponseDTO>> verifyEmail(@RequestBody @Valid VerifyEmailRequestDTO request) {
-        return ResponseEntity.ok(authService.verifyEmailWithEmailAndOtp(request.getEmail(), request.getOtp()));
+        ApiResponse<EmailVerificationResponseDTO> response = authService.verifyEmailWithEmailAndOtp(request.getEmail(), request.getOtp());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/resend-verification")
     public ResponseEntity<ApiResponse<String>> resendVerificationEmail(@RequestBody @Valid ResendVerificationRequestDTO request) {
-        return ResponseEntity.ok(authService.resendVerificationEmailByEmail(request.getEmail()));
+        ApiResponse<String> response = authService.resendVerificationEmailByEmail(request.getEmail());
+        return ResponseEntity.ok(response);
     }
 }

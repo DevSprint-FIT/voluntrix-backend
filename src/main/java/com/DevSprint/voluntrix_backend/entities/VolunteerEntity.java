@@ -11,19 +11,20 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Table(name = "volunteer")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolunteerEntity {
@@ -32,19 +33,11 @@ public class VolunteerEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long volunteerId;
 
-    @Column(nullable = false, unique = true)
-    private String username;
-
-    @Column(nullable = false)
-    private String firstName;
-
-    @Column(nullable = false)
-    private String lastName;
-
-    @Column(nullable = false, unique = true)
-    private String email;
-    @Column
+    @Column(nullable = true)
     private String institute;
+
+    @Column(unique = true, nullable = true)
+    private String instituteEmail;
 
     @Column(nullable = false)
     private Boolean isAvailable = false;
@@ -78,11 +71,18 @@ public class VolunteerEntity {
     @OneToMany(mappedBy = "eventHost", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventEntity> hostedEvents = new ArrayList<>();
 
-    @OneToMany(mappedBy = "volunteer")
+    @OneToMany(mappedBy = "volunteer", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<EventApplicationEntity> applications;
+
+    @ManyToMany
+    @JoinTable(
+            name = "volunteer_category",
+            joinColumns = @JoinColumn(name = "volunteer_id", referencedColumnName = "volunteerId"),
+            inverseJoinColumns = @JoinColumn(name = "category_id", referencedColumnName = "categoryId")
+    )
+    private Set<CategoryEntity> followedCategories = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 }
-

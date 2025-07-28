@@ -3,6 +3,7 @@ package com.DevSprint.voluntrix_backend.utils;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.DevSprint.voluntrix_backend.enums.TaskStatus;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -24,14 +25,27 @@ public class TaskDTOConvert {
         TaskDTO dto = modelMapper.map(task, TaskDTO.class);
 
         // Manually map nested fields
-        if (task.getAssignee() != null) {
-            dto.setAssigneeId(task.getAssignee().getVolunteerId());
-            dto.setAssigneeUsername(task.getAssignee().getUsername());
-        }
+        // if (task.getAssignee() != null) {
+        //     dto.setAssigneeId(task.getAssignee().getVolunteerId());
+        //     dto.setAssigneeUsername(task.getAssignee().getUsername());
+        // }
 
         if (task.getEvent() != null) {
             dto.setEventId(task.getEvent().getEventId());
             dto.setEventTitle(task.getEvent().getEventTitle());
+        }
+
+        // Manually map date fields to handle LocalDateTime to LocalDate conversion
+        if (task.getDueDate() != null) {
+            dto.setDueDate(task.getDueDate().toLocalDate());
+        }
+        
+        if (task.getTaskSubmittedDate() != null) {
+            dto.setTaskSubmittedDate(task.getTaskSubmittedDate().toLocalDate());
+        }
+        
+        if (task.getTaskReviewedDate() != null) {
+            dto.setTaskReviewedDate(task.getTaskReviewedDate().toLocalDate());
         }
 
         return dto;
@@ -46,9 +60,12 @@ public class TaskDTOConvert {
     public TaskEntity toTaskEntity(TaskCreateDTO taskCreateDTO) {
         TaskEntity task = new TaskEntity();
         task.setDescription(taskCreateDTO.getDescription());
-        task.setDueDate(taskCreateDTO.getDueDate());
-        task.setTaskStatus(taskCreateDTO.getTaskStatus());
+        // Convert LocalDate to LocalDateTime with time set to 11:59:59 PM
+        task.setDueDate(taskCreateDTO.getDueDate().atTime(23, 59, 59));
+        task.setTaskStatus(TaskStatus.TO_DO); // Automatically set to TO_DO for new tasks
         task.setTaskDifficulty(taskCreateDTO.getTaskDifficulty());
+        task.setTaskCategory(taskCreateDTO.getTaskCategory());
+        task.setTaskRewardPoints(10);
         return task;
     }
 

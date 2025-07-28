@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
+import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 
 @Repository
 public interface EventRepository extends JpaRepository<EventEntity, Long>, JpaSpecificationExecutor<EventEntity> {
@@ -25,4 +26,6 @@ public interface EventRepository extends JpaRepository<EventEntity, Long>, JpaSp
     List<EventEntity> findByOrganizationId(Long organizationId);
 
     Long countByOrganizationIdAndEventStatus(Long organizationId, EventStatus eventStatus);
+
+    List<EventEntity> findByEventHost(VolunteerEntity eventHost);
 }
