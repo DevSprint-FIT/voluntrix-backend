@@ -9,6 +9,7 @@ import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
 import com.DevSprint.voluntrix_backend.repositories.UserRepository;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
+import com.DevSprint.voluntrix_backend.repositories.EmailVerificationRepository;
 import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class UserService {
     private final VolunteerRepository volunteerRepository;
     private final SponsorRepository sponsorRepository;
     private final OrganizationRepository organizationRepository;
+    private final EmailVerificationRepository emailVerificationRepository;
     private final JwtService jwtService;
 
     public AuthResponseDTO setUserRole(UserType role) {
@@ -53,6 +55,7 @@ public class UserService {
                 case VOLUNTEER -> volunteerRepository.existsById(userId);
                 case SPONSOR -> sponsorRepository.existsById(userId);
                 case ORGANIZATION -> organizationRepository.existsById(userId);
+                case ADMIN -> true;
                 case PUBLIC -> {
                     nextStep = "DASHBOARD";
                     redirectUrl = "/dashboard";
@@ -81,5 +84,42 @@ public class UserService {
             .nextStep(nextStep)
             .redirectUrl(redirectUrl)
             .build();
+    }
+
+    // Delete user account and all associated role-specific data using JWT
+    public void deleteAccount() {
+        Long userId = currentUserService.getCurrentUserId();
+        UserEntity user = currentUserService.getCurrentUser(userId);
+
+        // Delete email verification records first
+        emailVerificationRepository.deleteByUser(user.getUserId());
+
+        // Delete role-specific data (foreign key constraints)
+        if (user.getRole() != null) {
+            switch (user.getRole()) {
+                case VOLUNTEER:
+                    volunteerRepository.findByUser(user).ifPresent(volunteer -> {
+                        volunteerRepository.delete(volunteer);
+                    });
+                    break;
+                case SPONSOR:
+                    sponsorRepository.findById(userId).ifPresent(sponsor -> {
+                        sponsorRepository.delete(sponsor);
+                    });
+                    break;
+                case ORGANIZATION:
+                    organizationRepository.findById(userId).ifPresent(organization -> {
+                        organizationRepository.delete(organization);
+                    });
+                    break;
+                case PUBLIC:
+                    // No additional data to delete for PUBLIC users
+                    break;
+                case ADMIN:
+                    break;
+            }
+        }
+
+        userRepository.delete(user);
     }
 }

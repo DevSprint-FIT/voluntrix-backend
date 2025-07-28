@@ -90,4 +90,64 @@ public class EmailVerificationService {
     public void cleanupExpiredOtps() {
         emailVerificationRepository.deleteExpiredOtps(LocalDateTime.now());
     }
+    
+    /**
+     * Send OTP to institute email for verification
+     * This creates a temporary OTP entry linked to the user for institute verification
+     */
+    @Transactional
+    public void sendInstituteVerificationEmail(UserEntity user, String instituteEmail, String instituteName) {
+        try {
+            emailVerificationRepository.deleteByUser(user.getUserId());
+            
+            // Generate new OTP
+            String otp = generateOTP();
+            LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(OTP_EXPIRY_MINUTES);
+            
+            EmailVerificationEntity verification = EmailVerificationEntity.builder()
+                .user(user)
+                .otp(otp)
+                .expiresAt(expiresAt)
+                .build();
+            
+            // Save OTP to database
+            EmailVerificationEntity savedVerification = emailVerificationRepository.save(verification);
+            System.out.println("Institute verification OTP saved: " + savedVerification.getId());
+            
+            // Send email to institute email address
+            emailService.sendVerificationEmail(instituteEmail, user.getFullName(), otp);
+            System.out.println("Institute verification email sent to: " + instituteEmail);
+            
+        } catch (Exception e) {
+            System.err.println("Error in sendInstituteVerificationEmail: " + e.getMessage());
+            throw new RuntimeException("Failed to send institute verification email: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Verify OTP for institute email
+     * This verifies the OTP but doesn't mark the user as verified (since it's for institute, not user email)
+     */
+    @Transactional
+    public boolean verifyInstituteOTP(UserEntity user, String otp) {
+        // Clean up expired OTPs
+        emailVerificationRepository.deleteExpiredOtps(LocalDateTime.now());
+        
+        var verification = emailVerificationRepository.findByUserAndOtpAndIsUsedFalseAndExpiresAtAfter(
+            user, otp, LocalDateTime.now()
+        );
+        
+        if (verification.isPresent()) {
+            EmailVerificationEntity entity = verification.get();
+            
+            // Mark OTP as used
+            entity.setIsUsed(true);
+            entity.setVerifiedAt(LocalDateTime.now());
+            emailVerificationRepository.save(entity);
+                    
+            return true;
+        }
+        
+        return false;
+    }
 }

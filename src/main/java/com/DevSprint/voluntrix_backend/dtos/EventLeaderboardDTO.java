@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventLeaderboardDTO {
-    private String firstName;
-    private String lastName;
+    private String fullName;
     private Integer eventRewardPoints;
     private String profilePictureUrl;
 }

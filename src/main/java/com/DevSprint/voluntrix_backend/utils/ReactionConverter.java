@@ -4,7 +4,6 @@ import com.DevSprint.voluntrix_backend.dtos.CreateReactionDTO;
 import com.DevSprint.voluntrix_backend.dtos.ReactionDTO;
 import com.DevSprint.voluntrix_backend.entities.ReactionEntity;
 import com.DevSprint.voluntrix_backend.entities.SocialFeedEntity;
-import com.DevSprint.voluntrix_backend.enums.UserType;
 
 import java.time.LocalDateTime;
 
@@ -23,8 +22,6 @@ public class ReactionConverter {
     public static ReactionEntity toEntity(CreateReactionDTO dto, SocialFeedEntity feed) {
         ReactionEntity entity = new ReactionEntity();
         entity.setSocialFeed(feed);
-        entity.setUserId(dto.getUserId());
-        entity.setUserType(UserType.valueOf(dto.getUserType().toUpperCase()));
         entity.setReacted(true);
         entity.setCreatedAt(LocalDateTime.now());
         return entity;

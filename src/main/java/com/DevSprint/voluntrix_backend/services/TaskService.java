@@ -209,10 +209,10 @@ public class TaskService {
         taskRepository.deleteById(taskId);
     }
 
-    public Map<String, Object> getVolunteerRewardStats(String username) {
-        // Get volunteer by username
-        VolunteerEntity volunteer = volunteerRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Volunteer not found: " + username));
+    public Map<String, Object> getVolunteerRewardStats(Long volunteerId) {
+        // Get volunteer by ID
+        VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
+                .orElseThrow(() -> new RuntimeException("Volunteer not found: " + volunteerId));
 
         // Determine volunteer level
         String level = determineVolunteerLevel(volunteer.getRewardPoints());
@@ -220,13 +220,14 @@ public class TaskService {
         // Build response map
         Map<String, Object> stats = new HashMap<>();
 
-        stats.put("name", volunteer.getFirstName());
+        stats.put("name", volunteer.getUser().getFullName());
         stats.put("totalRewardPoints", volunteer.getRewardPoints());
         stats.put("level", level);
         stats.put("profilePictureUrl", volunteer.getProfilePictureUrl());
         return stats;
     }
 
+    @SuppressWarnings("unused")
     private int getDifficultyPoints(TaskDifficulty difficulty) {
         if (difficulty == null) return 0;
         switch (difficulty) {

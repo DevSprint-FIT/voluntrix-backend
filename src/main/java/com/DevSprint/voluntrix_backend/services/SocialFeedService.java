@@ -27,10 +27,10 @@ public class SocialFeedService {
     private final OrganizationRepository organizationRepository;
     private final OrganizationDTOConverter organizationDTOConverter;
 
-    public SocialFeedResponseDTO createPost(SocialFeedRequestDTO socialFeedRequestDTO){
+    public SocialFeedResponseDTO createPost(SocialFeedRequestDTO socialFeedRequestDTO, Long organizationId) {
 
-        OrganizationEntity organization = organizationRepository.findById(socialFeedRequestDTO.getOrganizationId())
-                .orElseThrow(() -> new ResourceNotFoundException("Organization not found with is: " + socialFeedRequestDTO.getOrganizationId()));
+        OrganizationEntity organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Organization not found with ID: " + organizationId));
 
         SocialFeedEntity post = new SocialFeedEntity();
         post.setOrganization(organization);

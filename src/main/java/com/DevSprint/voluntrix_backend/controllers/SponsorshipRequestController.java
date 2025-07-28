@@ -17,20 +17,25 @@ import org.springframework.web.bind.annotation.RestController;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDTO;
 import com.DevSprint.voluntrix_backend.services.SponsorshipRequestService;
+import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
 import com.DevSprint.voluntrix_backend.utils.ApiResponse;
+import com.DevSprint.voluntrix_backend.validation.RequiresRole;
+import com.DevSprint.voluntrix_backend.enums.UserType;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/public/sponsorship-requests")
+@RequestMapping("/api/sponsorship-requests")
 @Validated
 public class SponsorshipRequestController {
     
     private final SponsorshipRequestService sponsorshipRequestService;
+    private final CurrentUserService currentUserService;
 
     @PostMapping
+    @RequiresRole(UserType.SPONSOR)
     public ResponseEntity<ApiResponse<SponsorshipRequestDTO>> createSponsorshipRequest(@Valid @RequestBody SponsorshipRequestCreateDTO createDTO) {
         SponsorshipRequestDTO createdRequest = sponsorshipRequestService.createSponsorshipRequest(createDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -38,26 +43,32 @@ public class SponsorshipRequestController {
     }
 
 
-    @GetMapping("/sponsor/{sponsorId}")
-    public ResponseEntity<ApiResponse<List<SponsorshipRequestDTO>>> getSponsorshipRequestsBySponsorId(@PathVariable Long sponsorId) {
+    @GetMapping("/sponsor/my-requests")
+    @RequiresRole(UserType.SPONSOR)
+    public ResponseEntity<ApiResponse<List<SponsorshipRequestDTO>>> getSponsorshipRequestsBySponsorId() {
+        Long sponsorId = currentUserService.getCurrentEntityId();
         List<SponsorshipRequestDTO> requests = sponsorshipRequestService.getSponsorshipRequestsBySponsorId(sponsorId);
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship requests retrieved successfully", requests));
     }
 
     @GetMapping("/event/{eventId}")
+    @RequiresRole({UserType.ORGANIZATION, UserType.VOLUNTEER})
     public ResponseEntity<ApiResponse<List<SponsorshipRequestDTO>>> getSponsorshipRequestsByEventId(@PathVariable Long eventId) {
         List<SponsorshipRequestDTO> requests = sponsorshipRequestService.getSponsorshipRequestsByEventId(eventId);
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship requests retrieved successfully", requests));
     }
 
-    @GetMapping("/sponsor/{sponsorId}/status/{status}")
+    @GetMapping("/sponsor/status/{status}")
+    @RequiresRole(UserType.SPONSOR)
     public ResponseEntity<ApiResponse<List<SponsorshipRequestDTO>>> getSponsorshipRequestsBySponsorIdAndStatus(
-            @PathVariable Long sponsorId, @PathVariable String status) {
+            @PathVariable String status) {
+        Long sponsorId = currentUserService.getCurrentEntityId();
         List<SponsorshipRequestDTO> requests = sponsorshipRequestService.getSponsorshipRequestsBySponsorIdAndStatus(sponsorId, status);
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship requests retrieved successfully", requests));
     }
 
     @GetMapping("/event/{eventId}/status/{status}")
+    @RequiresRole({UserType.ORGANIZATION, UserType.VOLUNTEER})
     public ResponseEntity<ApiResponse<List<SponsorshipRequestDTO>>> getSponsorshipRequestsByEventIdAndStatus(
             @PathVariable Long eventId, @PathVariable String status) {
         List<SponsorshipRequestDTO> requests = sponsorshipRequestService.getSponsorshipRequestsByEventIdAndStatus(eventId, status);
@@ -65,6 +76,7 @@ public class SponsorshipRequestController {
     }
 
     @PatchMapping("/{requestId}/status/{status}")
+    @RequiresRole(UserType.SPONSOR)
     public ResponseEntity<ApiResponse<SponsorshipRequestDTO>> updateSponsorshipRequestStatus(
             @PathVariable Long requestId, @PathVariable String status) {
         SponsorshipRequestDTO updatedRequest = sponsorshipRequestService.updateSponsorshipRequestStatus(requestId, status);
@@ -72,6 +84,7 @@ public class SponsorshipRequestController {
     }
 
     @DeleteMapping("/{requestId}")
+    @RequiresRole(UserType.SPONSOR)
     public ResponseEntity<ApiResponse<String>> deleteSponsorshipRequest(@PathVariable Long requestId) {
         sponsorshipRequestService.deleteSponsorshipRequest(requestId);
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship request deleted successfully", null));

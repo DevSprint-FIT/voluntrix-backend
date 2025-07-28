@@ -5,6 +5,7 @@ import com.DevSprint.voluntrix_backend.entities.SocialFeedEntity;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
+import com.DevSprint.voluntrix_backend.entities.UserEntity;
 
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ public class OrganizationDTOConverter {
         dto.setMediaType(socialFeed.getMediaType());
         dto.setCreatedAt(socialFeed.getCreatedAt());
         dto.setUpdatedAt(socialFeed.getUpdatedAt());
-        dto.setOrganizationName(socialFeed.getOrganization().getName());
+        dto.setOrganizationName(socialFeed.getOrganization().getUser().getFullName()); // Get name from UserEntity
         dto.setInstitute(socialFeed.getOrganization().getInstitute());
         dto.setOrganizationImageUrl(socialFeed.getOrganization().getImageUrl());
         dto.setImpressions(socialFeed.getImpressions());
@@ -42,12 +43,17 @@ public class OrganizationDTOConverter {
         var organizationDTO = new OrganizationDTO();
 
         organizationDTO.setId(organization.getId());
-        organizationDTO.setName(organization.getName());
-        organizationDTO.setUsername(organization.getUsername());
+        
+        // Map from associated UserEntity
+        organizationDTO.setName(organization.getUser().getFullName());
+        organizationDTO.setUsername(organization.getUser().getHandle());
+        organizationDTO.setEmail(organization.getUser().getEmail());
+        
+        // Map organization-specific fields
         organizationDTO.setInstitute(organization.getInstitute());
-        organizationDTO.setEmail(organization.getEmail());
         organizationDTO.setPhone(organization.getPhone());
-        organizationDTO.setAccountNumber(AESUtil.decrypt(organization.getAccountNumber()));
+        organizationDTO.setAccountNumber(organization.getAccountNumber() != null ? 
+            AESUtil.decrypt(organization.getAccountNumber()) : null);
         organizationDTO.setIsVerified(organization.getIsVerified());
         organizationDTO.setFollowerCount(organization.getFollowerCount());
         organizationDTO.setJoinedDate(organization.getCreatedAt());
@@ -69,12 +75,11 @@ public class OrganizationDTOConverter {
         var organization = new OrganizationEntity();
 
         organization.setId(organizationDTO.getId());
-        organization.setName(organizationDTO.getName());
-        organization.setUsername(organizationDTO.getUsername());
+        // Note: name, username, email are inherited from UserEntity relationship
         organization.setInstitute(organizationDTO.getInstitute());
-        organization.setEmail(organizationDTO.getEmail());
         organization.setPhone(organizationDTO.getPhone());
-        organization.setAccountNumber(organizationDTO.getAccountNumber());
+        organization.setAccountNumber(organizationDTO.getAccountNumber() != null ? 
+        AESUtil.encrypt(organizationDTO.getAccountNumber()) : null);
         organization.setIsVerified(organizationDTO.getIsVerified());
         organization.setFollowerCount(organizationDTO.getFollowerCount());
         organization.setCreatedAt(organizationDTO.getJoinedDate());
@@ -98,36 +103,67 @@ public class OrganizationDTOConverter {
     public OrganizationEntity toOrganizationEntity(OrganizationCreateDTO dto) {
         OrganizationEntity entity = new OrganizationEntity();
 
-        entity.setName(dto.getName());
-        entity.setUsername(dto.getUsername());
+        // Note: name, username, email are inherited from UserEntity relationship
         entity.setInstitute(dto.getInstitute());
-        entity.setEmail(dto.getEmail());
         entity.setPhone(dto.getPhone());
-        entity.setAccountNumber(AESUtil.encrypt(dto.getAccountNumber())); // encryption logic
-        entity.setIsVerified(dto.getIsVerified());
-        entity.setFollowerCount(dto.getFollowerCount());
+        entity.setAccountNumber(dto.getAccountNumber() != null ? AESUtil.encrypt(dto.getAccountNumber()) : null);
         entity.setDescription(dto.getDescription());
         entity.setWebsite(dto.getWebsite());
         entity.setBankName(dto.getBankName());
+        entity.setFacebookLink(dto.getFacebookLink());
+        entity.setLinkedinLink(dto.getLinkedinLink());
+        entity.setInstagramLink(dto.getInstagramLink());
+        
+        // Set default values
+        entity.setIsVerified(false);
+        entity.setFollowerCount(0);
+
+        return entity;
+    }
+
+    // OrganizationCreateDTO to OrganizationEntity with User
+    public OrganizationEntity toOrganizationEntity(OrganizationCreateDTO dto, UserEntity user) {
+        OrganizationEntity entity = new OrganizationEntity();
+
+        // Note: name, username, email are inherited from UserEntity relationship
+        // and accessed via entity.getUser().getXxx() 
+        
+        // Set properties from DTO
+        entity.setPhone(dto.getPhone());
+        entity.setInstitute(dto.getInstitute());
+        entity.setAccountNumber(dto.getAccountNumber() != null ? AESUtil.encrypt(dto.getAccountNumber()) : null);
+        entity.setDescription(dto.getDescription());
+        entity.setWebsite(dto.getWebsite());
+        entity.setImageUrl(dto.getImageUrl());
+        entity.setBankName(dto.getBankName());
+        entity.setFacebookLink(dto.getFacebookLink());
+        entity.setLinkedinLink(dto.getLinkedinLink());
+        entity.setInstagramLink(dto.getInstagramLink());
+        
+        // Set default values
+        entity.setIsVerified(false);
+        entity.setFollowerCount(0);
+        
+        // Set the user relationship
+        entity.setUser(user);
 
         return entity;
     }
 
     public void updateEntityFromDTO(OrganizationDTO dto, OrganizationEntity entity) {
-        if (dto.getName() != null) {
-            entity.setName(dto.getName());
-        }
+        // Note: name, username, email cannot be updated directly as they come from UserEntity
+        
         if (dto.getInstitute() != null) {
             entity.setInstitute(dto.getInstitute());
-        }
-        if (dto.getEmail() != null) {
-            entity.setEmail(dto.getEmail());
         }
         if (dto.getPhone() != null) {
             entity.setPhone(dto.getPhone());
         }
         if (dto.getAccountNumber() != null) {
-            entity.setAccountNumber(dto.getAccountNumber());
+            entity.setAccountNumber(AESUtil.encrypt(dto.getAccountNumber()));
+        }
+        if (dto.getImageUrl() != null) {
+            entity.setImageUrl(dto.getImageUrl());
         }
         if (dto.getIsVerified() != null) {
             entity.setIsVerified(dto.getIsVerified());
@@ -143,6 +179,18 @@ public class OrganizationDTOConverter {
         }
         if (dto.getDescription() != null) {
             entity.setDescription(dto.getDescription());
+        }
+        if (dto.getImageUrl() != null) {
+            entity.setImageUrl(dto.getImageUrl());
+        }
+        if (dto.getFacebookLink() != null) {
+            entity.setFacebookLink(dto.getFacebookLink());
+        }
+        if (dto.getLinkedinLink() != null) {
+            entity.setLinkedinLink(dto.getLinkedinLink());
+        }
+        if (dto.getInstagramLink() != null) {
+            entity.setInstagramLink(dto.getInstagramLink());
         }
 
     }

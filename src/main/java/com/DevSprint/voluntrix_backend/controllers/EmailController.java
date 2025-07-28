@@ -13,12 +13,14 @@ import lombok.RequiredArgsConstructor;
 import com.DevSprint.voluntrix_backend.dtos.EmailRequestDTO;
 import com.DevSprint.voluntrix_backend.services.EmailService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/public/email")
+@SecurityRequirement(name = "bearerAuth")
+@RequestMapping("/api/email")
 @Validated
 public class EmailController {
     
