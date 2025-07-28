@@ -209,10 +209,10 @@ public class TaskService {
         taskRepository.deleteById(taskId);
     }
 
-    public Map<String, Object> getVolunteerRewardStats(String username) {
-        // Get volunteer by username
-        VolunteerEntity volunteer = volunteerRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Volunteer not found: " + username));
+    public Map<String, Object> getVolunteerRewardStats(Long volunteerId) {
+        // Get volunteer by ID
+        VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
+                .orElseThrow(() -> new RuntimeException("Volunteer not found: " + volunteerId));
 
         // Determine volunteer level
         String level = determineVolunteerLevel(volunteer.getRewardPoints());
