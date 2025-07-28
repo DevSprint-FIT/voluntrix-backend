@@ -43,10 +43,10 @@ public class EventService {
     private final OrganizationRepository organizationRepository;
     private final RewardService rewardService;
 
-    public EventEntity addEvent(EventCreateDTO eventCreateDTO) {
-        VolunteerEntity eventHost = volunteerRepository.findById(eventCreateDTO.getEventHostId())
+    public EventEntity addEvent(EventCreateDTO eventCreateDTO, Long eventHostId) {
+        VolunteerEntity eventHost = volunteerRepository.findById(eventHostId)
                 .orElseThrow(() -> new VolunteerNotFoundException(
-                        "Event Host not found: " + eventCreateDTO.getEventHostId()));
+                        "Event Host not found: " + eventHostId));
 
         if (eventCreateDTO.getOrganizationId() != null) {
             organizationRepository.findById(eventCreateDTO.getOrganizationId())
@@ -97,7 +97,7 @@ public class EventService {
         return entityDTOConvert.toEventDTOList(eventRepository.findAll());
     }
 
-    public void updateEvent(Long eventId, EventDTO eventDTO) {
+    public void updateEvent(Long eventId, EventDTO eventDTO, Long eventHostId) {
         var selectedEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
@@ -163,10 +163,10 @@ public class EventService {
 
             selectedEvent.setCategories(categoryEntities);
         }
-        if (eventDTO.getEventHostId() != null) {
-            VolunteerEntity eventHost = volunteerRepository.findById(eventDTO.getEventHostId())
+        if (eventHostId != null) {
+            VolunteerEntity eventHost = volunteerRepository.findById(eventHostId)
                     .orElseThrow(() -> new VolunteerNotFoundException(
-                            "Event Host not found: " + eventDTO.getEventHostId()));
+                            "Event Host not found: " + eventHostId));
 
             if (!Boolean.TRUE.equals(eventHost.getIsEventHost())) {
                 throw new BadRequestException("Volunteer is not an event host");

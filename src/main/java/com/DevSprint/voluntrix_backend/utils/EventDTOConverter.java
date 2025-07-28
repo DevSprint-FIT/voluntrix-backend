@@ -51,11 +51,6 @@ public class EventDTOConverter {
         // Manually set the correct eventHostRewardPoints to avoid ambiguity
         eventDTO.setEventHostRewardPoints(eventEntity.getEventHostRewardPoints());
         
-        // Manually set eventHostId
-        if (eventEntity.getEventHost() != null) {
-            eventDTO.setEventHostId(eventEntity.getEventHost().getVolunteerId());
-        }
-        
         return eventDTO;
     }
 
