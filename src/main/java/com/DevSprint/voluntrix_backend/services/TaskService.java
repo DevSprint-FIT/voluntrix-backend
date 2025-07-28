@@ -220,13 +220,14 @@ public class TaskService {
         // Build response map
         Map<String, Object> stats = new HashMap<>();
 
-        stats.put("name", volunteer.getFirstName());
+        stats.put("name", volunteer.getUser().getFullName());
         stats.put("totalRewardPoints", volunteer.getRewardPoints());
         stats.put("level", level);
         stats.put("profilePictureUrl", volunteer.getProfilePictureUrl());
         return stats;
     }
 
+    @SuppressWarnings("unused")
     private int getDifficultyPoints(TaskDifficulty difficulty) {
         if (difficulty == null) return 0;
         switch (difficulty) {

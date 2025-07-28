@@ -54,13 +54,6 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
-<<<<<<< HEAD
-    // @GetMapping("/volunteer/{username}")
-    // public ResponseEntity<List<TaskDTO>> getTasksByVolunteerUsername(@PathVariable String username) {
-    //     List<TaskDTO> tasks = taskService.getTasksByVolunteerUsername(username);
-    //     return ResponseEntity.ok(tasks);
-    // }
-=======
     // New endpoint: Get tasks by assignee ID, event ID and task status
     @GetMapping("/assignee/{assigneeId}/event/{eventId}")
     public ResponseEntity<List<TaskDTO>> getTasksByAssigneeIdAndEventIdAndStatus(
@@ -70,7 +63,6 @@ public class TaskController {
         List<TaskDTO> tasks = taskService.getTasksByAssigneeIdAndEventIdAndStatus(assigneeId, eventId, taskStatus);
         return ResponseEntity.ok(tasks);
     }
->>>>>>> dev
 
     // New endpoint: Get task status counts for an event
     @GetMapping("/event/{eventId}/status-count")

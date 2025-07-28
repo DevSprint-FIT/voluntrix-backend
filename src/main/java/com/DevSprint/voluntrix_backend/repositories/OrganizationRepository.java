@@ -18,7 +18,6 @@ public interface OrganizationRepository extends JpaRepository<OrganizationEntity
     Optional<OrganizationEntity> findByUsername(@Param("username") String username);
     
     Optional<OrganizationEntity> findByUser(UserEntity user);
-    Optional<OrganizationEntity> findByUsername(String username);
 
     // JPQL Query
     @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.OrganizationNameDTO(e.id, e.name, e.imageUrl) FROM OrganizationEntity e")

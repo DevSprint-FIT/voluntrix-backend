@@ -39,7 +39,7 @@ public class CommentService {
         switch (userType) {
             case VOLUNTEER -> {
                 var volunteerDTO = volunteerService.getVolunteerByUsername(dto.getUserUsername());
-                commenterName = volunteerDTO.getFirstName() + " " + volunteerDTO.getLastName();
+                commenterName = volunteerDTO.getFullName();
                 profileImageUrl = volunteerDTO.getProfilePictureUrl();
             }
             case ORGANIZATION -> {
@@ -67,7 +67,7 @@ public class CommentService {
             switch (comment.getUserType()) {
                 case VOLUNTEER -> {
                     var volunteerDTO = volunteerService.getVolunteerByUsername(comment.getUserUsername());
-                    commenterName = volunteerDTO.getFirstName() + " " + volunteerDTO.getLastName();
+                    commenterName = volunteerDTO.getFullName();
                     profileImageUrl = volunteerDTO.getProfilePictureUrl();
                 }
                 case ORGANIZATION -> {

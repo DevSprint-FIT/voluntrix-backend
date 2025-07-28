@@ -11,6 +11,7 @@ import com.DevSprint.voluntrix_backend.exceptions.VolunteerNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.VolunteerRepository;
 import com.DevSprint.voluntrix_backend.repositories.CategoryRepository;
+import com.DevSprint.voluntrix_backend.repositories.UserRepository;
 import com.DevSprint.voluntrix_backend.utils.VolunteerDTOConvert;
 import com.DevSprint.voluntrix_backend.utils.VolunteerCategoryEntityDTOConverter;
 
@@ -96,16 +97,6 @@ public class VolunteerService {
         VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
                 .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with ID: " + volunteerId));
 
-        // Update only the fields provided in the DTO
-        if (volunteerUpdateDTO.getFirstName() != null) {
-            volunteer.setFirstName(volunteerUpdateDTO.getFirstName());
-        }
-        if (volunteerUpdateDTO.getLastName() != null) {
-            volunteer.setLastName(volunteerUpdateDTO.getLastName());
-        }
-        if (volunteerUpdateDTO.getEmail() != null) {
-            volunteer.setEmail(volunteerUpdateDTO.getEmail());
-        }
         if (volunteerUpdateDTO.getInstitute() != null) {
             volunteer.setInstitute(volunteerUpdateDTO.getInstitute());
         }
@@ -114,10 +105,6 @@ public class VolunteerService {
         }
         if (volunteerUpdateDTO.getIsAvailable() != null) {
             volunteer.setIsAvailable(volunteerUpdateDTO.getIsAvailable());
-        }
-        if (volunteerUpdateDTO.getIsEventHost() != null && !volunteer.getIsEventHost()
-                && volunteerUpdateDTO.getIsEventHost()) {
-            volunteer.setIsEventHost(true); // Promote to host if not already
         }
         if (volunteerUpdateDTO.getAbout() != null) {
             volunteer.setAbout(volunteerUpdateDTO.getAbout());

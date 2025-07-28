@@ -24,5 +24,6 @@ public class CategoryEntity {
     private String categoryName;
 
     @ManyToMany(mappedBy = "followedCategories")
+    @Builder.Default
     private Set<VolunteerEntity> followers = new HashSet<>();
 }
