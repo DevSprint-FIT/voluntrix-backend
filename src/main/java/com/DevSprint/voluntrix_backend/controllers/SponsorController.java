@@ -49,7 +49,7 @@ public class SponsorController {
         return ResponseEntity.ok(new ApiResponse<>("Sponsor retrieved successfully", sponsor));
     }
 
-    @PostMapping("/")
+    @PostMapping
     @RequiresRole(UserType.SPONSOR)
     public ResponseEntity<ApiResponse<SponsorDTO>> createSponsor(@Valid @RequestBody SponsorCreateDTO sponsorCreateDTO) {
         Long userId = currentUserService.getCurrentUserId();

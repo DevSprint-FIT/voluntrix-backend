@@ -3,6 +3,11 @@ package com.DevSprint.voluntrix_backend.controllers;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.enums.EventStatus;
 import com.DevSprint.voluntrix_backend.services.OrganizationEventService;
+import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
+import com.DevSprint.voluntrix_backend.validation.RequiresRole;
+import com.DevSprint.voluntrix_backend.enums.UserType;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,18 +18,21 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/public/organizations/{organizationId}/events")
+@SecurityRequirement(name = "bearerAuth")
+@RequestMapping("/api/organizations/events")
 public class OrganizationEventController {
 
     private final OrganizationEventService organizationEventService;
+    private final CurrentUserService currentUserService;
 
     // Single endpoint to get events by status
     @GetMapping
+    @RequiresRole(UserType.ORGANIZATION)
     public ResponseEntity<List<EventDTO>> getEventsByStatus(
-            @PathVariable Long organizationId,
             @RequestParam(required = false) EventStatus status) {
 
         List<EventDTO> events;
+        Long organizationId = currentUserService.getCurrentEntityId();
 
         if (status != null) {
             events = organizationEventService.getEventsByOrganizationAndStatus(organizationId, status);
@@ -40,7 +48,9 @@ public class OrganizationEventController {
 
     // status count API
     @GetMapping("/status-count")
-    public ResponseEntity<Map<String, Long>> getEventStatusCount(@PathVariable Long organizationId) {
+    @RequiresRole(UserType.ORGANIZATION)
+    public ResponseEntity<Map<String, Long>> getEventStatusCount() {
+        Long organizationId = currentUserService.getCurrentEntityId();
         Map<String, Long> statusCounts = organizationEventService.getEventStatusCounts(organizationId);
         return ResponseEntity.ok(statusCounts);
     }

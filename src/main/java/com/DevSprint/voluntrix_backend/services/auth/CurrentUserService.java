@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
+import com.DevSprint.voluntrix_backend.enums.UserType;
 import com.DevSprint.voluntrix_backend.exceptions.UserNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
@@ -66,6 +67,18 @@ public class CurrentUserService {
             case ADMIN -> user.getUserId();
             case PUBLIC -> null;
         };
+    }
+
+    public UserType getCurrentUserType() {
+        Long userId = getCurrentUserId();
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+        
+        if (user.getRole() == null) {
+            throw new RuntimeException("User role is not set");
+        }
+        
+        return user.getRole();
     }
 
 }

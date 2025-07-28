@@ -25,5 +25,5 @@ public interface VolunteerRepository extends JpaRepository<VolunteerEntity, Long
     @Query("SELECT v FROM VolunteerEntity v LEFT JOIN FETCH v.followedCategories WHERE v.volunteerId = :volunteerId")
     Optional<VolunteerEntity> findByIdWithCategories(@Param("volunteerId") Long volunteerId);
 
-    Optional<VolunteerEntity> findByUsername(String username);
+    Optional<VolunteerEntity> findByUserHandle(String username);
 }

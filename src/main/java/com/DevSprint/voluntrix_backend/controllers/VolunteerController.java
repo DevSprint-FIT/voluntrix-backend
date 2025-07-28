@@ -19,8 +19,6 @@ import com.DevSprint.voluntrix_backend.validation.RequiresRole;
 import com.DevSprint.voluntrix_backend.enums.UserType;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/volunteers")
@@ -29,13 +27,6 @@ public class VolunteerController {
 
     private final VolunteerService volunteerService;
     private final CurrentUserService currentUserService;
-
-    @GetMapping("/all")
-    @RequiresRole({UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR})
-    public ResponseEntity<List<VolunteerDTO>> getAllVolunteers() {
-        List<VolunteerDTO> volunteers = volunteerService.getAllVolunteers();
-        return ResponseEntity.ok(volunteers);
-    }
 
     @GetMapping("/me")
     @RequiresRole(UserType.VOLUNTEER)
