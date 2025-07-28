@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/public/comments")
+@RequestMapping("/api/comments")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class CommentController {
