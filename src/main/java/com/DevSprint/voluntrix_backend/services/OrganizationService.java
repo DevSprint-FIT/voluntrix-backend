@@ -3,6 +3,7 @@ package com.DevSprint.voluntrix_backend.services;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationUpdateDTO;
+import com.DevSprint.voluntrix_backend.dtos.OrganizationNameDTO;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
@@ -37,7 +38,8 @@ public class OrganizationService {
     public OrganizationDTO getOrganizationByUsername(String username) {
         return organizationRepository.findByUsername(username)
                 .map(organizationDTOConverter::toOrganizationDTO)
-                .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with username: " + username));
+                .orElseThrow(
+                        () -> new OrganizationNotFoundException("Organization not found with username: " + username));
     }
 
 
@@ -136,11 +138,14 @@ public class OrganizationService {
                 .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with id: " + id));
     }
 
-
     public void deleteOrganization(Long id) {
         if (!organizationRepository.existsById(id)) {
             throw new OrganizationNotFoundException("Organization not found with id: " + id);
         }
         organizationRepository.deleteById(id);
+    }
+
+    public List<OrganizationNameDTO> getAllOrganizationNames() {
+        return organizationRepository.findAllOrganizationIdNameAndUrl();
     }
 }

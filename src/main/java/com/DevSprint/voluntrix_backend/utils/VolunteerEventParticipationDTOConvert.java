@@ -18,8 +18,10 @@ public class VolunteerEventParticipationDTOConvert {
         VolunteerEventParticipationDTO participationDTO = new VolunteerEventParticipationDTO();
         participationDTO.setParticipationId(participationEntity.getParticipationId());
         participationDTO.setVolunteerId(participationEntity.getVolunteer().getVolunteerId());
+        participationDTO.setVolunteerUsername(participationEntity.getVolunteer().getUsername());
         participationDTO.setEventId(participationEntity.getEvent().getEventId());
         participationDTO.setAreaOfContribution(participationEntity.getAreaOfContribution());
+        participationDTO.setEventRewardPoints(participationEntity.getEventRewardPoints());
         return participationDTO;
     }
 
@@ -37,6 +39,7 @@ public class VolunteerEventParticipationDTOConvert {
         participationEntity.setVolunteer(volunteer);
         participationEntity.setEvent(event);
         participationEntity.setAreaOfContribution(participationDTO.getAreaOfContribution());
+        participationEntity.setEventRewardPoints(participationDTO.getEventRewardPoints());
         return participationEntity;
     }
 
@@ -46,6 +49,7 @@ public class VolunteerEventParticipationDTOConvert {
         participationEntity.setVolunteer(volunteer);
         participationEntity.setEvent(event);
         participationEntity.setAreaOfContribution(createDTO.getAreaOfContribution());
+        participationEntity.setEventRewardPoints(0);
         return participationEntity;
     }
 }

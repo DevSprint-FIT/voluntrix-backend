@@ -35,13 +35,13 @@ public class PaymentService {
     private final VolunteerRepository volunteerRepository;
     private final PaymentMapper paymentMapper;
 
-    @Value("${PAYHERE_MERCHANT_ID}")
+    @Value("${payhere.merchant.id}")
     private String merchantId;
 
-    @Value("${PAYHERE_MERCHANT_SECRET}")
+    @Value("${payhere.merchant.secret}")
     private String merchantSecret;
 
-    @Value("${PAYHERE_HASH_ALGORITHM}")
+    @Value("${payhere.hashAlgorithm}")
     private String hashAlgorithm;
 
     private String md5(String input) {

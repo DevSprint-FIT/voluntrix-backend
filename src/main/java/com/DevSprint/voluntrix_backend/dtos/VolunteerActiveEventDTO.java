@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolunteerActiveEventDTO {
+    private Long eventId;
     private String eventName;
     private LocalDate startDate;
     private LocalDate endDate;

@@ -4,5 +4,5 @@ public enum ContributionArea {
     DESIGN,
     EDITORIAL,
     LOGISTICS,
-    PROGRAMMING
+    PROGRAM
 }

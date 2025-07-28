@@ -1,0 +1,118 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches:
+      - main # Trigger when dev is merged to main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Cache dependencies to speed up builds
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      
+      - name: Run tests
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+          SPRING_DATASOURCE_USERNAME: sa
+          SPRING_DATASOURCE_PASSWORD: password
+          JWT_SECRET: test-jwt-secret-key-for-testing-purposes-only
+          MAIL_USERNAME: test@example.com
+          MAIL_PASSWORD: testpassword
+          IMAGEKIT_PRIVATE_KEY: test-private-key
+          IMAGEKIT_PUBLIC_KEY: test-public-key
+          IMAGEKIT_URL_ENDPOINT: https://test.example.com
+          OAUTH2_CLIENT_ID: test-client-id
+          OAUTH2_CLIENT_SECRET: test-client-secret
+          PAYHERE_MERCHANT_ID: test-merchant-id
+          PAYHERE_MERCHANT_SECRET: test-merchant-secret
+          PAYHERE_HASH_ALGORITHM: SHA-256
+        run: mvn clean test -Dspring.profiles.active=test
+
+      - name: Test Docker build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false  # Don't push, just build
+          tags: voluntrix-backend:pr-test
+
+  build: 
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Cache dependencies to speed up builds
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      # Set environment variables for the build
+      - name: Build with Maven
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+          SPRING_DATASOURCE_USERNAME: sa
+          SPRING_DATASOURCE_PASSWORD: password
+          JWT_SECRET: test-jwt-secret-key-for-testing-purposes-only
+          MAIL_USERNAME: test@example.com
+          MAIL_PASSWORD: testpassword
+          IMAGEKIT_PRIVATE_KEY: test-private-key
+          IMAGEKIT_PUBLIC_KEY: test-public-key
+          IMAGEKIT_URL_ENDPOINT: https://test.example.com
+          OAUTH2_CLIENT_ID: test-client-id
+          OAUTH2_CLIENT_SECRET: test-client-secret
+          PAYHERE_MERCHANT_ID: test-merchant-id
+          PAYHERE_MERCHANT_SECRET: test-merchant-secret
+          PAYHERE_HASH_ALGORITHM: SHA-256
+        run: mvn clean package -DskipTests -Dspring.profiles.active=test
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/voluntrix-backend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

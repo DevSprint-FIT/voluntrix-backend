@@ -10,7 +10,7 @@ import com.DevSprint.voluntrix_backend.dtos.MonthlyFollowCountDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -46,4 +46,11 @@ public class FollowedOrganizationController {
         List<MonthlyFollowCountDTO> stats = followedOrganizationService.getMonthlyFollowerStats(year, organizationId);
         return ResponseEntity.ok(stats);
     }
+
+    @GetMapping("/institute-distribution/{organizationId}")
+    public ResponseEntity<Map<String, Long>> getInstituteDistribution(@PathVariable Long organizationId) {
+        Map<String, Long> data = followedOrganizationService.getInstituteDistributionByOrganization(organizationId);
+        return ResponseEntity.ok(data);
+    }
+
 }

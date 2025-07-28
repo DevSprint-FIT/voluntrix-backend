@@ -18,11 +18,12 @@ public class VolunteerDTO {
     private String institute;
     private String instituteEmail;
     private Boolean isAvailable;
-    private Integer volunteerLevel; 
-    private Integer rewardPoints; 
-    private Boolean isEventHost;  
+    private Integer volunteerLevel;
+    private Integer rewardPoints;
+    private Boolean isEventHost;
     private String joinedDate;
     private String about;
     private String phoneNumber;
     private String profilePictureUrl;
 }
+

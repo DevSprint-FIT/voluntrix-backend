@@ -14,14 +14,12 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "sponsor")
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class SponsorEntity {

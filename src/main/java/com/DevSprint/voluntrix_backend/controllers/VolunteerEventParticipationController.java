@@ -1,16 +1,18 @@
 package com.DevSprint.voluntrix_backend.controllers;
 
-import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationDTO;
-import com.DevSprint.voluntrix_backend.dtos.VolunteerEventStatsDTO;
-import com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO;
-import com.DevSprint.voluntrix_backend.dtos.VolunteerAppliedEventDTO;
-import com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationCreateDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerEventParticipationDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerCompletedEventDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerAppliedEventDTO;
+import com.DevSprint.voluntrix_backend.dtos.VolunteerEventStatsDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventLeaderboardDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.services.EventService;
 import com.DevSprint.voluntrix_backend.services.VolunteerService;
 import com.DevSprint.voluntrix_backend.services.VolunteerEventParticipationService;
+import com.DevSprint.voluntrix_backend.dtos.EventLeaderboardDTO;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +59,12 @@ public class VolunteerEventParticipationController {
         return ResponseEntity.ok(participations);
     }
 
+    @GetMapping("/event/{eventId}/available")
+    public ResponseEntity<List<VolunteerEventParticipationDTO>> getAvailableVolunteersByEvent(@PathVariable Long eventId) {
+        List<VolunteerEventParticipationDTO> participations = participationService.getAvailableParticipationsByEvent(eventId);
+        return ResponseEntity.ok(participations);
+    }
+
     @GetMapping("/volunteer/{volunteerId}/event/{eventId}")
     public ResponseEntity<VolunteerEventParticipationDTO> getByVolunteerAndEvent(@PathVariable Long volunteerId, @PathVariable Long eventId) {
         VolunteerEventParticipationDTO dto = participationService.getParticipationByVolunteerAndEvent(volunteerId, eventId);
@@ -90,5 +98,12 @@ public class VolunteerEventParticipationController {
     public ResponseEntity<Void> deleteParticipation(@PathVariable Long volunteerId, @PathVariable Long eventId) {
         participationService.deleteParticipationByVolunteerAndEvent(volunteerId, eventId);
         return ResponseEntity.noContent().build();
+    }
+
+    // Get event leaderboard
+    @GetMapping("/event/{eventId}/leaderboard")
+    public ResponseEntity<List<EventLeaderboardDTO>> getEventLeaderboard(@PathVariable Long eventId) {
+        List<EventLeaderboardDTO> leaderboard = participationService.getEventLeaderboard(eventId);
+        return ResponseEntity.ok(leaderboard);
     }
 }
