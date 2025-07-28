@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/apisponsorship-requests")
+@RequestMapping("/api/sponsorship-requests")
 @Validated
 public class SponsorshipRequestController {
     
