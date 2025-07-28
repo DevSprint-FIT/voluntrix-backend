@@ -36,7 +36,7 @@ public interface VolunteerEventParticipationRepository extends JpaRepository<Vol
 
    // Find all active events for a given volunteer
    @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.VolunteerActiveEventDTO(" +
-      "e.eventTitle, e.eventStartDate, e.eventEndDate, e.eventLocation) " +
+      "e.eventId, e.eventTitle, e.eventStartDate, e.eventEndDate, e.eventLocation) " +
       "FROM VolunteerEventParticipationEntity vep " +"JOIN vep.event e " +
       "WHERE vep.volunteer.id = :volunteerId AND e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.ACTIVE")
    List<VolunteerActiveEventDTO> findActiveEventsByVolunteerId(@Param("volunteerId") Long volunteerId);
