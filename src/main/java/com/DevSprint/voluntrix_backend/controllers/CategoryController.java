@@ -5,6 +5,7 @@ import com.DevSprint.voluntrix_backend.enums.UserType;
 import com.DevSprint.voluntrix_backend.services.*;
 import com.DevSprint.voluntrix_backend.validation.RequiresRole;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.*;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.*;
 
 @RequiredArgsConstructor
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/public/categories")
 public class CategoryController {
 

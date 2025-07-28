@@ -26,11 +26,9 @@ public class CommentService {
     private final OrganizationService organizationService;
     private final CommentDTOConverter commentDTOConverter;
 
-    public CommentDTO addComment(CreateCommentDTO dto) {
+    public CommentDTO addComment(CreateCommentDTO dto, Long userId, UserType userType) {
         SocialFeedEntity feed = socialFeedRepository.findById(dto.getSocialFeedId())
                 .orElseThrow(() -> new ResourceNotFoundException("Social feed post not found with ID: " + dto.getSocialFeedId()));
-
-        UserType userType = parseUserType(dto.getUserType());
 
         String commenterName;
         String profileImageUrl;
@@ -87,13 +85,5 @@ public class CommentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found with ID: " + commentId));
 
         commentRepository.delete(comment);
-    }
-
-    private UserType parseUserType(String userTypeStr) {
-        try {
-            return UserType.valueOf(userTypeStr.toUpperCase());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new InvalidUserTypeException("Invalid userType: " + userTypeStr);
-        }
     }
 }
