@@ -60,4 +60,8 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     // Get latest message for a room
     @Query("SELECT m FROM Message m WHERE m.chatSessionId = :roomId ORDER BY m.timestamp DESC LIMIT 1")
     Message findLatestMessageByRoomId(@Param("roomId") String roomId);
+    
+    // Count unread messages for a user in a specific room
+    @Query("SELECT COUNT(m) FROM Message m WHERE m.chatSessionId = :roomId AND m.receiverId = :receiverId AND m.status != 'READ'")
+    long countUnreadMessagesByRoomIdAndReceiverId(@Param("roomId") String roomId, @Param("receiverId") String receiverId);
 }

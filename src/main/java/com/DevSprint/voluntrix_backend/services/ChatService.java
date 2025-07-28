@@ -252,6 +252,18 @@ public class ChatService {
     }
     
     /**
+     * Get participants of a private room
+     */
+    public String[] getRoomParticipants(String roomId) {
+        Optional<PrivateRoom> roomOpt = privateRoomService.getRoomById(roomId);
+        if (roomOpt.isPresent()) {
+            PrivateRoom room = roomOpt.get();
+            return new String[]{room.getUser1(), room.getUser2()};
+        }
+        return new String[0];
+    }
+    
+    /**
      * Get all conversations for a user with last message and unread count
      */
     public List<ConversationSummary> getUserConversations(String username) {
@@ -274,8 +286,10 @@ public class ChatService {
                 summary.setLastMessage(convertToDTO(lastMessage));
             }
             
-            // TODO: Calculate unread count (for now, set to 0)
-            summary.setUnreadCount(0);
+            // Calculate unread count for this user in this room
+            String currentUserId = "user_" + username;
+            long unreadCount = messageRepository.countUnreadMessagesByRoomIdAndReceiverId(room.getRoomId(), currentUserId);
+            summary.setUnreadCount((int) unreadCount);
             
             conversations.add(summary);
         }
@@ -301,5 +315,32 @@ public class ChatService {
         
         log.info("Found {} conversations for user: {}, sorted by last message timestamp", conversations.size(), username);
         return conversations;
+    }
+    
+    /**
+     * Mark all messages in a room as read for a specific user
+     */
+    public void markRoomMessagesAsRead(String roomId, String username) {
+        log.info("Marking messages as read for user: {} in room: {}", username, roomId);
+        
+        String userId = "user_" + username;
+        
+        // Get all unread messages for this user in this room
+        List<Message> unreadMessages = messageRepository.findByRoomIdOrderByTimestampDesc(roomId)
+            .stream()
+            .filter(message -> userId.equals(message.getReceiverId()) && 
+                              message.getStatus() != Message.MessageStatus.READ)
+            .collect(Collectors.toList());
+        
+        // Mark them as read
+        for (Message message : unreadMessages) {
+            message.setStatus(Message.MessageStatus.READ);
+            message.setReadAt(LocalDateTime.now());
+        }
+        
+        if (!unreadMessages.isEmpty()) {
+            messageRepository.saveAll(unreadMessages);
+            log.info("Marked {} messages as read for user: {} in room: {}", unreadMessages.size(), username, roomId);
+        }
     }
 }

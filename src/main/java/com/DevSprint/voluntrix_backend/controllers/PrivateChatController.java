@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -91,11 +92,50 @@ public class PrivateChatController {
             // Send message to all subscribers of this private room
             messagingTemplate.convertAndSend("/topic/private-room/" + roomId, responseMessage);
             
+            // Send chat list updates to both participants
+            try {
+                String[] participants = chatService.getRoomParticipants(roomId);
+                for (String participant : participants) {
+                    ChatListUpdateDTO updateMessage = new ChatListUpdateDTO();
+                    updateMessage.setRoomId(roomId);
+                    updateMessage.setParticipant(participant);
+                    updateMessage.setLastMessage(message.getContent());
+                    updateMessage.setTimestamp(savedMessage.getTimestamp());
+                    updateMessage.setSenderName(message.getSenderName());
+                    
+                    messagingTemplate.convertAndSend("/topic/chat-updates/" + participant, updateMessage);
+                    log.info("Sent chat list update to: {}", participant);
+                }
+            } catch (Exception e) {
+                log.error("Error sending chat list updates for room: {}", roomId, e);
+            }
+            
             log.info("Private message sent successfully to room: {}", roomId);
             
         } catch (Exception e) {
             log.error("Error sending private message to room: {}", roomId, e);
         }
+    }
+
+    // DTO for chat list updates
+    public static class ChatListUpdateDTO {
+        private String roomId;
+        private String participant;
+        private String lastMessage;
+        private LocalDateTime timestamp;
+        private String senderName;
+        
+        // Getters and setters
+        public String getRoomId() { return roomId; }
+        public void setRoomId(String roomId) { this.roomId = roomId; }
+        public String getParticipant() { return participant; }
+        public void setParticipant(String participant) { this.participant = participant; }
+        public String getLastMessage() { return lastMessage; }
+        public void setLastMessage(String lastMessage) { this.lastMessage = lastMessage; }
+        public LocalDateTime getTimestamp() { return timestamp; }
+        public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
+        public String getSenderName() { return senderName; }
+        public void setSenderName(String senderName) { this.senderName = senderName; }
     }
 }
 
@@ -187,6 +227,25 @@ class PrivateChatRestController {
             return ResponseEntity.ok(sponsors);
         } catch (Exception e) {
             log.error("Error getting sponsors", e);
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    /**
+     * Mark all messages in a room as read for a user
+     */
+    @PostMapping("/room/{roomId}/mark-read")
+    public ResponseEntity<Void> markRoomMessagesAsRead(
+            @PathVariable String roomId,
+            @RequestParam String username) {
+        
+        log.info("Marking messages as read for user: {} in room: {}", username, roomId);
+        
+        try {
+            chatService.markRoomMessagesAsRead(roomId, username);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Error marking messages as read", e);
             return ResponseEntity.status(500).build();
         }
     }
