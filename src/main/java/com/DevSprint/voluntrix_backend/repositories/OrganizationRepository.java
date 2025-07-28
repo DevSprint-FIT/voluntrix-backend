@@ -20,6 +20,6 @@ public interface OrganizationRepository extends JpaRepository<OrganizationEntity
     Optional<OrganizationEntity> findByUser(UserEntity user);
 
     // JPQL Query
-    @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.OrganizationNameDTO(e.id, e.name, e.imageUrl) FROM OrganizationEntity e")
+    @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.OrganizationNameDTO(e.id, e.user.fullName, e.imageUrl) FROM OrganizationEntity e")
     List<OrganizationNameDTO> findAllOrganizationIdNameAndUrl();
 }
