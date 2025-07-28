@@ -12,6 +12,7 @@ import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.services.EventService;
 import com.DevSprint.voluntrix_backend.services.VolunteerService;
 import com.DevSprint.voluntrix_backend.services.VolunteerEventParticipationService;
+import com.DevSprint.voluntrix_backend.dtos.EventLeaderboardDTO;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,12 @@ public class VolunteerEventParticipationController {
         return ResponseEntity.ok(participations);
     }
 
+    @GetMapping("/event/{eventId}/available")
+    public ResponseEntity<List<VolunteerEventParticipationDTO>> getAvailableVolunteersByEvent(@PathVariable Long eventId) {
+        List<VolunteerEventParticipationDTO> participations = participationService.getAvailableParticipationsByEvent(eventId);
+        return ResponseEntity.ok(participations);
+    }
+
     @GetMapping("/volunteer/{volunteerId}/event/{eventId}")
     public ResponseEntity<VolunteerEventParticipationDTO> getByVolunteerAndEvent(@PathVariable Long volunteerId, @PathVariable Long eventId) {
         VolunteerEventParticipationDTO dto = participationService.getParticipationByVolunteerAndEvent(volunteerId, eventId);
@@ -99,5 +106,4 @@ public class VolunteerEventParticipationController {
         List<EventLeaderboardDTO> leaderboard = participationService.getEventLeaderboard(eventId);
         return ResponseEntity.ok(leaderboard);
     }
-
 }

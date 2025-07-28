@@ -21,8 +21,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.Collectors;
+
 
 @Service
 public class TaskService {
@@ -95,6 +98,42 @@ public class TaskService {
         return taskDTOConvert.toTaskDTOList(tasks);
     }
 
+    // New methods for filtered task retrieval
+    public List<TaskDTO> getTasksByEventIdAndStatus(Long eventId, TaskStatus taskStatus) {
+        List<TaskEntity> tasks = taskRepository.findByEvent_EventIdAndTaskStatus(eventId, taskStatus);
+        return taskDTOConvert.toTaskDTOList(tasks);
+    }
+
+    public List<TaskDTO> getTasksByAssigneeIdAndEventIdAndStatus(Long assigneeId, Long eventId, TaskStatus taskStatus) {
+        List<TaskEntity> tasks = taskRepository.findByAssignee_VolunteerIdAndEvent_EventIdAndTaskStatus(assigneeId, eventId, taskStatus);
+        return taskDTOConvert.toTaskDTOList(tasks);
+    }
+
+    // New methods for task status counts
+    public Map<String, Long> getTaskStatusCountsByEventId(Long eventId) {
+        Map<String, Long> statusCounts = new HashMap<>();
+        statusCounts.put("TO_DO", taskRepository.countByEvent_EventIdAndTaskStatus(eventId, TaskStatus.TO_DO));
+        statusCounts.put("IN_PROGRESS", taskRepository.countByEvent_EventIdAndTaskStatus(eventId, TaskStatus.IN_PROGRESS));
+        statusCounts.put("DONE", taskRepository.countByEvent_EventIdAndTaskStatus(eventId, TaskStatus.DONE));
+        return statusCounts;
+    }
+
+    public Map<String, Long> getTaskStatusCountsByAssigneeIdAndEventId(Long assigneeId, Long eventId) {
+        Map<String, Long> statusCounts = new HashMap<>();
+        statusCounts.put("TO_DO", taskRepository.countByAssignee_VolunteerIdAndEvent_EventIdAndTaskStatus(assigneeId, eventId, TaskStatus.TO_DO));
+        statusCounts.put("IN_PROGRESS", taskRepository.countByAssignee_VolunteerIdAndEvent_EventIdAndTaskStatus(assigneeId, eventId, TaskStatus.IN_PROGRESS));
+        statusCounts.put("DONE", taskRepository.countByAssignee_VolunteerIdAndEvent_EventIdAndTaskStatus(assigneeId, eventId, TaskStatus.DONE));
+        return statusCounts;
+    }
+
+    public List<LocalDate> getTaskSubmittedDatesByAssigneeId(Long assigneeId) {
+        List<TaskEntity> tasks = taskRepository.findTasksWithSubmittedDatesByAssigneeId(assigneeId);
+        return tasks.stream()
+                .map(task -> task.getTaskSubmittedDate().toLocalDate())
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
     public TaskDTO patchTask(Long taskId, TaskUpdateDTO taskUpdateDTO) {
         TaskEntity task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + taskId));
@@ -108,7 +147,8 @@ public class TaskService {
             task.setDescription(taskUpdateDTO.getDescription());
         }
         if (taskUpdateDTO.getDueDate() != null) {
-            task.setDueDate(taskUpdateDTO.getDueDate());
+            // Convert LocalDate to LocalDateTime with time set to 11:59:59 PM
+            task.setDueDate(taskUpdateDTO.getDueDate().atTime(23, 59, 59));
         }
         if (taskUpdateDTO.getTaskStatus() != null) {
             task.setTaskStatus(taskUpdateDTO.getTaskStatus());

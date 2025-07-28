@@ -35,6 +35,19 @@ public class TaskDTOConvert {
             dto.setEventTitle(task.getEvent().getEventTitle());
         }
 
+        // Manually map date fields to handle LocalDateTime to LocalDate conversion
+        if (task.getDueDate() != null) {
+            dto.setDueDate(task.getDueDate().toLocalDate());
+        }
+        
+        if (task.getTaskSubmittedDate() != null) {
+            dto.setTaskSubmittedDate(task.getTaskSubmittedDate().toLocalDate());
+        }
+        
+        if (task.getTaskReviewedDate() != null) {
+            dto.setTaskReviewedDate(task.getTaskReviewedDate().toLocalDate());
+        }
+
         return dto;
     }
 
@@ -47,9 +60,12 @@ public class TaskDTOConvert {
     public TaskEntity toTaskEntity(TaskCreateDTO taskCreateDTO) {
         TaskEntity task = new TaskEntity();
         task.setDescription(taskCreateDTO.getDescription());
-        task.setDueDate(taskCreateDTO.getDueDate());
+        // Convert LocalDate to LocalDateTime with time set to 11:59:59 PM
+        task.setDueDate(taskCreateDTO.getDueDate().atTime(23, 59, 59));
         task.setTaskStatus(TaskStatus.TO_DO); // Automatically set to TO_DO for new tasks
         task.setTaskDifficulty(taskCreateDTO.getTaskDifficulty());
+        task.setTaskCategory(taskCreateDTO.getTaskCategory());
+        task.setTaskRewardPoints(10);
         return task;
     }
 

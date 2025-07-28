@@ -24,6 +24,9 @@ public interface VolunteerEventParticipationRepository extends JpaRepository<Vol
    // Find all participation records for a given event
    List<VolunteerEventParticipationEntity> findByEvent_EventId(Long eventId);
 
+   // Find all participation records for a given event where volunteers are available
+   List<VolunteerEventParticipationEntity> findByEvent_EventIdAndVolunteer_IsAvailable(Long eventId, Boolean isAvailable);
+
    // Find participation record by both volunteer and event
    VolunteerEventParticipationEntity findByVolunteer_VolunteerIdAndEvent_EventId(Long volunteerId, Long eventId);
 

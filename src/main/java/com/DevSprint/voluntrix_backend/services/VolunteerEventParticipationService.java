@@ -77,6 +77,13 @@ public class VolunteerEventParticipationService {
         return participationDTOConvert.toParticipationDTOList(participationEntities);
     }
 
+    // Get all participation records for a specific event where volunteers are available
+    public List<VolunteerEventParticipationDTO> getAvailableParticipationsByEvent(Long eventId) {
+        List<VolunteerEventParticipationEntity> participationEntities = participationRepository.findByEvent_EventIdAndVolunteer_IsAvailable(eventId, true);
+
+        return participationDTOConvert.toParticipationDTOList(participationEntities);
+    }
+
     // Get a specific participation record for a given volunteer and event
     public VolunteerEventParticipationDTO getParticipationByVolunteerAndEvent(Long volunteerId, Long eventId) {
         VolunteerEventParticipationEntity participationEntity = participationRepository.findByVolunteer_VolunteerIdAndEvent_EventId(volunteerId, eventId);
@@ -160,3 +167,4 @@ public class VolunteerEventParticipationService {
         return leaderboard;
     }
 }
+

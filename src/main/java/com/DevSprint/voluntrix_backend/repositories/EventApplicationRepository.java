@@ -26,7 +26,7 @@ public interface EventApplicationRepository extends JpaRepository<EventApplicati
 
     // Find all events that a volunteer has applied for
    @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.VolunteerAppliedEventDTO(" +
-      "e.eventTitle, e.eventType, ea.contributionArea) " +
+      "ea.id, e.eventTitle, e.eventType, ea.contributionArea) " +
       "FROM EventApplicationEntity ea " +
       "JOIN ea.event e " +
       "WHERE ea.volunteer.id = :volunteerId AND ea.applicationStatus = 'PENDING'")
