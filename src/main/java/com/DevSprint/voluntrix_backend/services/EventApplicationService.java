@@ -33,28 +33,24 @@ public class EventApplicationService {
     private final VolunteerRepository volunteerRepository;
     private final EventDTOConverter entityDTOConvert;
 
-    public void addEventApplication(EventApplicationCreateDTO eventApplicationCreateDTO) {
+    public void addEventApplication(EventApplicationCreateDTO eventApplicationCreateDTO, Long volunteerId) {
         if (eventApplicationCreateDTO.getEventId() == null) {
             throw new IllegalArgumentException("Event ID cannot be null");
-        }
-
-        if (eventApplicationCreateDTO.getVolunteerId() == null) {
-            throw new IllegalArgumentException("Volunteer ID cannot be null");
         }
 
         EventEntity event = eventRepository.findById(eventApplicationCreateDTO.getEventId())
                 .orElseThrow(() -> new EventNotFoundException(
                         "Event not found: " + eventApplicationCreateDTO.getEventId()));
 
-        VolunteerEntity volunteer = volunteerRepository.findById(eventApplicationCreateDTO.getVolunteerId())
+        VolunteerEntity volunteer = volunteerRepository.findById(volunteerId)
                 .orElseThrow(() -> new VolunteerNotFoundException(
-                        "Volunteer not found: " + eventApplicationCreateDTO.getVolunteerId()));
+                        "Volunteer not found: " + volunteerId));
 
         boolean alreadyApplied = eventApplicationRepository.existsByEventAndVolunteer(event, volunteer);
         if (alreadyApplied) {
             throw new DuplicateApplicationException(
                     "Application already exists for this volunteer and event. Volunteer ID:"
-                            + eventApplicationCreateDTO.getVolunteerId() + " Event ID:"
+                            + volunteerId + " Event ID:"
                             + eventApplicationCreateDTO.getEventId());
         }
 
@@ -74,9 +70,9 @@ public class EventApplicationService {
         return entityDTOConvert.toEventApplicationDTO(eventApplicationEntity);
     }
 
-    public void updateEventApplication(EventApplicationCreateDTO eventApplicationCreateDTO, Long id) {
-        EventApplicationEntity selectedApplication = eventApplicationRepository.findById(id)
-                .orElseThrow(() -> new EventApplicationNotFoundException("Event application not found with ID: " + id));
+    public void updateEventApplication(EventApplicationCreateDTO eventApplicationCreateDTO, Long volunteerId) {
+        EventApplicationEntity selectedApplication = eventApplicationRepository.findById(volunteerId)
+                .orElseThrow(() -> new EventApplicationNotFoundException("Event application not found with ID: " + volunteerId));
 
         EventEntity event = selectedApplication.getEvent();
         VolunteerEntity volunteer = selectedApplication.getVolunteer();
@@ -87,17 +83,17 @@ public class EventApplicationService {
                             "Event not found: " + eventApplicationCreateDTO.getEventId()));
         }
 
-        if (eventApplicationCreateDTO.getVolunteerId() != null) {
-            volunteer = volunteerRepository.findById(eventApplicationCreateDTO.getVolunteerId())
+        if (volunteerId != null) {
+            volunteer = volunteerRepository.findById(volunteerId)
                     .orElseThrow(() -> new VolunteerNotFoundException(
-                            "Volunteer not found: " + eventApplicationCreateDTO.getVolunteerId()));
+                            "Volunteer not found: " + volunteerId));
         }
 
-        if (eventApplicationCreateDTO.getEventId() != null || eventApplicationCreateDTO.getVolunteerId() != null) {
+        if (eventApplicationCreateDTO.getEventId() != null || volunteerId != null) {
             Optional<EventApplicationEntity> existingApplication = eventApplicationRepository
                     .findByEventAndVolunteer(event, volunteer);
 
-            if (existingApplication != null && !existingApplication.get().getId().equals(id)) {
+            if (existingApplication != null && !existingApplication.get().getId().equals(volunteerId)) {
                 throw new DuplicateApplicationException(
                         "Application already exists for this volunteer and event. Volunteer ID:"
                                 + selectedApplication.getVolunteer().getVolunteerId() + " Event ID:"
