@@ -83,7 +83,7 @@ public class VolunteerService {
     }
 
     public VolunteerDTO getVolunteerByUsername(String username) {
-        Optional<VolunteerEntity> volunteer = volunteerRepository.findByUsername(username);
+        Optional<VolunteerEntity> volunteer = volunteerRepository.findByUserHandle(username);
         return volunteer.map(entityDTOConvert::toVolunteerDTO)
                 .orElseThrow(() -> new VolunteerNotFoundException("Volunteer not found with username: " + username));
     }
