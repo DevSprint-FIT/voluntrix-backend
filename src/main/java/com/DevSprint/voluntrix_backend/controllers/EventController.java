@@ -167,9 +167,9 @@ public class EventController {
     public ResponseEntity<List<EventAndOrgDTO>> searchEventsWithOrg(@RequestParam String query) {
         List<EventAndOrgDTO> results = eventService.searchEventsWithOrg(query);
 
-        if (results == null || results.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        // if (results == null || results.isEmpty()) {
+        //     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        // }
 
         return new ResponseEntity<List<EventAndOrgDTO>>(results, HttpStatus.OK);
     }

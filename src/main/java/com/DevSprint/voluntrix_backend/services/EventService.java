@@ -264,7 +264,6 @@ public class EventService {
         }
 
         if (categoryIds != null && !categoryIds.isEmpty()) {
-
             for (Long id : categoryIds) {
                 categoryRepository.findById(id)
                         .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + id));
@@ -278,19 +277,29 @@ public class EventService {
             });
         }
 
+        // Only include events with status COMPLETE or ACTIVE
+        spec = spec.and((root, query, criteriaBuilder) -> 
+            root.get("eventStatus").in("COMPLETE", "ACTIVE")
+        );
+
         return entityDTOConvert.toEventAndOrgDTOList(eventRepository.findAll(spec));
     }
 
     public List<EventNameDTO> getAllEventNames() {
         return eventRepository.findAllEventIdAndTitle();
-    }
+    } 
 
     public List<EventDTO> searchEvents(String query) {
         return entityDTOConvert.toEventDTOList(eventRepository.findByEventTitleContainingIgnoreCase(query));
     }
 
     public List<EventAndOrgDTO> searchEventsWithOrg(String query) {
-        List<EventEntity> events = eventRepository.findByEventTitleContainingIgnoreCase(query);
+        List<EventEntity> events = eventRepository.findByEventTitleContainingIgnoreCase(query)
+            .stream()
+            .filter(event -> event.getEventStatus() != null &&
+                    (event.getEventStatus().name().equalsIgnoreCase("ACTIVE") ||
+                     event.getEventStatus().name().equalsIgnoreCase("COMPLETE")))
+            .collect(Collectors.toList());
         return entityDTOConvert.toEventAndOrgDTOList(events);
     }
 

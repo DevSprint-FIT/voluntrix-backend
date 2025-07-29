@@ -15,8 +15,8 @@ import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 @Repository
 public interface EventRepository extends JpaRepository<EventEntity, Long>, JpaSpecificationExecutor<EventEntity> {
 
-    // JPQL Query
-    @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.EventNameDTO(e.eventId, e.eventTitle) FROM EventEntity e")
+    // JPQL Query for Completed and Active events only
+    @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.EventNameDTO(e.eventId, e.eventTitle) FROM EventEntity e WHERE e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.COMPLETE OR e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.ACTIVE")
     List<EventNameDTO> findAllEventIdAndTitle();
 
     List<EventEntity> findByEventTitleContainingIgnoreCase(String eventTitle);
@@ -28,7 +28,6 @@ public interface EventRepository extends JpaRepository<EventEntity, Long>, JpaSp
     Long countByOrganizationIdAndEventStatus(Long organizationId, EventStatus eventStatus);
 
     List<EventEntity> findByEventHost(VolunteerEntity eventHost);
-
 
     List<EventEntity> findTop3ByEventStatusOrderByEventStartDateDesc(EventStatus eventStatus);
 
