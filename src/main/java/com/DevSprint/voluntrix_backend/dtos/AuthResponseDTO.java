@@ -24,8 +24,8 @@ public class AuthResponseDTO {
     
     // User status information
     private String role;
-    private boolean isEmailVerified;
-    private boolean isProfileCompleted;
+    private boolean emailVerified;
+    private boolean profileCompleted;
     
     // Account metadata
     private LocalDateTime createdAt;
