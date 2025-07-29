@@ -12,7 +12,6 @@ import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
 import com.DevSprint.voluntrix_backend.services.EventService;
 import com.DevSprint.voluntrix_backend.services.VolunteerService;
 import com.DevSprint.voluntrix_backend.services.VolunteerEventParticipationService;
-import com.DevSprint.voluntrix_backend.dtos.EventLeaderboardDTO;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;

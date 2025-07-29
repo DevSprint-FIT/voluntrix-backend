@@ -227,6 +227,7 @@ public class TaskService {
         return stats;
     }
 
+    @SuppressWarnings("unused")
     private int getDifficultyPoints(TaskDifficulty difficulty) {
         if (difficulty == null) return 0;
         switch (difficulty) {
