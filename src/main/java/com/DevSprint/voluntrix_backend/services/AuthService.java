@@ -10,7 +10,10 @@ import com.DevSprint.voluntrix_backend.dtos.AuthResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.CurrentUserDTO;
 import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.LoginRequestDTO;
+import com.DevSprint.voluntrix_backend.dtos.RefreshTokenRequestDTO;
+import com.DevSprint.voluntrix_backend.dtos.RefreshTokenResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.SignupRequestDTO;
+import com.DevSprint.voluntrix_backend.entities.RefreshTokenEntity;
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.exceptions.OTPVerificationException;
 import com.DevSprint.voluntrix_backend.exceptions.UserNotFoundException;
@@ -30,6 +33,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
     private final VolunteerRepository volunteerRepository;
     private final SponsorRepository sponsorRepository;
@@ -67,6 +71,9 @@ public class AuthService {
 
         UserDetails userDetails = userMapper.toUserDetails(user);
         String token = jwtService.generateToken(userDetails);
+        
+        // Generate refresh token
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(user);
 
         // Determine next step for the user
         String nextStep = user.getIsVerified() ? 
@@ -82,6 +89,7 @@ public class AuthService {
 
         AuthResponseDTO authResponse = AuthResponseDTO.builder()
             .token(token)
+            .refreshToken(refreshToken.getToken())
             .userId(user.getUserId())
             .email(user.getEmail())
             .handle(user.getHandle())
@@ -115,6 +123,9 @@ public class AuthService {
         userRepository.save(user);
 
         String token = jwtService.generateToken(user);
+        
+        // Generate refresh token
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(user);
 
         boolean isProfileCompleted = false;
         if (user.getRole() != null) {
@@ -148,6 +159,7 @@ public class AuthService {
 
         return AuthResponseDTO.builder()
             .token(token)
+            .refreshToken(refreshToken.getToken())
             .userId(user.getUserId())
             .email(user.getEmail())
             .handle(user.getHandle())
@@ -305,5 +317,30 @@ public class AuthService {
             case ADMIN -> user.getUserId(); // For admin, use the user ID itself
             case PUBLIC -> null; // Public users don't have specific entity IDs
         };
+    }
+
+    public RefreshTokenResponseDTO refreshToken(RefreshTokenRequestDTO request) {
+        String requestRefreshToken = request.getRefreshToken();
+        
+        RefreshTokenEntity refreshToken = refreshTokenService.findByToken(requestRefreshToken);
+        refreshToken = refreshTokenService.verifyExpiration(refreshToken);
+        
+        UserEntity user = refreshToken.getUser();
+        String newAccessToken = jwtService.generateToken(user);
+        
+        // Optionally create a new refresh token (token rotation)
+        RefreshTokenEntity newRefreshToken = refreshTokenService.createRefreshToken(user);
+        
+        return RefreshTokenResponseDTO.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken.getToken())
+                .expiresIn(jwtService.getJwtExpirationMillis() / 1000) 
+                .build();
+    }
+
+    public void logout(String refreshToken) {
+        if (refreshToken != null && !refreshToken.isEmpty()) {
+            refreshTokenService.deleteByToken(refreshToken);
+        }
     }
 }
