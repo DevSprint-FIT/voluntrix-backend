@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EventApplicationCreateDTO implements Serializable {
     private Long eventId;
-    private Long volunteerId;
     private String description;
     private ContributionArea contributionArea;
     private ApplicationStatus applicationStatus;

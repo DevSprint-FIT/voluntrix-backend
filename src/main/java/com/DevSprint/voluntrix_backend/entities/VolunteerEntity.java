@@ -14,9 +14,8 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +24,7 @@ import java.util.HashSet;
 
 @Entity
 @Table(name = "volunteer")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolunteerEntity {
@@ -35,20 +33,11 @@ public class VolunteerEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long volunteerId;
 
-    @Column(nullable = false, unique = true)
-    private String username;
-
-    @Column(nullable = false)
-    private String firstName;
-
-    @Column(nullable = false)
-    private String lastName;
-
-    @Column(nullable = false, unique = true)
-    private String email;
-  
-    @Column
+    @Column(nullable = true)
     private String institute;
+
+    @Column(unique = true, nullable = true)
+    private String instituteEmail;
 
     @Column(nullable = false)
     private Boolean isAvailable = false;

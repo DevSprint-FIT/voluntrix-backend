@@ -18,7 +18,7 @@ public class VolunteerEventParticipationDTOConvert {
         VolunteerEventParticipationDTO participationDTO = new VolunteerEventParticipationDTO();
         participationDTO.setParticipationId(participationEntity.getParticipationId());
         participationDTO.setVolunteerId(participationEntity.getVolunteer().getVolunteerId());
-        participationDTO.setVolunteerUsername(participationEntity.getVolunteer().getUsername());
+        participationDTO.setVolunteerUsername(participationEntity.getVolunteer().getUser().getUsername());
         participationDTO.setEventId(participationEntity.getEvent().getEventId());
         participationDTO.setAreaOfContribution(participationEntity.getAreaOfContribution());
         participationDTO.setEventRewardPoints(participationEntity.getEventRewardPoints());

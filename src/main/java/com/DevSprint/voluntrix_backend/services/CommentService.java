@@ -26,11 +26,9 @@ public class CommentService {
     private final OrganizationService organizationService;
     private final CommentDTOConverter commentDTOConverter;
 
-    public CommentDTO addComment(CreateCommentDTO dto) {
+    public CommentDTO addComment(CreateCommentDTO dto, Long userId, UserType userType) {
         SocialFeedEntity feed = socialFeedRepository.findById(dto.getSocialFeedId())
                 .orElseThrow(() -> new ResourceNotFoundException("Social feed post not found with ID: " + dto.getSocialFeedId()));
-
-        UserType userType = parseUserType(dto.getUserType());
 
         String commenterName;
         String profileImageUrl;
@@ -39,7 +37,7 @@ public class CommentService {
         switch (userType) {
             case VOLUNTEER -> {
                 var volunteerDTO = volunteerService.getVolunteerByUsername(dto.getUserUsername());
-                commenterName = volunteerDTO.getFirstName() + " " + volunteerDTO.getLastName();
+                commenterName = volunteerDTO.getFullName();
                 profileImageUrl = volunteerDTO.getProfilePictureUrl();
             }
             case ORGANIZATION -> {
@@ -67,7 +65,7 @@ public class CommentService {
             switch (comment.getUserType()) {
                 case VOLUNTEER -> {
                     var volunteerDTO = volunteerService.getVolunteerByUsername(comment.getUserUsername());
-                    commenterName = volunteerDTO.getFirstName() + " " + volunteerDTO.getLastName();
+                    commenterName = volunteerDTO.getFullName();
                     profileImageUrl = volunteerDTO.getProfilePictureUrl();
                 }
                 case ORGANIZATION -> {
@@ -87,13 +85,5 @@ public class CommentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Comment not found with ID: " + commentId));
 
         commentRepository.delete(comment);
-    }
-
-    private UserType parseUserType(String userTypeStr) {
-        try {
-            return UserType.valueOf(userTypeStr.toUpperCase());
-        } catch (IllegalArgumentException | NullPointerException e) {
-            throw new InvalidUserTypeException("Invalid userType: " + userTypeStr);
-        }
     }
 }

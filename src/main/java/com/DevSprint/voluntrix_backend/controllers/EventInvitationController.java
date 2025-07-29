@@ -16,14 +16,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.DevSprint.voluntrix_backend.dtos.EventInvitationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventInvitationDTO;
+import com.DevSprint.voluntrix_backend.enums.UserType;
 import com.DevSprint.voluntrix_backend.services.EventInvitationService;
+import com.DevSprint.voluntrix_backend.validation.RequiresRole;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/public/event-invitations")
+@RequestMapping("/api/event-invitations")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class EventInvitationController {
@@ -31,12 +33,14 @@ public class EventInvitationController {
     private final EventInvitationService eventInvitationService;
 
     @GetMapping
+    @RequiresRole({UserType.ADMIN, UserType.VOLUNTEER})
     public ResponseEntity<List<EventInvitationDTO>> getAllEventInvitations() {
         return new ResponseEntity<List<EventInvitationDTO>>(eventInvitationService.getAllEventInvitations(),
                 HttpStatus.OK);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequiresRole(UserType.VOLUNTEER)
     public ResponseEntity<Void> addEventInvitation(@RequestBody EventInvitationCreateDTO eventInvitationCreateDTO) {
         if (eventInvitationCreateDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -47,6 +51,7 @@ public class EventInvitationController {
     }
 
     @GetMapping("/{eventInvitationId}")
+    @RequiresRole({UserType.ADMIN, UserType.VOLUNTEER})
     public ResponseEntity<EventInvitationDTO> getEventInvitationById(@PathVariable Long eventInvitationId) {
         if (eventInvitationId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -57,6 +62,7 @@ public class EventInvitationController {
     }
 
     @PatchMapping(value = "/{eventInvitationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequiresRole(UserType.VOLUNTEER)
     public ResponseEntity<Void> updateEventInvitation(@PathVariable Long eventInvitationId,
             @Valid @RequestBody EventInvitationCreateDTO eventInvitationCreateDTO) {
         if (eventInvitationId == null || eventInvitationCreateDTO == null) {
@@ -68,6 +74,7 @@ public class EventInvitationController {
     }
 
     @DeleteMapping("/{eventInvitationId}")
+    @RequiresRole(UserType.VOLUNTEER)
     public ResponseEntity<Void> deleteEventInvitation(@PathVariable Long eventInvitationId) {
         if (eventInvitationId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -78,6 +85,7 @@ public class EventInvitationController {
     }
 
     @GetMapping("/organization/{organizationId}")
+    @RequiresRole(UserType.VOLUNTEER)
     public ResponseEntity<List<EventInvitationDTO>> getEventInvitationsByOrganizationId(@PathVariable Long organizationId) {
         if (organizationId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

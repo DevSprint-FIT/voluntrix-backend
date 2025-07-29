@@ -12,18 +12,12 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VolunteerUpdateDTO {
-    private String firstName;
-
-    private String lastName;
-
-    @Email(message = "Email should be valid")
-    private String email;
-
     private String institute;
 
-    private Boolean isAvailable;
+    @Email(message = "Institute email should be valid")
+    private String instituteEmail;
 
-    private Boolean isEventHost;
+    private Boolean isAvailable;
 
     @Size(max = 255, message = "About section can have at most 255 characters")
     private String about;

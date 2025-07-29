@@ -7,10 +7,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.AuthResponseDTO;
+import com.DevSprint.voluntrix_backend.dtos.CurrentUserDTO;
 import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.LoginRequestDTO;
+import com.DevSprint.voluntrix_backend.dtos.RefreshTokenRequestDTO;
+import com.DevSprint.voluntrix_backend.dtos.RefreshTokenResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.SignupRequestDTO;
+import com.DevSprint.voluntrix_backend.entities.RefreshTokenEntity;
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
+import com.DevSprint.voluntrix_backend.exceptions.OTPVerificationException;
+import com.DevSprint.voluntrix_backend.exceptions.TokenRefreshException;
 import com.DevSprint.voluntrix_backend.exceptions.UserNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
@@ -20,14 +26,17 @@ import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 import com.DevSprint.voluntrix_backend.utils.UserMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final JwtService jwtService;
+    private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
     private final VolunteerRepository volunteerRepository;
     private final SponsorRepository sponsorRepository;
@@ -65,6 +74,9 @@ public class AuthService {
 
         UserDetails userDetails = userMapper.toUserDetails(user);
         String token = jwtService.generateToken(userDetails);
+        
+        // Generate refresh token
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(user);
 
         // Determine next step for the user
         String nextStep = user.getIsVerified() ? 
@@ -80,6 +92,7 @@ public class AuthService {
 
         AuthResponseDTO authResponse = AuthResponseDTO.builder()
             .token(token)
+            .refreshToken(refreshToken.getToken())
             .userId(user.getUserId())
             .email(user.getEmail())
             .handle(user.getHandle())
@@ -112,7 +125,10 @@ public class AuthService {
         user.setLastLogin(java.time.LocalDateTime.now());
         userRepository.save(user);
 
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateToken(userMapper.toUserDetails(user));
+        
+        // Generate refresh token
+        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(user);
 
         boolean isProfileCompleted = false;
         if (user.getRole() != null) {
@@ -121,6 +137,7 @@ public class AuthService {
                 case SPONSOR -> sponsorRepository.existsById(user.getUserId());
                 case ORGANIZATION -> organizationRepository.existsById(user.getUserId());
                 case PUBLIC -> false;
+                case ADMIN -> true;
             };
         }
 
@@ -145,6 +162,7 @@ public class AuthService {
 
         return AuthResponseDTO.builder()
             .token(token)
+            .refreshToken(refreshToken.getToken())
             .userId(user.getUserId())
             .email(user.getEmail())
             .handle(user.getHandle())
@@ -208,10 +226,7 @@ public class AuthService {
                 new EmailVerificationResponseDTO(true, "Email verified successfully")
             );
         } else {
-            return new ApiResponse<>(
-                "Invalid or expired OTP",
-                new EmailVerificationResponseDTO(false, "Invalid or expired OTP")
-            );
+            throw new OTPVerificationException("Invalid or expired OTP");
         }
     }
 
@@ -229,5 +244,118 @@ public class AuthService {
             "Verification email sent successfully",
             "Please check your email for the new verification code"
         );
+    }
+
+    public CurrentUserDTO getCurrentUser(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+
+        // Get role-specific entity ID
+        Long entityId = getRoleSpecificEntityId(user);
+
+        // Determine profile completion status
+        boolean isProfileCompleted = false;
+        if (user.getRole() != null) {
+            isProfileCompleted = switch (user.getRole()) {
+                case VOLUNTEER -> volunteerRepository.findByUser(user).isPresent();
+                case SPONSOR -> sponsorRepository.findByUser(user).isPresent();
+                case ORGANIZATION -> organizationRepository.findByUser(user).isPresent();
+                case PUBLIC -> false;
+                case ADMIN -> true;
+            };
+        }
+
+        // Determine next step for the user
+        String nextStep;
+        if (!user.getIsVerified()) {
+            nextStep = "VERIFY_EMAIL";
+        } else if (user.getRole() == null) {
+            nextStep = "SELECT_ROLE";
+        } else if (!isProfileCompleted) {
+            nextStep = "COMPLETE_PROFILE";
+        } else {
+            nextStep = "DASHBOARD";
+        }
+
+        String redirectUrl = switch (nextStep) {
+            case "VERIFY_EMAIL" -> "/verify-email";
+            case "SELECT_ROLE" -> "/select-role";
+            case "COMPLETE_PROFILE" -> "/complete-profile";
+            default -> "/dashboard";
+        };
+
+        return CurrentUserDTO.builder()
+            .userId(user.getUserId())
+            .email(user.getEmail())
+            .handle(user.getHandle())
+            .fullName(user.getFullName())
+            .role(user.getRole())
+            .isEmailVerified(user.getIsVerified())
+            .isProfileCompleted(isProfileCompleted)
+            .authProvider(user.getAuthProvider())
+            .createdAt(user.getCreatedAt())
+            .lastLogin(user.getLastLogin())
+            .nextStep(nextStep)
+            .redirectUrl(redirectUrl)
+            .entityId(entityId)
+            .build();
+    }
+
+    //Get the role-specific entity ID
+    private Long getRoleSpecificEntityId(UserEntity user) {
+        if (user.getRole() == null) {
+            return null;
+        }
+
+        return switch (user.getRole()) {
+            case VOLUNTEER -> volunteerRepository.findByUser(user)
+                .map(volunteer -> volunteer.getVolunteerId())
+                .orElse(null);
+            case SPONSOR -> sponsorRepository.findByUser(user)
+                .map(sponsor -> sponsor.getSponsorId())
+                .orElse(null);
+            case ORGANIZATION -> organizationRepository.findByUser(user)
+                .map(organization -> organization.getId())
+                .orElse(null);
+            case ADMIN -> user.getUserId(); // For admin, use the user ID itself
+            case PUBLIC -> null; // Public users don't have specific entity IDs
+        };
+    }
+
+    public RefreshTokenResponseDTO refreshToken(RefreshTokenRequestDTO request) {
+        String requestRefreshToken = request.getRefreshToken();
+        
+        RefreshTokenEntity refreshToken = refreshTokenService.findByToken(requestRefreshToken);
+        refreshToken = refreshTokenService.verifyExpiration(refreshToken);
+        
+        UserEntity user = refreshToken.getUser();
+        String newAccessToken = jwtService.generateToken(userMapper.toUserDetails(user));
+        
+        // Optionally create a new refresh token (token rotation)
+        RefreshTokenEntity newRefreshToken = refreshTokenService.createRefreshToken(user);
+        
+        return RefreshTokenResponseDTO.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken.getToken())
+                .expiresIn(jwtService.getJwtExpirationMillis() / 1000) 
+                .build();
+    }
+
+    public void logout(String refreshToken) {
+        if (refreshToken != null && !refreshToken.isEmpty()) {
+            try {
+                refreshTokenService.deleteByToken(refreshToken);
+            } catch (TokenRefreshException e) {
+                // Token not found or already deleted, which is fine for logout
+                log.warn("Refresh token not found during logout: {}", e.getMessage());
+            }
+        }
+    }
+
+    public void logoutUser(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        refreshTokenService.deleteByUser(user);
+        log.info("Logged out user: {}", user.getEmail());
     }
 }

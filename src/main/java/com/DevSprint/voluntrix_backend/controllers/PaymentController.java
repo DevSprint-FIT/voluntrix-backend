@@ -11,6 +11,8 @@ import com.DevSprint.voluntrix_backend.utils.PaymentMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.Map;
 
 @Validated
 @RequiredArgsConstructor
@@ -37,7 +37,13 @@ public class PaymentController {
         return ResponseEntity.ok(paymentService.createPendingPayment(paymentRequest));
     } 
 
-    @PostMapping("/notify")
+    @GetMapping("/status/{orderId}")
+    public ResponseEntity<PaymentStatusResponseDTO> getPaymentStatus(@PathVariable String orderId) {
+        PaymentStatusResponseDTO statusDto = paymentService.getPaymentStatusByOrderId(orderId);
+        return ResponseEntity.ok(statusDto);
+    }
+
+    @PostMapping("/payment/notify")
     public ResponseEntity<String> notifyPayment(@RequestParam Map<String, String> params) {
         boolean isValid = paymentService.verifyPayment(params);
 
@@ -50,10 +56,4 @@ public class PaymentController {
         
         return ResponseEntity.ok("Transaction saved succesfully.");
     } 
-
-    @GetMapping("/status/{orderId}")
-    public ResponseEntity<PaymentStatusResponseDTO> getPaymentStatus(@PathVariable String orderId) {
-        PaymentStatusResponseDTO statusDto = paymentService.getPaymentStatusByOrderId(orderId);
-        return ResponseEntity.ok(statusDto);
-    }
 }

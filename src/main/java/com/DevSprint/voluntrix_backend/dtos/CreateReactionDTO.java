@@ -11,6 +11,4 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CreateReactionDTO {
     private Long socialFeedId;
-    private Long userId;
-    private String userType;
 }

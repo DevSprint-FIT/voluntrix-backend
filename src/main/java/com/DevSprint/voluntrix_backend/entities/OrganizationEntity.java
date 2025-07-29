@@ -33,14 +33,8 @@ public class OrganizationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
     @Column(nullable = true)
     private String institute;
-
-    @Column(nullable = false, unique = true)
-    private String email;
 
     @Column(nullable = false)
     private String phone;
@@ -61,9 +55,6 @@ public class OrganizationEntity {
     @Column(nullable = true, columnDefinition = "TEXT")
     private String imageUrl;
 
-    @Column(unique = true, nullable = false)
-    private String username;
-
     @Column(nullable = true)
     private String description;
 
@@ -75,6 +66,9 @@ public class OrganizationEntity {
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EventEntity> events = new ArrayList<>();
+
+    @Column(nullable = true)
+    private String documentUrl;
 
     @Column(nullable = true)
     private String facebookLink;

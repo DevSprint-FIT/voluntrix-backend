@@ -99,6 +99,10 @@ jobs:
           PAYHERE_HASH_ALGORITHM: SHA-256
         run: mvn clean package -DskipTests -Dspring.profiles.active=test
 
+      # Verify JAR file exists before Docker build
+      - name: Verify JAR file exists
+        run: ls -la target/
+        
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 

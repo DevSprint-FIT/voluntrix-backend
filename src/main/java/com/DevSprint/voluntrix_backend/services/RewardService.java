@@ -93,7 +93,10 @@ public class RewardService {
                 bonusPoints = 1;
             } else if (submittedDate != null) {
                 // Late submission - calculate penalty
-                long daysLate = ChronoUnit.DAYS.between(dueDate.toLocalDate(), submittedDate.toLocalDate());
+                long daysLate = 0;
+                if (submittedDate != null) {
+                    daysLate = ChronoUnit.DAYS.between(dueDate.toLocalDate(), submittedDate.toLocalDate());
+                }
 
                 if (daysLate == 1) {
                     bonusPoints = -1; // First day late: -1 point

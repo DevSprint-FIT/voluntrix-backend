@@ -25,8 +25,11 @@ import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
+import com.DevSprint.voluntrix_backend.enums.UserType;
 import com.DevSprint.voluntrix_backend.services.EventRecommendationService;
 import com.DevSprint.voluntrix_backend.services.EventService;
+import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
+import com.DevSprint.voluntrix_backend.validation.RequiresRole;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -34,25 +37,26 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/public/events")
+@RequestMapping("/api/events")
 @SecurityRequirement(name = "bearerAuth")
 public class EventController {
 
     private final EventService eventService;
     private final EventRecommendationService eventRecommendationService;
+    private final CurrentUserService currentUserService;
 
+    @RequiresRole({UserType.VOLUNTEER})
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Long>> addEvent(@RequestBody EventCreateDTO eventCreateDTO) {
-        if (eventCreateDTO == null || eventCreateDTO.getEventHostId() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        Long eventHostId = currentUserService.getCurrentEntityId();
 
-        EventEntity savedEvent = eventService.addEvent(eventCreateDTO);
+        EventEntity savedEvent = eventService.addEvent(eventCreateDTO , eventHostId);
         Map<String, Long> response = new HashMap<>();
         response.put("eventId", savedEvent.getEventId());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
     @DeleteMapping("/{eventId}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
 
@@ -64,6 +68,7 @@ public class EventController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
     @GetMapping("/{eventId}")
     public ResponseEntity<EventDTO> getEventById(@PathVariable Long eventId) {
 
@@ -75,6 +80,7 @@ public class EventController {
         return new ResponseEntity<EventDTO>(selectedEvent, HttpStatus.OK);
     }
 
+    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
     @GetMapping("/with-org/{eventId}")
     public ResponseEntity<EventAndOrgDTO> getEventAndOrgById(@PathVariable Long eventId) {
 
@@ -85,12 +91,8 @@ public class EventController {
         var selectedEvent = eventService.getEventAndOrgById(eventId);
         return new ResponseEntity<EventAndOrgDTO>(selectedEvent, HttpStatus.OK);
     }
-
-    @GetMapping
-    public ResponseEntity<List<EventDTO>> getAllEvents() {
-        return new ResponseEntity<List<EventDTO>>(eventService.getAllEvents(), HttpStatus.OK);
-    }
-
+    
+    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
     @PatchMapping(value = "/{eventId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateEvent(@PathVariable Long eventId, @Valid @RequestBody EventDTO eventDTO) {
 
@@ -98,10 +100,13 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        eventService.updateEvent(eventId, eventDTO);
+        Long eventHostId = currentUserService.getCurrentEntityId();
+
+        eventService.updateEvent(eventId, eventDTO, eventHostId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    
+    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
     @GetMapping("/filter")
     public ResponseEntity<List<EventDTO>> getFilteredEvent(
             @RequestParam(value = "eventLocation", required = false) String eventLocation,
@@ -120,6 +125,7 @@ public class EventController {
         return new ResponseEntity<List<EventDTO>>(filteredEventList, HttpStatus.OK);
     }
 
+    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
     @GetMapping("/filter-with-org")
     public ResponseEntity<List<EventAndOrgDTO>> getFilteredEventWithOrg(
             @RequestParam(value = "eventLocation", required = false) String eventLocation,
@@ -138,11 +144,13 @@ public class EventController {
         return new ResponseEntity<List<EventAndOrgDTO>>(filteredEventList, HttpStatus.OK);
     }
 
+    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
     @GetMapping("/names")
     public ResponseEntity<List<EventNameDTO>> getAllEventNames() {
         return new ResponseEntity<List<EventNameDTO>>(eventService.getAllEventNames(), HttpStatus.OK);
     }
 
+    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION, UserType.PUBLIC})
     @GetMapping("/search")
     public ResponseEntity<List<EventDTO>> searchEvents(@RequestParam String query) {
         List<EventDTO> results = eventService.searchEvents(query);
@@ -154,6 +162,7 @@ public class EventController {
         return new ResponseEntity<List<EventDTO>>(results, HttpStatus.OK);
     }
 
+    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
     @GetMapping("/search-with-org")
     public ResponseEntity<List<EventAndOrgDTO>> searchEventsWithOrg(@RequestParam String query) {
         List<EventAndOrgDTO> results = eventService.searchEventsWithOrg(query);
@@ -165,12 +174,12 @@ public class EventController {
         return new ResponseEntity<List<EventAndOrgDTO>>(results, HttpStatus.OK);
     }
 
-    @GetMapping("/host/{hostId}")
-    public ResponseEntity<List<EventDTO>> getEventsByHostId(@PathVariable Long hostId) {
+    @RequiresRole(UserType.VOLUNTEER)
+    @GetMapping("/host")
+    public ResponseEntity<List<EventDTO>> getEventsByHostId() {
 
-        if (hostId == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        Long hostId = currentUserService.getCurrentEntityId();
+
 
         List<EventDTO> events = eventService.getEventsByHostId(hostId);
 
@@ -181,11 +190,10 @@ public class EventController {
         return new ResponseEntity<List<EventDTO>>(events, HttpStatus.OK);
     }
 
-    @GetMapping("/recommended/{volunteerId}")
-    public ResponseEntity<List<EventAndOrgDTO>> getRecommendedEvents(@PathVariable Long volunteerId) {
-        if (volunteerId == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    @RequiresRole(UserType.VOLUNTEER)
+    @GetMapping("/recommended")
+    public ResponseEntity<List<EventAndOrgDTO>> getRecommendedEvents() {
+        Long volunteerId = currentUserService.getCurrentEntityId();
 
         List<EventAndOrgDTO> recommendedEvents = eventRecommendationService.getRecommendedEvents(volunteerId);
 
@@ -194,5 +202,13 @@ public class EventController {
         }
 
         return new ResponseEntity<List<EventAndOrgDTO>>(recommendedEvents, HttpStatus.OK);
+    }
+    
+    @GetMapping("/latest-three")
+    @RequiresRole(UserType.VOLUNTEER)
+    public ResponseEntity<List<EventAndOrgDTO>> getLatestThreeEvents() {
+        List<EventAndOrgDTO> latestEvents = eventRecommendationService.getLatestThreeEvents();
+
+        return new ResponseEntity<List<EventAndOrgDTO>>(latestEvents, HttpStatus.OK);
     }
 }
