@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.DevSprint.voluntrix_backend.entities.RefreshTokenEntity;
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
@@ -21,6 +22,8 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity
     
     boolean existsByToken(String token);
     
+    @Modifying
+    @Transactional
     void deleteByUser(UserEntity user);
     
     @Modifying
