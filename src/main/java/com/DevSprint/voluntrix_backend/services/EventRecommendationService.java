@@ -41,14 +41,22 @@ public class EventRecommendationService {
 
         Set<CategoryEntity> volunteerCategories = volunteer.getFollowedCategories();
 
-        List<EventEntity> allEvents = eventRepository.findAll();
+        // Fetch all ACTIVE events ordered by latest
+        List<EventEntity> allActiveEvents = eventRepository
+                .findByEventStatusOrderByEventStartDateDesc(EventStatus.ACTIVE);
 
-        List<EventEntity> filteredEvents = allEvents.stream()
-                .filter(event -> event.getEventStatus() == EventStatus.ACTIVE)
+        List<EventEntity> filteredEvents = allActiveEvents.stream()
+                // Exclude already applied or participated
                 .filter(event -> !hasAppliedOrParticipated(volunteer, event))
+                // Check visibility
                 .filter(event -> isEventVisibleToVolunteer(volunteer, event))
+                // Exclude past events
                 .filter(event -> !event.getEventStartDate().isBefore(LocalDate.now()))
-                .filter(event -> hasMatchingCategory(event.getCategories(), volunteerCategories))
+                // Optional category filter
+                .filter(event -> volunteerCategories == null || volunteerCategories.isEmpty()
+                        || hasMatchingCategory(event.getCategories(), volunteerCategories))
+                // Limit to 8
+                .limit(8)
                 .collect(Collectors.toList());
 
         return entityDTOConvert.toEventAndOrgDTOList(filteredEvents);
@@ -75,4 +83,12 @@ public class EventRecommendationService {
             return false;
         return eventCategories.stream().anyMatch(volunteerCategories::contains);
     }
+
+    public List<EventAndOrgDTO> getLatestThreeEvents() {
+        List<EventEntity> latestEvents = eventRepository
+                .findTop3ByEventStatusOrderByEventStartDateDesc(EventStatus.ACTIVE);
+
+        return entityDTOConvert.toEventAndOrgDTOList(latestEvents);
+    }
+
 }
