@@ -25,6 +25,8 @@ public class OrganizationCreateDTO {
 
     private String description;
 
+    private String documentUrl;
+
     private String website;
 
     private String facebookLink;

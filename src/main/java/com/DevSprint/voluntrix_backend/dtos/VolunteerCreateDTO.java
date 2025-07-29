@@ -1,7 +1,6 @@
 package com.DevSprint.voluntrix_backend.dtos;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Pattern;
@@ -29,7 +28,6 @@ public class VolunteerCreateDTO {
     @Size(max = 2048, message = "Profile picture URL can have at most 2048 characters")
     private String profilePictureUrl;
 
-    @NotBlank(message = "Phone number is required")
     @Pattern(regexp = "^(?:\\+94|0)?7\\d{8}$", message = "Phone number must be a valid Sri Lankan mobile number")
     private String phoneNumber;
 }

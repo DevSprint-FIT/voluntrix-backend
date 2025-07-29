@@ -16,6 +16,7 @@ import com.DevSprint.voluntrix_backend.dtos.SignupRequestDTO;
 import com.DevSprint.voluntrix_backend.entities.RefreshTokenEntity;
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.exceptions.OTPVerificationException;
+import com.DevSprint.voluntrix_backend.exceptions.TokenRefreshException;
 import com.DevSprint.voluntrix_backend.exceptions.UserNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.OrganizationRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
@@ -25,9 +26,11 @@ import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 import com.DevSprint.voluntrix_backend.utils.UserMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -340,7 +343,19 @@ public class AuthService {
 
     public void logout(String refreshToken) {
         if (refreshToken != null && !refreshToken.isEmpty()) {
-            refreshTokenService.deleteByToken(refreshToken);
+            try {
+                refreshTokenService.deleteByToken(refreshToken);
+            } catch (TokenRefreshException e) {
+                // Token not found or already deleted, which is fine for logout
+                log.warn("Refresh token not found during logout: {}", e.getMessage());
+            }
         }
+    }
+
+    public void logoutUser(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        refreshTokenService.deleteByUser(user);
+        log.info("Logged out user: {}", user.getEmail());
     }
 }
