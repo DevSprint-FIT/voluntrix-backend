@@ -28,4 +28,9 @@ public interface EventRepository extends JpaRepository<EventEntity, Long>, JpaSp
     Long countByOrganizationIdAndEventStatus(Long organizationId, EventStatus eventStatus);
 
     List<EventEntity> findByEventHost(VolunteerEntity eventHost);
+
+
+    List<EventEntity> findTop3ByEventStatusOrderByEventStartDateDesc(EventStatus eventStatus);
+
+    List<EventEntity> findByEventStatusOrderByEventStartDateDesc(EventStatus status);
 }

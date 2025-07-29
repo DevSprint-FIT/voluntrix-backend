@@ -122,7 +122,7 @@ public class AuthService {
         user.setLastLogin(java.time.LocalDateTime.now());
         userRepository.save(user);
 
-        String token = jwtService.generateToken(user);
+        String token = jwtService.generateToken(userMapper.toUserDetails(user));
         
         // Generate refresh token
         RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(user);
@@ -326,7 +326,7 @@ public class AuthService {
         refreshToken = refreshTokenService.verifyExpiration(refreshToken);
         
         UserEntity user = refreshToken.getUser();
-        String newAccessToken = jwtService.generateToken(user);
+        String newAccessToken = jwtService.generateToken(userMapper.toUserDetails(user));
         
         // Optionally create a new refresh token (token rotation)
         RefreshTokenEntity newRefreshToken = refreshTokenService.createRefreshToken(user);

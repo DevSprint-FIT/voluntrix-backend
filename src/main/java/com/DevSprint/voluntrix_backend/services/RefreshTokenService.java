@@ -53,8 +53,6 @@ public class RefreshTokenService {
             throw new TokenRefreshException("Refresh token was expired. Please make a new signin request");
         }
 
-        // Update last used timestamp
-        refreshTokenRepository.updateLastUsedAt(token.getToken(), LocalDateTime.now());
         return token;
     }
 
