@@ -203,4 +203,12 @@ public class EventController {
 
         return new ResponseEntity<List<EventAndOrgDTO>>(recommendedEvents, HttpStatus.OK);
     }
+    
+    @GetMapping("/latest-three")
+    @RequiresRole(UserType.VOLUNTEER)
+    public ResponseEntity<List<EventAndOrgDTO>> getLatestThreeEvents() {
+        List<EventAndOrgDTO> latestEvents = eventRecommendationService.getLatestThreeEvents();
+
+        return new ResponseEntity<List<EventAndOrgDTO>>(latestEvents, HttpStatus.OK);
+    }
 }
