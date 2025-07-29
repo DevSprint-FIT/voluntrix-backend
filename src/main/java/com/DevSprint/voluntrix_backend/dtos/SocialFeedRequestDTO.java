@@ -7,8 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SocialFeedRequestDTO {
-    private Long organizationId;
     private String content;
     private String mediaUrl;
     private MediaType mediaType;
+    private Long mediaSizeInBytes;
 }

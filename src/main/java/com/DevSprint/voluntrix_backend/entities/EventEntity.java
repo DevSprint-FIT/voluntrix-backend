@@ -14,9 +14,11 @@ import com.DevSprint.voluntrix_backend.enums.EventType;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,6 +26,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @NoArgsConstructor
@@ -49,7 +53,9 @@ public class EventEntity {
     private LocalTime eventTime;
 
     private String eventImageUrl;
-    private Integer volunteerCount;
+
+    @Builder.Default
+    private Integer volunteerCount = 0;
 
     @Enumerated(EnumType.STRING)
     private EventType eventType; // ONLINE or ONSITE
@@ -63,12 +69,33 @@ public class EventEntity {
     private Boolean sponsorshipEnabled;
     private Boolean donationEnabled;
 
+    private String sponsorshipProposalUrl;
+    private Integer donationGoal;
+
+    @Builder.Default
+    private Integer donations = 0;
+
     @ManyToMany
     @JoinTable(name = "event_category", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<CategoryEntity> categories;
-  
-    // Foreign Key Reference to Organization Table
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "event_host_id", nullable = false)
+    private VolunteerEntity eventHost;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<EventApplicationEntity> applications;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "organization_id", nullable = true)
     private OrganizationEntity organization;
+
+    @Builder.Default
+    private Integer eventHostRewardPoints = 0;
+
+    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private EventInvitationEntity invitation;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<SponsorshipEntity> sponsorships;
 }

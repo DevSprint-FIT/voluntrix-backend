@@ -3,8 +3,12 @@ package com.DevSprint.voluntrix_backend.entities;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 
 import lombok.Getter;
@@ -14,6 +18,8 @@ import lombok.AllArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,14 +33,8 @@ public class OrganizationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
     @Column(nullable = true)
     private String institute;
-
-    @Column(nullable = false, unique = true)
-    private String email;
 
     @Column(nullable = false)
     private String phone;
@@ -48,15 +48,12 @@ public class OrganizationEntity {
     @Column(nullable = false)
     private Integer followerCount = 0;
 
-    @Column(nullable =true, updatable = false)
+    @Column(nullable = true, updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column(nullable = true, columnDefinition = "TEXT")
     private String imageUrl;
-
-    @Column(unique = true, nullable = false)
-    private String username;
 
     @Column(nullable = true)
     private String description;
@@ -66,4 +63,26 @@ public class OrganizationEntity {
 
     @Column(nullable = true)
     private String bankName;
+
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EventEntity> events = new ArrayList<>();
+
+    @Column(nullable = true)
+    private String documentUrl;
+
+    @Column(nullable = true)
+    private String facebookLink;
+
+    @Column(nullable = true)
+    private String linkedinLink;
+
+    @Column(nullable = true)
+    private String instagramLink;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
+    @OneToMany(mappedBy = "organization")
+    private List<EventInvitationEntity> invitations;
 }

@@ -1,6 +1,7 @@
 package com.DevSprint.voluntrix_backend.entities;
 
 import com.DevSprint.voluntrix_backend.enums.MediaType;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "social_feed")
@@ -44,6 +46,13 @@ public class SocialFeedEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    private Long mediaSizeInBytes;
 
+    // Manage reactions
+    @OneToMany(mappedBy = "socialFeed", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReactionEntity> reactions;
+
+    @OneToMany(mappedBy = "socialFeed", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentEntity> comments;
 
 }

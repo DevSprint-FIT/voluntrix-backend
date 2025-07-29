@@ -9,6 +9,5 @@ import lombok.Setter;
 public class FollowOrganizationDTO {
     private Long volunteerId;
     private Long organizationId;
-
 }
 

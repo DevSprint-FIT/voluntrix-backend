@@ -3,5 +3,7 @@ package com.DevSprint.voluntrix_backend.enums;
 public enum UserType {
     VOLUNTEER,
     SPONSOR,
-    PUBLIC
+    ORGANIZATION,
+    PUBLIC,
+    ADMIN
 }
