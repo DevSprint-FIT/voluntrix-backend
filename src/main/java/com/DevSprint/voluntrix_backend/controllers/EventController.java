@@ -197,10 +197,6 @@ public class EventController {
 
         List<EventAndOrgDTO> recommendedEvents = eventRecommendationService.getRecommendedEvents(volunteerId);
 
-        if (recommendedEvents == null || recommendedEvents.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-
         return new ResponseEntity<List<EventAndOrgDTO>>(recommendedEvents, HttpStatus.OK);
     }
     
