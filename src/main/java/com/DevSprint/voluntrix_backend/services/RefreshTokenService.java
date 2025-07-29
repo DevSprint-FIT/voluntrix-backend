@@ -33,7 +33,7 @@ public class RefreshTokenService {
     @Transactional
     public RefreshTokenEntity createRefreshToken(UserEntity user) {
         // Delete existing refresh token for this user
-        refreshTokenRepository.findByUser(user).ifPresent(refreshTokenRepository::delete);
+        refreshTokenRepository.deleteByUser(user);
 
         RefreshTokenEntity refreshToken = RefreshTokenEntity.builder()
                 .user(user)

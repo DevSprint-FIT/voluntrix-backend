@@ -48,7 +48,7 @@ public class OrganizationController {
         return ResponseEntity.ok(new ApiResponse<>("Organization retrieved successfully", organization));
     }
 
-    @PostMapping("/")
+    @PostMapping
     @RequiresRole(UserType.ORGANIZATION)
     public ResponseEntity<ApiResponse<OrganizationDTO>> createOrganization(@Valid @RequestBody OrganizationCreateDTO organizationCreateDTO) {
         Long userId = currentUserService.getCurrentUserId();

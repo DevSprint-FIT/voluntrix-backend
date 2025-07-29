@@ -63,6 +63,7 @@ public class OrganizationDTOConverter {
         organization.setWebsite(organizationDTO.getWebsite());
         organization.setBankName(organizationDTO.getBankName());
         organizationDTO.setImageUrl(organization.getImageUrl());
+        organizationDTO.setDocumentUrl(organization.getDocumentUrl());
         organizationDTO.setFacebookLink(organization.getFacebookLink());
         organizationDTO.setLinkedinLink(organization.getLinkedinLink());
         organizationDTO.setInstagramLink(organization.getInstagramLink());
@@ -85,6 +86,7 @@ public class OrganizationDTOConverter {
         organization.setCreatedAt(organizationDTO.getJoinedDate());
         organization.setDescription(organizationDTO.getDescription());
         organization.setImageUrl(organizationDTO.getImageUrl());
+        organization.setDocumentUrl(organizationDTO.getDocumentUrl());
         organization.setFacebookLink(organizationDTO.getFacebookLink());
         organization.setLinkedinLink(organizationDTO.getLinkedinLink());
         organization.setInstagramLink(organizationDTO.getInstagramLink());
@@ -110,6 +112,8 @@ public class OrganizationDTOConverter {
         entity.setDescription(dto.getDescription());
         entity.setWebsite(dto.getWebsite());
         entity.setBankName(dto.getBankName());
+        entity.setImageUrl(dto.getImageUrl());
+        entity.setDocumentUrl(dto.getDocumentUrl());
         entity.setFacebookLink(dto.getFacebookLink());
         entity.setLinkedinLink(dto.getLinkedinLink());
         entity.setInstagramLink(dto.getInstagramLink());
@@ -135,6 +139,7 @@ public class OrganizationDTOConverter {
         entity.setDescription(dto.getDescription());
         entity.setWebsite(dto.getWebsite());
         entity.setImageUrl(dto.getImageUrl());
+        entity.setDocumentUrl(dto.getDocumentUrl());
         entity.setBankName(dto.getBankName());
         entity.setFacebookLink(dto.getFacebookLink());
         entity.setLinkedinLink(dto.getLinkedinLink());
