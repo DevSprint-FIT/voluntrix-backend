@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -47,6 +48,10 @@ public class SecurityConfig {
                     ).permitAll()
                     .requestMatchers("/api/auth/**").authenticated() // Other auth endpoints need auth
                     .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
+                    .requestMatchers("/api/chat/**").permitAll() // Allow chat API endpoints
+                    .requestMatchers("/api/private-chat/**").permitAll() // Allow private chat API endpoints
+                    .requestMatchers("/ws/**").permitAll() // Allow WebSocket connections
+                    .requestMatchers("/chat", "/chat.html", "/static/**", "/*.html", "/*.css", "/*.js", "/").permitAll()
                     .anyRequest().authenticated() // Require authentication for everything else
             )
             .sessionManagement(session -> session
