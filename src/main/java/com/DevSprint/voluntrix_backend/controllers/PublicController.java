@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.InstituteDTO;
+import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
 import com.DevSprint.voluntrix_backend.dtos.SocialFeedResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
 import com.DevSprint.voluntrix_backend.enums.UserType;
 import com.DevSprint.voluntrix_backend.services.EventService;
 import com.DevSprint.voluntrix_backend.services.InstituteService;
+import com.DevSprint.voluntrix_backend.services.OrganizationService;
 import com.DevSprint.voluntrix_backend.services.SocialFeedService;
 import com.DevSprint.voluntrix_backend.services.SponsorService;
 import com.DevSprint.voluntrix_backend.services.VolunteerService;
@@ -40,6 +42,7 @@ public class PublicController {
     private final VolunteerService volunteerService;
     private final EventService eventService;
     private final SocialFeedService socialFeedService;
+    private final OrganizationService organizationService;
 
     @GetMapping("/institutes")
     @RequiresRole({UserType.VOLUNTEER, UserType.SPONSOR, UserType.ORGANIZATION, UserType.ADMIN, UserType.PUBLIC})
@@ -81,5 +84,13 @@ public class PublicController {
     public ResponseEntity<List<SocialFeedResponseDTO>> getAllPosts(){
         List<SocialFeedResponseDTO> posts = socialFeedService.getAllPosts();
         return ResponseEntity.ok(posts);
+    }
+
+    @GetMapping("/organizations/{id}")
+    @RequiresRole({UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR})
+    public ResponseEntity<ApiResponse<OrganizationDTO>> getOrganizationById(
+            @Parameter(description = "Organization ID") @PathVariable Long id) {
+        OrganizationDTO organization = organizationService.getOrganizationById(id);
+        return ResponseEntity.ok(new ApiResponse<>("Organization retrieved successfully", organization));
     }
 }
