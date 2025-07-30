@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 
 import com.DevSprint.voluntrix_backend.services.ChatService;
 import com.DevSprint.voluntrix_backend.services.UserSessionService;
+import com.DevSprint.voluntrix_backend.dtos.ChatMessage;
 import com.DevSprint.voluntrix_backend.dtos.ChatMessageDTO;
 import com.DevSprint.voluntrix_backend.entities.Message;
 
@@ -82,8 +83,17 @@ public class ChatController {
             userSessionService.addUserSession(chatMessage.getSenderId(), sessionId, chatMessage.getSenderName());
             
             // Store in WebSocket session attributes
-            headerAccessor.getSessionAttributes().put("userId", chatMessage.getSenderId());
-            headerAccessor.getSessionAttributes().put("username", chatMessage.getSenderName());
+            if (headerAccessor.getSessionAttributes() == null) {
+                headerAccessor.setSessionAttributes(new java.util.HashMap<>());
+            }
+            // Ensure session attributes are not null before using
+            java.util.Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
+            if (sessionAttributes == null) {
+                sessionAttributes = new java.util.HashMap<>();
+                headerAccessor.setSessionAttributes(sessionAttributes);
+            }
+            sessionAttributes.put("userId", chatMessage.getSenderId());
+            sessionAttributes.put("username", chatMessage.getSenderName());
             
             log.info("User {} joined the chat with session {}", chatMessage.getSenderId(), sessionId);
             

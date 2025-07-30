@@ -1,4 +1,4 @@
-package com.DevSprint.voluntrix_backend.controllers;
+package com.DevSprint.voluntrix_backend.dtos;
 
 import com.DevSprint.voluntrix_backend.dtos.ChatMessageDTO.MessageType;
 import java.time.LocalDateTime;

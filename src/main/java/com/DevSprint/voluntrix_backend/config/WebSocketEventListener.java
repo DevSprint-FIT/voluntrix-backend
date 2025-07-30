@@ -6,7 +6,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import com.DevSprint.voluntrix_backend.controllers.ChatMessage;
+import com.DevSprint.voluntrix_backend.dtos.ChatMessage;
 import com.DevSprint.voluntrix_backend.dtos.ChatMessageDTO.MessageType;
 import com.DevSprint.voluntrix_backend.services.UserSessionService;
 
@@ -24,8 +24,13 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        String userId = (String) headerAccessor.getSessionAttributes().get("userId");
-        String username = (String) headerAccessor.getSessionAttributes().get("username");
+        java.util.Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
+        String userId = null;
+        String username = null;
+        if (sessionAttributes != null) {
+            userId = (String) sessionAttributes.get("userId");
+            username = (String) sessionAttributes.get("username");
+        }
         String sessionId = headerAccessor.getSessionId();
 
         if (userId != null && username != null && sessionId != null) {
