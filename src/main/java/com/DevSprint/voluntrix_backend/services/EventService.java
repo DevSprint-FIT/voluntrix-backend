@@ -16,6 +16,7 @@ import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
+import com.DevSprint.voluntrix_backend.enums.EventStatus;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
@@ -278,16 +279,14 @@ public class EventService {
         }
 
         // Only include events with status COMPLETE or ACTIVE
-        spec = spec.and((root, query, criteriaBuilder) -> 
-            root.get("eventStatus").in("COMPLETE", "ACTIVE")
-        );
+        spec = spec.and((root, query, criteriaBuilder) -> root.get("eventStatus").in("COMPLETE", "ACTIVE"));
 
         return entityDTOConvert.toEventAndOrgDTOList(eventRepository.findAll(spec));
     }
 
     public List<EventNameDTO> getAllEventNames() {
         return eventRepository.findAllEventIdAndTitle();
-    } 
+    }
 
     public List<EventDTO> searchEvents(String query) {
         return entityDTOConvert.toEventDTOList(eventRepository.findByEventTitleContainingIgnoreCase(query));
@@ -295,11 +294,11 @@ public class EventService {
 
     public List<EventAndOrgDTO> searchEventsWithOrg(String query) {
         List<EventEntity> events = eventRepository.findByEventTitleContainingIgnoreCase(query)
-            .stream()
-            .filter(event -> event.getEventStatus() != null &&
-                    (event.getEventStatus().name().equalsIgnoreCase("ACTIVE") ||
-                     event.getEventStatus().name().equalsIgnoreCase("COMPLETE")))
-            .collect(Collectors.toList());
+                .stream()
+                .filter(event -> event.getEventStatus() != null &&
+                        (event.getEventStatus().name().equalsIgnoreCase("ACTIVE") ||
+                                event.getEventStatus().name().equalsIgnoreCase("COMPLETE")))
+                .collect(Collectors.toList());
         return entityDTOConvert.toEventAndOrgDTOList(events);
     }
 
@@ -316,5 +315,19 @@ public class EventService {
         List<EventEntity> events = eventRepository.findByEventHost(eventHost);
 
         return entityDTOConvert.toEventDTOList(events);
+    }
+
+    public Integer incrementVolCount(Long eventId) {
+        EventEntity eventEntity = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        if (!eventEntity.getEventStatus().equals(EventStatus.ACTIVE)) {
+            throw new BadRequestException("Event is not active for recruitment.");
+        }
+
+        eventRepository.incrementVolunteerCountById(eventId);
+        eventEntity.setVolunteerCount(eventEntity.getVolunteerCount() + 1);
+
+        return eventEntity.getVolunteerCount();
     }
 }
