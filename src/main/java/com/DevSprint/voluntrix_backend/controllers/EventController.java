@@ -207,4 +207,11 @@ public class EventController {
 
         return new ResponseEntity<List<EventAndOrgDTO>>(latestEvents, HttpStatus.OK);
     }
+
+    @PatchMapping("/recruit-volunteer/{eventId}")
+    @RequiresRole(UserType.VOLUNTEER)
+    public ResponseEntity<Integer> recruitVolunteer(@PathVariable Long eventId) {
+        Integer updatedVolCount = eventService.incrementVolCount(eventId);
+        return new ResponseEntity<Integer>(updatedVolCount, HttpStatus.OK);
+    }
 }

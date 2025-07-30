@@ -5,7 +5,9 @@ import java.util.List;
 import com.DevSprint.voluntrix_backend.enums.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
@@ -32,4 +34,8 @@ public interface EventRepository extends JpaRepository<EventEntity, Long>, JpaSp
     List<EventEntity> findTop3ByEventStatusOrderByEventStartDateDesc(EventStatus eventStatus);
 
     List<EventEntity> findByEventStatusOrderByEventStartDateDesc(EventStatus status);
+
+    @Modifying
+    @Query("UPDATE EventEntity e SET e.volunteerCount = e.volunteerCount + 1 WHERE e.eventId = :eventId")
+    void incrementVolunteerCountById(@Param("eventId") Long eventId);
 }
