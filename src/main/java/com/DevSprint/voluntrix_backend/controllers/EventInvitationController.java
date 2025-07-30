@@ -62,7 +62,7 @@ public class EventInvitationController {
     }
 
     @PatchMapping(value = "/{eventInvitationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @RequiresRole(UserType.VOLUNTEER)
+    @RequiresRole(UserType.ORGANIZATION)
     public ResponseEntity<Void> updateEventInvitation(@PathVariable Long eventInvitationId,
             @Valid @RequestBody EventInvitationCreateDTO eventInvitationCreateDTO) {
         if (eventInvitationId == null || eventInvitationCreateDTO == null) {
