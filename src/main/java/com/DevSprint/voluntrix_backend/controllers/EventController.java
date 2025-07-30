@@ -23,6 +23,7 @@ import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventStatusUpdateDTO;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.DevSprint.voluntrix_backend.enums.UserType;
@@ -92,7 +93,7 @@ public class EventController {
         return new ResponseEntity<EventAndOrgDTO>(selectedEvent, HttpStatus.OK);
     }
     
-    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
+    @RequiresRole(UserType.VOLUNTEER)
     @PatchMapping(value = "/{eventId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateEvent(@PathVariable Long eventId, @Valid @RequestBody EventDTO eventDTO) {
 
@@ -213,5 +214,15 @@ public class EventController {
     public ResponseEntity<Integer> recruitVolunteer(@PathVariable Long eventId) {
         Integer updatedVolCount = eventService.incrementVolCount(eventId);
         return new ResponseEntity<Integer>(updatedVolCount, HttpStatus.OK);
+
+    @PatchMapping("/{eventId}/status")
+    @RequiresRole(UserType.ORGANIZATION)
+    public ResponseEntity<Void> updateEventStatus(@PathVariable Long eventId, @RequestBody EventStatusUpdateDTO statusUpdateDTO) {
+        if (eventId == null || statusUpdateDTO == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        eventService.updateEventStatus(eventId, statusUpdateDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
