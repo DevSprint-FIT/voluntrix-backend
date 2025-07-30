@@ -12,6 +12,7 @@ import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventStatusUpdateDTO;
 import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
@@ -307,5 +308,16 @@ public class EventService {
         List<EventEntity> events = eventRepository.findByEventHost(eventHost);
 
         return entityDTOConvert.toEventDTOList(events);
+    }
+
+    public void updateEventStatus(Long eventId, EventStatusUpdateDTO statusUpdateDTO) {
+        EventEntity event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
+
+        if (statusUpdateDTO.getEventStatus() != null) {
+            event.setEventStatus(statusUpdateDTO.getEventStatus());
+        }
+
+        eventRepository.save(event);
     }
 }
