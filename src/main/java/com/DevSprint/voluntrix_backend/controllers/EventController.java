@@ -168,9 +168,9 @@ public class EventController {
     public ResponseEntity<List<EventAndOrgDTO>> searchEventsWithOrg(@RequestParam String query) {
         List<EventAndOrgDTO> results = eventService.searchEventsWithOrg(query);
 
-        if (results == null || results.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        // if (results == null || results.isEmpty()) {
+        //     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        // }
 
         return new ResponseEntity<List<EventAndOrgDTO>>(results, HttpStatus.OK);
     }
@@ -208,6 +208,12 @@ public class EventController {
 
         return new ResponseEntity<List<EventAndOrgDTO>>(latestEvents, HttpStatus.OK);
     }
+
+    @PatchMapping("/recruit-volunteer/{eventId}")
+    @RequiresRole(UserType.VOLUNTEER)
+    public ResponseEntity<Integer> recruitVolunteer(@PathVariable Long eventId) {
+        Integer updatedVolCount = eventService.incrementVolCount(eventId);
+        return new ResponseEntity<Integer>(updatedVolCount, HttpStatus.OK);
 
     @PatchMapping("/{eventId}/status")
     @RequiresRole(UserType.ORGANIZATION)

@@ -49,9 +49,9 @@ public class SponsorshipService {
                 .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
 
         List<SponsorshipEntity> sponsorships = sponsorshipRepository.findByEventEventId(eventId);
-        if (sponsorships.isEmpty()) {
-            throw new SponsorshipNotFoundException("No sponsorships found for event with ID: " + eventId);
-        }
+        // if (sponsorships.isEmpty()) {
+        //     throw new SponsorshipNotFoundException("No sponsorships found for event with ID: " + eventId);
+        // }
         return sponsorshipDTOConvert.toSponsorshipEntityList(sponsorships);
     }
 
@@ -60,9 +60,9 @@ public class SponsorshipService {
                 .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
 
         List<SponsorshipEntity> sponsorships = sponsorshipRepository.findAvailableSponsorshipsByEventId(eventId);
-        if (sponsorships.isEmpty()) {
-            throw new SponsorshipNotFoundException("No available sponsorships found for event with ID: " + eventId);
-        }
+        // if (sponsorships.isEmpty()) {
+        //     throw new SponsorshipNotFoundException("No available sponsorships found for event with ID: " + eventId);
+        // }
         return sponsorshipDTOConvert.toSponsorshipEntityList(sponsorships);
     }
 
