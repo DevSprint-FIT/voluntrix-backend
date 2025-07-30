@@ -85,7 +85,7 @@ public class EventInvitationController {
     }
 
     @GetMapping("/organization/{organizationId}")
-    @RequiresRole(UserType.VOLUNTEER)
+    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
     public ResponseEntity<List<EventInvitationDTO>> getEventInvitationsByOrganizationId(@PathVariable Long organizationId) {
         if (organizationId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
