@@ -44,6 +44,7 @@ public class EventDTO implements Serializable {
     private String sponsorshipProposalUrl;
     private Integer donationGoal;
     private Integer donations;
+    private Long eventHostId;
 
     private Set<CategoryDTO> categories;
 
