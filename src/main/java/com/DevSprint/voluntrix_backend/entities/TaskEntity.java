@@ -60,7 +60,7 @@ public class TaskEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ContributionArea taskCategory; // DESIGN, EDITORIAL, LOGISTICS, PROGRAMMING
+    private ContributionArea taskCategory; // DESIGN, EDITORIAL, LOGISTICS, PROGRAM
 
     @Column(length = 1000)
     private String resourceUrl;
