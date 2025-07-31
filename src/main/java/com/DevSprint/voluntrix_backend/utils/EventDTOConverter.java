@@ -45,12 +45,12 @@ public class EventDTOConverter {
     }
 
     // EventEntity to EventDTO
-     public EventDTO toEventDTO(EventEntity eventEntity) {
+    public EventDTO toEventDTO(EventEntity eventEntity) {
         EventDTO eventDTO = modelMapper.map(eventEntity, EventDTO.class);
-        
+
         // Manually set the correct eventHostRewardPoints to avoid ambiguity
         eventDTO.setEventHostRewardPoints(eventEntity.getEventHostRewardPoints());
-        
+
         return eventDTO;
     }
 
