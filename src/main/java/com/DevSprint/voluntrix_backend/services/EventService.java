@@ -330,6 +330,7 @@ public class EventService {
         eventEntity.setVolunteerCount(eventEntity.getVolunteerCount() + 1);
 
         return eventEntity.getVolunteerCount();
+    }
 
     public void updateEventStatus(Long eventId, EventStatusUpdateDTO statusUpdateDTO) {
         EventEntity event = eventRepository.findById(eventId)

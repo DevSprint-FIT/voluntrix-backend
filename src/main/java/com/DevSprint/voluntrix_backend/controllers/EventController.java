@@ -46,18 +46,18 @@ public class EventController {
     private final EventRecommendationService eventRecommendationService;
     private final CurrentUserService currentUserService;
 
-    @RequiresRole({UserType.VOLUNTEER})
+    @RequiresRole({ UserType.VOLUNTEER })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Long>> addEvent(@RequestBody EventCreateDTO eventCreateDTO) {
         Long eventHostId = currentUserService.getCurrentEntityId();
 
-        EventEntity savedEvent = eventService.addEvent(eventCreateDTO , eventHostId);
+        EventEntity savedEvent = eventService.addEvent(eventCreateDTO, eventHostId);
         Map<String, Long> response = new HashMap<>();
         response.put("eventId", savedEvent.getEventId());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ORGANIZATION })
     @DeleteMapping("/{eventId}")
     public ResponseEntity<Void> deleteEvent(@PathVariable Long eventId) {
 
@@ -69,7 +69,7 @@ public class EventController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ORGANIZATION })
     @GetMapping("/{eventId}")
     public ResponseEntity<EventDTO> getEventById(@PathVariable Long eventId) {
 
@@ -81,7 +81,7 @@ public class EventController {
         return new ResponseEntity<EventDTO>(selectedEvent, HttpStatus.OK);
     }
 
-    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ORGANIZATION })
     @GetMapping("/with-org/{eventId}")
     public ResponseEntity<EventAndOrgDTO> getEventAndOrgById(@PathVariable Long eventId) {
 
@@ -92,7 +92,7 @@ public class EventController {
         var selectedEvent = eventService.getEventAndOrgById(eventId);
         return new ResponseEntity<EventAndOrgDTO>(selectedEvent, HttpStatus.OK);
     }
-    
+
     @RequiresRole(UserType.VOLUNTEER)
     @PatchMapping(value = "/{eventId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> updateEvent(@PathVariable Long eventId, @Valid @RequestBody EventDTO eventDTO) {
@@ -106,8 +106,8 @@ public class EventController {
         eventService.updateEvent(eventId, eventDTO, eventHostId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
-    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
+
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ORGANIZATION })
     @GetMapping("/filter")
     public ResponseEntity<List<EventDTO>> getFilteredEvent(
             @RequestParam(value = "eventLocation", required = false) String eventLocation,
@@ -126,7 +126,7 @@ public class EventController {
         return new ResponseEntity<List<EventDTO>>(filteredEventList, HttpStatus.OK);
     }
 
-    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ORGANIZATION })
     @GetMapping("/filter-with-org")
     public ResponseEntity<List<EventAndOrgDTO>> getFilteredEventWithOrg(
             @RequestParam(value = "eventLocation", required = false) String eventLocation,
@@ -145,13 +145,13 @@ public class EventController {
         return new ResponseEntity<List<EventAndOrgDTO>>(filteredEventList, HttpStatus.OK);
     }
 
-    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ORGANIZATION })
     @GetMapping("/names")
     public ResponseEntity<List<EventNameDTO>> getAllEventNames() {
         return new ResponseEntity<List<EventNameDTO>>(eventService.getAllEventNames(), HttpStatus.OK);
     }
 
-    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION, UserType.PUBLIC})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ORGANIZATION, UserType.PUBLIC })
     @GetMapping("/search")
     public ResponseEntity<List<EventDTO>> searchEvents(@RequestParam String query) {
         List<EventDTO> results = eventService.searchEvents(query);
@@ -163,13 +163,13 @@ public class EventController {
         return new ResponseEntity<List<EventDTO>>(results, HttpStatus.OK);
     }
 
-    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ORGANIZATION })
     @GetMapping("/search-with-org")
     public ResponseEntity<List<EventAndOrgDTO>> searchEventsWithOrg(@RequestParam String query) {
         List<EventAndOrgDTO> results = eventService.searchEventsWithOrg(query);
 
         // if (results == null || results.isEmpty()) {
-        //     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        // return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         // }
 
         return new ResponseEntity<List<EventAndOrgDTO>>(results, HttpStatus.OK);
@@ -180,7 +180,6 @@ public class EventController {
     public ResponseEntity<List<EventDTO>> getEventsByHostId() {
 
         Long hostId = currentUserService.getCurrentEntityId();
-
 
         List<EventDTO> events = eventService.getEventsByHostId(hostId);
 
@@ -200,7 +199,7 @@ public class EventController {
 
         return new ResponseEntity<List<EventAndOrgDTO>>(recommendedEvents, HttpStatus.OK);
     }
-    
+
     @GetMapping("/latest-three")
     @RequiresRole(UserType.VOLUNTEER)
     public ResponseEntity<List<EventAndOrgDTO>> getLatestThreeEvents() {
@@ -214,10 +213,12 @@ public class EventController {
     public ResponseEntity<Integer> recruitVolunteer(@PathVariable Long eventId) {
         Integer updatedVolCount = eventService.incrementVolCount(eventId);
         return new ResponseEntity<Integer>(updatedVolCount, HttpStatus.OK);
+    }
 
     @PatchMapping("/{eventId}/status")
     @RequiresRole(UserType.ORGANIZATION)
-    public ResponseEntity<Void> updateEventStatus(@PathVariable Long eventId, @RequestBody EventStatusUpdateDTO statusUpdateDTO) {
+    public ResponseEntity<Void> updateEventStatus(@PathVariable Long eventId,
+            @RequestBody EventStatusUpdateDTO statusUpdateDTO) {
         if (eventId == null || statusUpdateDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
