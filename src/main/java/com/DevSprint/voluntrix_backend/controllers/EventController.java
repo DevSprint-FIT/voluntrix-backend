@@ -226,4 +226,22 @@ public class EventController {
         eventService.updateEventStatus(eventId, statusUpdateDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/total-events-count")
+    @RequiresRole(UserType.VOLUNTEER)
+    public ResponseEntity<Long> getTotalEventsCountByHostId() {
+        Long eventHostId = currentUserService.getCurrentEntityId();
+
+        Long count = eventService.getTotalEventsCountByHostId(eventHostId);
+        return new ResponseEntity<>(count, HttpStatus.OK);
+    }
+
+    @GetMapping("/total-event-host-reward-points")
+    @RequiresRole(UserType.VOLUNTEER)
+    public ResponseEntity<Long> getTotalEventHostRewardPoints() {
+        Long eventHostId = currentUserService.getCurrentEntityId();
+
+        Long points = eventService.getTotalEventHostRewardPoints(eventHostId);
+        return new ResponseEntity<>(points, HttpStatus.OK);
+    }
 }

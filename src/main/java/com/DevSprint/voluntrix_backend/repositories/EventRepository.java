@@ -38,4 +38,10 @@ public interface EventRepository extends JpaRepository<EventEntity, Long>, JpaSp
     @Modifying
     @Query("UPDATE EventEntity e SET e.volunteerCount = e.volunteerCount + 1 WHERE e.eventId = :eventId")
     void incrementVolunteerCountById(@Param("eventId") Long eventId);
+
+    @Query("SELECT COUNT(e) FROM EventEntity e WHERE e.eventHost.volunteerId = :eventHostId AND (e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.ACTIVE OR e.eventStatus = com.DevSprint.voluntrix_backend.enums.EventStatus.COMPLETE)")
+    Long countByEventHostIdWithActiveOrCompleteStatus(@Param("eventHostId") Long eventHostId);
+
+    @Query("SELECT COALESCE(SUM(e.eventHostRewardPoints), 0) FROM EventEntity e WHERE e.eventHost.volunteerId = :eventHostId")
+    Long sumEventHostRewardPointsByHostId(@Param("eventHostId") Long eventHostId);
 }

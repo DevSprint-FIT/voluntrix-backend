@@ -342,4 +342,28 @@ public class EventService {
 
         eventRepository.save(event);
     }
+
+    public Long getTotalEventsCountByHostId(Long eventHostId) {
+        VolunteerEntity eventHost = volunteerRepository.findById(eventHostId)
+                .orElseThrow(() -> new VolunteerNotFoundException(
+                        "Event Host not found: " + eventHostId));
+
+        if (!Boolean.TRUE.equals(eventHost.getIsEventHost())) {
+            throw new BadRequestException("Volunteer is not an event host");
+        }
+
+        return eventRepository.countByEventHostIdWithActiveOrCompleteStatus(eventHostId);
+    }
+
+    public Long getTotalEventHostRewardPoints(Long eventHostId) {
+        VolunteerEntity eventHost = volunteerRepository.findById(eventHostId)
+                .orElseThrow(() -> new VolunteerNotFoundException(
+                        "Event Host not found: " + eventHostId));
+
+        if (!Boolean.TRUE.equals(eventHost.getIsEventHost())) {
+            throw new BadRequestException("Volunteer is not an event host");
+        }
+
+        return eventRepository.sumEventHostRewardPointsByHostId(eventHostId);
+    }
 }
