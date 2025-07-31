@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.InstituteDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
@@ -14,6 +15,7 @@ import com.DevSprint.voluntrix_backend.dtos.SocialFeedResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorDTO;
 import com.DevSprint.voluntrix_backend.dtos.VolunteerDTO;
 import com.DevSprint.voluntrix_backend.enums.UserType;
+import com.DevSprint.voluntrix_backend.services.EventRecommendationService;
 import com.DevSprint.voluntrix_backend.services.EventService;
 import com.DevSprint.voluntrix_backend.services.InstituteService;
 import com.DevSprint.voluntrix_backend.services.OrganizationService;
@@ -43,16 +45,17 @@ public class PublicController {
     private final EventService eventService;
     private final SocialFeedService socialFeedService;
     private final OrganizationService organizationService;
+    private final EventRecommendationService eventRecommendationService;
 
     @GetMapping("/institutes")
-    @RequiresRole({UserType.VOLUNTEER, UserType.SPONSOR, UserType.ORGANIZATION, UserType.ADMIN, UserType.PUBLIC})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.SPONSOR, UserType.ORGANIZATION, UserType.ADMIN, UserType.PUBLIC })
     public ResponseEntity<ApiResponse<List<InstituteDTO>>> getAllInstitutes() {
         List<InstituteDTO> institutes = instituteService.getAllInstitutes();
         return ResponseEntity.ok(new ApiResponse<>("Institutes retrieved successfully", institutes));
     }
 
     @GetMapping("/institutes/{key}")
-    @RequiresRole({UserType.VOLUNTEER, UserType.SPONSOR, UserType.ORGANIZATION, UserType.ADMIN, UserType.PUBLIC})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.SPONSOR, UserType.ORGANIZATION, UserType.ADMIN, UserType.PUBLIC })
     public ResponseEntity<ApiResponse<InstituteDTO>> getInstituteByKey(
             @Parameter(description = "Institute key") @PathVariable String key) {
         InstituteDTO institute = instituteService.getInstituteByKey(key);
@@ -60,37 +63,43 @@ public class PublicController {
     }
 
     @GetMapping("/sponsors/all")
-    @RequiresRole({UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR })
     public ResponseEntity<ApiResponse<List<SponsorDTO>>> getAllSponsorsForAdmin() {
         List<SponsorDTO> sponsors = sponsorService.getAllSponsors();
         return ResponseEntity.ok(new ApiResponse<>("All sponsors retrieved successfully", sponsors));
     }
 
     @GetMapping("/volunteers/all")
-    @RequiresRole({UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR })
     public ResponseEntity<List<VolunteerDTO>> getAllVolunteers() {
         List<VolunteerDTO> volunteers = volunteerService.getAllVolunteers();
         return ResponseEntity.ok(volunteers);
     }
 
     @GetMapping("/events/all")
-    @RequiresRole({UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR })
     public ResponseEntity<List<EventDTO>> getAllEvents() {
         return new ResponseEntity<List<EventDTO>>(eventService.getAllEvents(), HttpStatus.OK);
     }
 
     @GetMapping("/posts/all")
-    @RequiresRole({UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR})
-    public ResponseEntity<List<SocialFeedResponseDTO>> getAllPosts(){
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR })
+    public ResponseEntity<List<SocialFeedResponseDTO>> getAllPosts() {
         List<SocialFeedResponseDTO> posts = socialFeedService.getAllPosts();
         return ResponseEntity.ok(posts);
     }
 
     @GetMapping("/organizations/{id}")
-    @RequiresRole({UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR })
     public ResponseEntity<ApiResponse<OrganizationDTO>> getOrganizationById(
             @Parameter(description = "Organization ID") @PathVariable Long id) {
         OrganizationDTO organization = organizationService.getOrganizationById(id);
         return ResponseEntity.ok(new ApiResponse<>("Organization retrieved successfully", organization));
+    }
+
+    @GetMapping("/latest-three")
+    public ResponseEntity<List<EventAndOrgDTO>> getLatestThreeEvents() {
+        List<EventAndOrgDTO> latestEvents = eventRecommendationService.getLatestThreeEvents();
+        return new ResponseEntity<List<EventAndOrgDTO>>(latestEvents, HttpStatus.OK);
     }
 }
