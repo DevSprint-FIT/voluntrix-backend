@@ -148,4 +148,10 @@ public class OrganizationService {
     public List<OrganizationNameDTO> getAllOrganizationNames() {
         return organizationRepository.findAllOrganizationIdNameAndUrl();
     }
+
+    public OrganizationDTO getOrganizationById(Long id) {
+        OrganizationEntity organization = organizationRepository.findById(id)
+            .orElseThrow(() -> new OrganizationNotFoundException("Organization not found with id: " + id));
+        return organizationDTOConverter.toOrganizationDTO(organization);
+    }
 }

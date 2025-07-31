@@ -22,6 +22,9 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long jwtExpirationMillis;
 
+    @Value("${jwt.refresh.expiration:604800000}") // 7 days default
+    private long refreshTokenDurationMs;
+
     public Key getSigningKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
@@ -68,6 +71,23 @@ public class JwtService {
 
     public String extractRole(String token) {
         return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
+    public long getJwtExpirationMillis() {
+        return jwtExpirationMillis;
+    }
+
+    public long getRefreshTokenDurationMs() {
+        return refreshTokenDurationMs;
+    }
+
+    public boolean isRefreshTokenValid(String refreshToken, UserDetails userDetails) {
+        try {
+            final String username = extractUsername(refreshToken);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(refreshToken));
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

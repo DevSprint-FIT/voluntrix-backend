@@ -124,6 +124,7 @@ public class EventDTOConverter {
         if (entity.getOrganization() != null) {
             dto.setOrganizationName(entity.getOrganization().getUser().getFullName());
             dto.setOrganizationImageUrl(entity.getOrganization().getImageUrl());
+            dto.setInstitute(entity.getOrganization().getInstitute());
         }
 
         return dto;

@@ -68,6 +68,9 @@ public class OrganizationEntity {
     private List<EventEntity> events = new ArrayList<>();
 
     @Column(nullable = true)
+    private String documentUrl;
+
+    @Column(nullable = true)
     private String facebookLink;
 
     @Column(nullable = true)

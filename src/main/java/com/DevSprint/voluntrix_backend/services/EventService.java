@@ -12,10 +12,12 @@ import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
+import com.DevSprint.voluntrix_backend.dtos.EventStatusUpdateDTO;
 import com.DevSprint.voluntrix_backend.entities.CategoryEntity;
 import com.DevSprint.voluntrix_backend.entities.EventEntity;
 import com.DevSprint.voluntrix_backend.entities.OrganizationEntity;
 import com.DevSprint.voluntrix_backend.entities.VolunteerEntity;
+import com.DevSprint.voluntrix_backend.enums.EventStatus;
 import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.DevSprint.voluntrix_backend.exceptions.CategoryNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
@@ -264,7 +266,6 @@ public class EventService {
         }
 
         if (categoryIds != null && !categoryIds.isEmpty()) {
-
             for (Long id : categoryIds) {
                 categoryRepository.findById(id)
                         .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + id));
@@ -278,6 +279,9 @@ public class EventService {
             });
         }
 
+        // Only include events with status COMPLETE or ACTIVE
+        spec = spec.and((root, query, criteriaBuilder) -> root.get("eventStatus").in("COMPLETE", "ACTIVE"));
+
         return entityDTOConvert.toEventAndOrgDTOList(eventRepository.findAll(spec));
     }
 
@@ -290,7 +294,12 @@ public class EventService {
     }
 
     public List<EventAndOrgDTO> searchEventsWithOrg(String query) {
-        List<EventEntity> events = eventRepository.findByEventTitleContainingIgnoreCase(query);
+        List<EventEntity> events = eventRepository.findByEventTitleContainingIgnoreCase(query)
+                .stream()
+                .filter(event -> event.getEventStatus() != null &&
+                        (event.getEventStatus().name().equalsIgnoreCase("ACTIVE") ||
+                                event.getEventStatus().name().equalsIgnoreCase("COMPLETE")))
+                .collect(Collectors.toList());
         return entityDTOConvert.toEventAndOrgDTOList(events);
     }
 
@@ -307,5 +316,54 @@ public class EventService {
         List<EventEntity> events = eventRepository.findByEventHost(eventHost);
 
         return entityDTOConvert.toEventDTOList(events);
+    }
+
+    public Integer incrementVolCount(Long eventId) {
+        EventEntity eventEntity = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
+        if (!eventEntity.getEventStatus().equals(EventStatus.ACTIVE)) {
+            throw new BadRequestException("Event is not active for recruitment.");
+        }
+
+        eventRepository.incrementVolunteerCountById(eventId);
+        eventEntity.setVolunteerCount(eventEntity.getVolunteerCount() + 1);
+
+        return eventEntity.getVolunteerCount();
+    }
+
+    public void updateEventStatus(Long eventId, EventStatusUpdateDTO statusUpdateDTO) {
+        EventEntity event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
+
+        if (statusUpdateDTO.getEventStatus() != null) {
+            event.setEventStatus(statusUpdateDTO.getEventStatus());
+        }
+
+        eventRepository.save(event);
+    }
+
+    public Long getTotalEventsCountByHostId(Long eventHostId) {
+        VolunteerEntity eventHost = volunteerRepository.findById(eventHostId)
+                .orElseThrow(() -> new VolunteerNotFoundException(
+                        "Event Host not found: " + eventHostId));
+
+        if (!Boolean.TRUE.equals(eventHost.getIsEventHost())) {
+            throw new BadRequestException("Volunteer is not an event host");
+        }
+
+        return eventRepository.countByEventHostIdWithActiveOrCompleteStatus(eventHostId);
+    }
+
+    public Long getTotalEventHostRewardPoints(Long eventHostId) {
+        VolunteerEntity eventHost = volunteerRepository.findById(eventHostId)
+                .orElseThrow(() -> new VolunteerNotFoundException(
+                        "Event Host not found: " + eventHostId));
+
+        if (!Boolean.TRUE.equals(eventHost.getIsEventHost())) {
+            throw new BadRequestException("Volunteer is not an event host");
+        }
+
+        return eventRepository.sumEventHostRewardPointsByHostId(eventHostId);
     }
 }

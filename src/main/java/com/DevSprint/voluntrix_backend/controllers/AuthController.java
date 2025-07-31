@@ -13,6 +13,8 @@ import com.DevSprint.voluntrix_backend.dtos.AuthResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.CurrentUserDTO;
 import com.DevSprint.voluntrix_backend.dtos.EmailVerificationResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.LoginRequestDTO;
+import com.DevSprint.voluntrix_backend.dtos.RefreshTokenRequestDTO;
+import com.DevSprint.voluntrix_backend.dtos.RefreshTokenResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.ResendVerificationRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.SignupRequestDTO;
 import com.DevSprint.voluntrix_backend.dtos.UserProfileStatusDTO;
@@ -23,7 +25,7 @@ import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
 import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
@@ -65,11 +67,6 @@ public class AuthController {
         return ResponseEntity.ok(new ApiResponse<AuthResponseDTO>("Login successful", response));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout() {
-        return ResponseEntity.ok(new ApiResponse<>("Logout successful", "You have been logged out successfully."));
-    }
-
     @PostMapping("/verify-email")
     public ResponseEntity<ApiResponse<EmailVerificationResponseDTO>> verifyEmail(@RequestBody @Valid VerifyEmailRequestDTO request) {
         ApiResponse<EmailVerificationResponseDTO> response = authService.verifyEmailWithEmailAndOtp(request.getEmail(), request.getOtp());
@@ -80,5 +77,22 @@ public class AuthController {
     public ResponseEntity<ApiResponse<String>> resendVerificationEmail(@RequestBody @Valid ResendVerificationRequestDTO request) {
         ApiResponse<String> response = authService.resendVerificationEmailByEmail(request.getEmail());
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<RefreshTokenResponseDTO>> refreshToken(@RequestBody @Valid RefreshTokenRequestDTO request) {
+        RefreshTokenResponseDTO response = authService.refreshToken(request);
+        return ResponseEntity.ok(new ApiResponse<>("Token refreshed successfully", response));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request) {
+        String refreshToken = request.getHeader("X-Refresh-Token");
+        if (refreshToken == null || refreshToken.trim().isEmpty()) {
+        return ResponseEntity.badRequest()
+            .body(new ApiResponse<>("Logout failed", "Refresh token is required"));
+        }
+        authService.logout(refreshToken);
+        return ResponseEntity.ok(new ApiResponse<>("Logout successful", "You have been logged out successfully."));
     }
 }

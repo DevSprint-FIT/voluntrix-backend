@@ -2,6 +2,7 @@ package com.DevSprint.voluntrix_backend.controllers;
 
 import com.DevSprint.voluntrix_backend.dtos.OrganizationCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
+import com.DevSprint.voluntrix_backend.dtos.OrganizationNameDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationUpdateDTO;
 import com.DevSprint.voluntrix_backend.services.OrganizationService;
 import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
@@ -48,7 +49,7 @@ public class OrganizationController {
         return ResponseEntity.ok(new ApiResponse<>("Organization retrieved successfully", organization));
     }
 
-    @PostMapping("/")
+    @PostMapping
     @RequiresRole(UserType.ORGANIZATION)
     public ResponseEntity<ApiResponse<OrganizationDTO>> createOrganization(@Valid @RequestBody OrganizationCreateDTO organizationCreateDTO) {
         Long userId = currentUserService.getCurrentUserId();
@@ -62,5 +63,11 @@ public class OrganizationController {
         Long userId = currentUserService.getCurrentUserId();
         OrganizationDTO updatedOrganization = organizationService.updateOrganizationProfile(organizationUpdateDTO, userId);
         return ResponseEntity.ok(new ApiResponse<>("Organization updated successfully", updatedOrganization));
+    }
+
+    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
+    @GetMapping("/names")
+    public ResponseEntity<List<OrganizationNameDTO>> getAllOrganizationNames() {
+        return new ResponseEntity<List<OrganizationNameDTO>>(organizationService.getAllOrganizationNames(), HttpStatus.OK);
     }
 }

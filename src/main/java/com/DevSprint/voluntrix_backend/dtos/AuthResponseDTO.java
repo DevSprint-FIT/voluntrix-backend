@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class AuthResponseDTO {
     
     private String token;
+    private String refreshToken;
     
     // User basic information
     private Long userId;
@@ -23,8 +24,8 @@ public class AuthResponseDTO {
     
     // User status information
     private String role;
-    private boolean isEmailVerified;
-    private boolean isProfileCompleted;
+    private boolean emailVerified;
+    private boolean profileCompleted;
     
     // Account metadata
     private LocalDateTime createdAt;
