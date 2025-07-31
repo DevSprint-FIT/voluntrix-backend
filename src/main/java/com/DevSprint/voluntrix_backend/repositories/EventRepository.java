@@ -44,4 +44,6 @@ public interface EventRepository extends JpaRepository<EventEntity, Long>, JpaSp
 
     @Query("SELECT COALESCE(SUM(e.eventHostRewardPoints), 0) FROM EventEntity e WHERE e.eventHost.volunteerId = :eventHostId")
     Long sumEventHostRewardPointsByHostId(@Param("eventHostId") Long eventHostId);
+
+    List<EventEntity> findByEventStatusIn(List<EventStatus> statuses);
 }

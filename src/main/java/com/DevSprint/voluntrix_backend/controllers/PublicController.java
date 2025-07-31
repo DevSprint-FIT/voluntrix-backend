@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.DevSprint.voluntrix_backend.dtos.EventAndOrgDTO;
-import com.DevSprint.voluntrix_backend.dtos.EventDTO;
 import com.DevSprint.voluntrix_backend.dtos.EventNameDTO;
 import com.DevSprint.voluntrix_backend.dtos.InstituteDTO;
 import com.DevSprint.voluntrix_backend.dtos.OrganizationDTO;
@@ -86,8 +85,13 @@ public class PublicController {
 
     @GetMapping("/events/all")
     @RequiresRole({ UserType.VOLUNTEER, UserType.ADMIN, UserType.ORGANIZATION, UserType.SPONSOR })
-    public ResponseEntity<List<EventDTO>> getAllEvents() {
-        return new ResponseEntity<List<EventDTO>>(eventService.getAllEvents(), HttpStatus.OK);
+    public ResponseEntity<List<EventAndOrgDTO>> getAllEvents() {
+        return new ResponseEntity<List<EventAndOrgDTO>>(eventService.getAllEvents(), HttpStatus.OK);
+    }
+
+    @GetMapping("/events/available/all")
+    public ResponseEntity<List<EventAndOrgDTO>> getAllAvailableEvents() {
+        return new ResponseEntity<List<EventAndOrgDTO>>(eventService.getAllAvailableEvents(), HttpStatus.OK);
     }
 
     @GetMapping("/posts/all")
