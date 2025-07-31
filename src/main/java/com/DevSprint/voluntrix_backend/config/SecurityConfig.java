@@ -43,7 +43,8 @@ public class SecurityConfig {
                             "/api/auth/signup",
                             "/api/auth/login", 
                             "/api/auth/verify-email",
-                            "/api/auth/resend-verification"
+                            "/api/auth/resend-verification",
+                            "/api/public/**"
                     ).permitAll()
                     .requestMatchers("/api/auth/**").authenticated() // Other auth endpoints need auth
                     .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
