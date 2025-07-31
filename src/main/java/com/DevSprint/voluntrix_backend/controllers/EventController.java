@@ -214,6 +214,7 @@ public class EventController {
     public ResponseEntity<Integer> recruitVolunteer(@PathVariable Long eventId) {
         Integer updatedVolCount = eventService.incrementVolCount(eventId);
         return new ResponseEntity<Integer>(updatedVolCount, HttpStatus.OK);
+    }
 
     @PatchMapping("/{eventId}/status")
     @RequiresRole(UserType.ORGANIZATION)
