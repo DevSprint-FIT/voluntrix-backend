@@ -121,7 +121,7 @@ public class PublicController {
         return new ResponseEntity<List<EventAndOrgDTO>>(results, HttpStatus.OK);
     }
 
-    @GetMapping("/filter-with-org")
+    @GetMapping("/events/filter-with-org")
     public ResponseEntity<List<EventAndOrgDTO>> getFilteredEventWithOrg(
             @RequestParam(value = "eventLocation", required = false) String eventLocation,
             @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
