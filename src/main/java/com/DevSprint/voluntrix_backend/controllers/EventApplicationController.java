@@ -35,9 +35,8 @@ public class EventApplicationController {
     private final EventApplicationService eventApplicationService;
     private final CurrentUserService currentUserService;
 
-
     @GetMapping("/all")
-    @RequiresRole({UserType.ADMIN, UserType.VOLUNTEER})
+    @RequiresRole({ UserType.ADMIN, UserType.VOLUNTEER })
     public ResponseEntity<List<EventApplicationDTO>> getAllEventApplications() {
         return new ResponseEntity<List<EventApplicationDTO>>(eventApplicationService.getAllEventApplications(),
                 HttpStatus.OK);
@@ -55,7 +54,7 @@ public class EventApplicationController {
     }
 
     @GetMapping("/{eventApplicationId}/details")
-    @RequiresRole({UserType.ADMIN, UserType.VOLUNTEER})
+    @RequiresRole({ UserType.ADMIN, UserType.VOLUNTEER })
     public ResponseEntity<EventApplicationDTO> getEventApplicationById(@PathVariable Long eventApplicationId) {
         if (eventApplicationId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -66,19 +65,21 @@ public class EventApplicationController {
     }
 
     @PatchMapping(value = "/{eventApplicationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @RequiresRole({UserType.VOLUNTEER, UserType.ADMIN})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ADMIN })
     public ResponseEntity<Void> updateEventApplication(@PathVariable Long eventApplicationId,
             @Valid @RequestBody EventApplicationCreateDTO eventApplicationCreateDTO) {
         if (eventApplicationId == null || eventApplicationCreateDTO == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        eventApplicationService.updateEventApplication(eventApplicationCreateDTO, eventApplicationId);
+        Long volunteerId = currentUserService.getCurrentEntityId();
+
+        eventApplicationService.updateEventApplication(eventApplicationCreateDTO, volunteerId, eventApplicationId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{eventApplicationId}")
-    @RequiresRole({UserType.VOLUNTEER, UserType.ADMIN})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ADMIN })
     public ResponseEntity<Void> deleteEventApplication(@PathVariable Long eventApplicationId) {
         if (eventApplicationId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -89,7 +90,7 @@ public class EventApplicationController {
     }
 
     @GetMapping("/event/{eventId}")
-    @RequiresRole({UserType.VOLUNTEER, UserType.ADMIN})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ADMIN })
     public ResponseEntity<List<EventApplicationDTO>> getEventApplicationsByEventId(@PathVariable Long eventId) {
         if (eventId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -100,7 +101,7 @@ public class EventApplicationController {
     }
 
     @GetMapping("/event/volunteers/{eventId}")
-    @RequiresRole({UserType.VOLUNTEER, UserType.ADMIN})
+    @RequiresRole({ UserType.VOLUNTEER, UserType.ADMIN })
     public ResponseEntity<List<EventApplicationAndVolDTO>> getEventApplicationsAndVolunteersByEventId(
             @PathVariable Long eventId) {
 
