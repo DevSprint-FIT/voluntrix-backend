@@ -22,6 +22,7 @@ public class SponsorDTO {
     private String website;
     private String sponsorshipNote;
     private String documentUrl;
+    private String imageUrl;
     private String linkedinProfile;
     private String address;
     private LocalDateTime appliedAt;

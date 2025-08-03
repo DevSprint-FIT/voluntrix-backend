@@ -51,6 +51,9 @@ public class SponsorEntity {
     private String documentUrl;
 
     @Column(nullable = true)
+    private String imageUrl;
+
+    @Column(nullable = true)
     private String linkedinProfile;
 
     @Column(nullable = true)
