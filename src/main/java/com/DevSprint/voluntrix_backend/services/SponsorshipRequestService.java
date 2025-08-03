@@ -5,11 +5,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.DevSprint.voluntrix_backend.dtos.SponsorRequestTableDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDTO;
 import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorshipEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorshipRequestEntity;
+import com.DevSprint.voluntrix_backend.enums.SponsorshipPaymentStatus;
 import com.DevSprint.voluntrix_backend.enums.SponsorshipRequestStatus;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.SponsorNotFoundException;
@@ -17,6 +19,7 @@ import com.DevSprint.voluntrix_backend.exceptions.SponsorshipIsNotAvailableExcep
 import com.DevSprint.voluntrix_backend.exceptions.SponsorshipNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.SponsorshipRequestNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
+import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorshipRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorshipRequestRepository;
@@ -37,6 +40,7 @@ public class SponsorshipRequestService {
     private final SponsorshipRequestDTOConverter sponsorshipDTOConverter;
     private final SponsorRepository sponsorRepository;
     private final EventRepository eventRepository;
+    private final PaymentRepository paymentRepository;
 
     public SponsorshipRequestDTO createSponsorshipRequest(SponsorshipRequestCreateDTO createDTO) {
         SponsorshipEntity sponsorship = sponsorshipRepository.findById(createDTO.getSponsorshipId())
@@ -79,23 +83,37 @@ public class SponsorshipRequestService {
         return sponsorshipDTOConverter.toSponsorshipRequestDTOList(requests);
     }
 
-    public List<SponsorshipRequestDTO> getSponsorshipRequestsBySponsorIdAndStatus(Long sponsorId, String status) {
+    public List<SponsorRequestTableDTO> getSponsorshipRequestsBySponsorIdAndStatus(Long sponsorId, SponsorshipRequestStatus status) {
         sponsorRepository.findById(sponsorId)
                 .orElseThrow(() -> new SponsorNotFoundException("Sponsor not found with ID: " + sponsorId));
-
-        List<SponsorshipRequestEntity> requests = sponsorshipRequestRepository.findBySponsor_SponsorId(sponsorId);
-        if (requests.isEmpty()) {
-            throw new SponsorshipRequestNotFoundException("No sponsorship requests found for sponsor ID: " + sponsorId);
+    
+        List<Object[]> sponsorshipDetails = sponsorshipRequestRepository.findEventDetailsWithSponsorshipBySponsorIdAndStatus(sponsorId, status);
+        if (sponsorshipDetails.isEmpty()) {
+            throw new SponsorshipRequestNotFoundException("No sponsorship requests found for sponsor ID: " + sponsorId + " with status: " + status);
         }
 
-        // Filter by status if needed
-        if (!"ALL".equalsIgnoreCase(status)) {
-            requests = requests.stream()
-                    .filter(req -> req.getStatus().name().equals(status))
-                    .collect(Collectors.toList());
+        Long eventId = (Long) sponsorshipDetails.get(0)[0];
+
+        if (status.name() == "APPROVED") {
+            Double totalAmountPaid = paymentRepository.sumTotalAmountPaidByEventIdAndSponsorId(eventId, sponsorId);
+            SponsorshipPaymentStatus paymentStatus;
+
+            if(totalAmountPaid == null) {
+                totalAmountPaid = 0.0;
+                paymentStatus = SponsorshipPaymentStatus.UNPAID;
+            }else if (totalAmountPaid > (Integer) sponsorshipDetails.get(0)[4]) {
+                throw new IllegalArgumentException("Total amount paid exceeds the sponsorship price.");
+            } else if(totalAmountPaid < (Integer) sponsorshipDetails.get(0)[4]) {
+                paymentStatus = SponsorshipPaymentStatus.PARTIALPAID;
+            } else {
+                paymentStatus = SponsorshipPaymentStatus.FULLPAID;
+            }
+
+            return sponsorshipDTOConverter.toSponsorRequestTableDTOList(sponsorshipDetails, paymentStatus, totalAmountPaid);
+
         }
 
-        return sponsorshipDTOConverter.toSponsorshipRequestDTOList(requests);
+        return sponsorshipDTOConverter.toSponsorRequestTableDTOList(sponsorshipDetails);
     }
 
     public List<SponsorshipRequestDTO> getSponsorshipRequestsByEventIdAndStatus(Long eventId, String status) {

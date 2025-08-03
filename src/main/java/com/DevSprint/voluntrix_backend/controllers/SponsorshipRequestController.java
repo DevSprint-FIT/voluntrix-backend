@@ -14,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.DevSprint.voluntrix_backend.dtos.SponsorRequestTableDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDTO;
 import com.DevSprint.voluntrix_backend.services.SponsorshipRequestService;
 import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
 import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 import com.DevSprint.voluntrix_backend.validation.RequiresRole;
+import com.DevSprint.voluntrix_backend.enums.SponsorshipRequestStatus;
 import com.DevSprint.voluntrix_backend.enums.UserType;
 
 import jakarta.validation.Valid;
@@ -60,10 +62,10 @@ public class SponsorshipRequestController {
 
     @GetMapping("/sponsor/status/{status}")
     @RequiresRole(UserType.SPONSOR)
-    public ResponseEntity<ApiResponse<List<SponsorshipRequestDTO>>> getSponsorshipRequestsBySponsorIdAndStatus(
-            @PathVariable String status) {
+    public ResponseEntity<ApiResponse<List<SponsorRequestTableDTO>>> getSponsorshipRequestsBySponsorIdAndStatus(
+            @PathVariable SponsorshipRequestStatus status) {
         Long sponsorId = currentUserService.getCurrentEntityId();
-        List<SponsorshipRequestDTO> requests = sponsorshipRequestService.getSponsorshipRequestsBySponsorIdAndStatus(sponsorId, status);
+        List<SponsorRequestTableDTO> requests = sponsorshipRequestService.getSponsorshipRequestsBySponsorIdAndStatus(sponsorId, status);
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship requests retrieved successfully", requests));
     }
 
