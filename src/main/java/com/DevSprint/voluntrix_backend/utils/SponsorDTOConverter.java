@@ -21,6 +21,7 @@ public class SponsorDTOConverter {
         // Map from associated UserEntity
         dto.setName(sponsor.getUser().getFullName());
         dto.setEmail(sponsor.getUser().getEmail());
+        dto.setHandle(sponsor.getUser().getHandle());
         
         // Map sponsor-specific fields
         dto.setCompany(sponsor.getCompany());

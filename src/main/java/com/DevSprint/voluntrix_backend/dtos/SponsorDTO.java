@@ -14,6 +14,7 @@ import lombok.Setter;
 public class SponsorDTO {
     private Long sponsorId;
     private String name; 
+    private String handle;
     private String email;
     private String company;
     private boolean verified;

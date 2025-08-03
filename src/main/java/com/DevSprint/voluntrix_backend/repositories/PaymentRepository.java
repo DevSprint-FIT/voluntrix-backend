@@ -56,4 +56,14 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, String>{
     """)
     List<MonthlyDonationData> getMonthlyDonationsForOrganizationAndYear(@Param("organizationId") Long organizationId,@Param("year") int year);
 
+    @Query("""
+            SELECT SUM(p.amount) 
+            FROM PaymentEntity p
+            WHERE p.event.id = :eventId
+            AND p.sponsor.id = :sponsorId
+            AND p.transactionType = 'SPONSORSHIP'
+            AND p.status = 'SUCCESS'
+    """)
+    Double sumTotalAmountPaidByEventIdAndSponsorId(@Param("eventId") Long eventId, @Param("sponsorId") Long sponsorId);
+
 }
