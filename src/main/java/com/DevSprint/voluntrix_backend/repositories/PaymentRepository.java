@@ -65,5 +65,5 @@ public interface PaymentRepository extends JpaRepository<PaymentEntity, String>{
             AND p.status = 'SUCCESS'
     """)
     Double sumTotalAmountPaidByEventIdAndSponsorId(@Param("eventId") Long eventId, @Param("sponsorId") Long sponsorId);
-
+    
 }

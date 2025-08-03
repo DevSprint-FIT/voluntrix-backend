@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.DevSprint.voluntrix_backend.dtos.SponsorRequestTableDTO;
+import com.DevSprint.voluntrix_backend.dtos.SponsorshipPaymentDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponReqWithNameDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDTO;
 import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
@@ -110,5 +111,17 @@ public class SponsorshipRequestDTOConverter {
         return requests.stream()
                 .map(this::toSponReqWithNameDTO)
                 .toList();
+    }
+
+    public SponsorshipPaymentDTO toSponsorshipPaymentDTO(Object[] sponsorshipDetails, Long sponsorId, String orderId, Double payableAmount) {
+        SponsorshipPaymentDTO dto = new SponsorshipPaymentDTO();
+        dto.setEventTitle((String) sponsorshipDetails[1]);
+        dto.setOrderId(orderId);
+        dto.setType((String) sponsorshipDetails[2]);
+        dto.setPrice((Integer) sponsorshipDetails[3]);
+        dto.setBenefits((String) sponsorshipDetails[4]);
+        dto.setPayableAmount(payableAmount.intValue());
+
+        return dto;
     }
 }

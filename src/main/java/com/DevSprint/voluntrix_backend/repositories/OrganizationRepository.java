@@ -22,4 +22,7 @@ public interface OrganizationRepository extends JpaRepository<OrganizationEntity
     // JPQL Query
     @Query("SELECT new com.DevSprint.voluntrix_backend.dtos.OrganizationNameDTO(e.id, e.user.fullName, e.imageUrl) FROM OrganizationEntity e")
     List<OrganizationNameDTO> findAllOrganizationIdNameAndUrl();
+
+    @Query("SELECT o.imageUrl FROM OrganizationEntity o WHERE o.user.userId = :userId")
+    Optional<String> findImageUrlByUserId(@Param("userId") Long userId);
 }

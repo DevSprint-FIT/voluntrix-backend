@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.SponsorRequestTableDTO;
+import com.DevSprint.voluntrix_backend.dtos.SponsorshipPaymentDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponReqWithNameDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDTO;
@@ -42,6 +43,7 @@ public class SponsorshipRequestService {
     private final SponsorRepository sponsorRepository;
     private final EventRepository eventRepository;
     private final PaymentRepository paymentRepository;
+    private final PaymentService paymentService;
 
     public SponsorshipRequestDTO createSponsorshipRequest(SponsorshipRequestCreateDTO createDTO) {
         SponsorshipEntity sponsorship = sponsorshipRepository.findById(createDTO.getSponsorshipId())
@@ -98,7 +100,7 @@ public class SponsorshipRequestService {
 
         Long eventId = (Long) sponsorshipDetails.get(0)[0];
 
-        if (status.name() == "APPROVED") {
+        if (status.name().equals("APPROVED")) {
             Double totalAmountPaid = paymentRepository.sumTotalAmountPaidByEventIdAndSponsorId(eventId, sponsorId);
             SponsorshipPaymentStatus paymentStatus;
 
@@ -169,5 +171,42 @@ public class SponsorshipRequestService {
                 .findBySponsorship_Event_EventId(eventIdLong);
 
         return sponsorshipDTOConverter.toSponReqWithNameDTOList(requests);
+    }
+
+    public SponsorshipPaymentDTO getSponsorshipRequestById(Long requestId, Long sponsorId) {
+        sponsorshipRequestRepository.findByRequestId(requestId)
+                .orElseThrow(() -> new SponsorshipRequestNotFoundException(
+                        "Sponsorship request not found with ID: " + requestId));
+
+        Object[] sponsorshipDetails = sponsorshipRequestRepository
+                .findEventDetailsWithSponsorshipByRequestIdAndSponsorId(requestId, sponsorId)
+                .orElseThrow(() -> new SponsorshipRequestNotFoundException(
+                        "Sponsorship request not found with ID: " + requestId + " for sponsor ID: " + sponsorId));
+        
+        // Check if the array is empty
+        if (sponsorshipDetails.length == 0) {
+            throw new SponsorshipRequestNotFoundException(
+                "No sponsorship details found for request ID: " + requestId + " and sponsor ID: " + sponsorId);
+        }
+        
+        // Extract the nested array (the actual data is inside the first element)
+        Object[] actualData = (Object[]) sponsorshipDetails[0];
+
+        System.out.println("Actual data length: " + actualData.length);
+        for (int i = 0; i < actualData.length; i++) {
+            Object item = actualData[i];
+            System.out.println("Index " + i + ": Type=" + 
+                (item != null ? item.getClass().getSimpleName() : "null") + 
+                ", Value=" + item);
+        }
+
+        String orderId = paymentService.generateOrderId("SPONSORSHIP");
+        Long eventId = (Long) actualData[0];
+        Double payableAmount = ((Number) actualData[3]).doubleValue() - paymentRepository.sumTotalAmountPaidByEventIdAndSponsorId(eventId, sponsorId);
+        System.out.println("Payable Amount: " + payableAmount);
+        SponsorshipPaymentDTO sponsorshipPaymentDTO = sponsorshipDTOConverter
+                .toSponsorshipPaymentDTO(actualData, sponsorId, orderId, payableAmount);
+
+        return sponsorshipPaymentDTO;
     }
 }

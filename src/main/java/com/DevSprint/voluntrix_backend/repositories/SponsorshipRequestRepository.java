@@ -33,17 +33,18 @@ public interface SponsorshipRequestRepository extends JpaRepository<SponsorshipR
         @Param("status") SponsorshipRequestStatus status
     );
 
-    // @Query("""
-    //     SELECT new com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestEventDetailsDTO(
-    //         e.eventId, e.eventTitle, e.startTime, s.packageType, s.price
-    //     )
-    //     FROM SponsorshipRequestEntity sr 
-    //     JOIN sr.sponsorship s 
-    //     JOIN s.event e 
-    //     WHERE sr.sponsor.sponsorId = :sponsorId
-    //     """)
-    // List<SponsorshipRequestEventDetailsDTO> findAllEventDetailsForSponsor(
-    //     @Param("sponsorId") Long sponsorId
-    // );
+    @Query("""
+        SELECT e.eventId, e.eventTitle, s.type, s.price, s.benefits, sr.requestId
+        FROM SponsorshipRequestEntity sr 
+        JOIN sr.sponsorship s 
+        JOIN s.event e 
+        WHERE sr.requestId = :requestId 
+        AND sr.sponsor.sponsorId = :sponsorId
+        """)
+    Optional<Object[]> findEventDetailsWithSponsorshipByRequestIdAndSponsorId(
+        @Param("requestId") Long requestId,
+        @Param("sponsorId") Long sponsorId
+    );
+
 
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.DevSprint.voluntrix_backend.dtos.SponsorRequestTableDTO;
+import com.DevSprint.voluntrix_backend.dtos.SponsorshipPaymentDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponReqWithNameDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDTO;
@@ -102,5 +103,14 @@ public class SponsorshipRequestController {
             @PathVariable Long eventId) {
         List<SponReqWithNameDTO> requests = sponsorshipRequestService.getSponReqWithNameDTOs(eventId);
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship requests retrieved successfully", requests));
+    }
+
+    @GetMapping("/sponsor-requests/{requestId}")
+    @RequiresRole({ UserType.SPONSOR })
+    public ResponseEntity<ApiResponse<SponsorshipPaymentDTO>> getSponsorshipRequestById(
+            @PathVariable Long requestId) {
+        Long sponsorId = currentUserService.getCurrentEntityId();
+        SponsorshipPaymentDTO request = sponsorshipRequestService.getSponsorshipRequestById(requestId, sponsorId);
+        return ResponseEntity.ok(new ApiResponse<>("Sponsorship request retrieved successfully", request));
     }
 }
