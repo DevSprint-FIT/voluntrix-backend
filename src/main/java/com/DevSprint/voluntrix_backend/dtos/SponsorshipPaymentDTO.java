@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 public class SponsorshipPaymentDTO implements Serializable{
     private String orderId;
     private String eventTitle;
+    private Long eventId;
+    private Long sponsorId;
     private Integer price;
     private String type;
     private String benefits;

@@ -121,6 +121,8 @@ public class SponsorshipRequestDTOConverter {
         dto.setPrice((Integer) sponsorshipDetails[3]);
         dto.setBenefits((String) sponsorshipDetails[4]);
         dto.setPayableAmount(payableAmount.intValue());
+        dto.setSponsorId(sponsorId);
+        dto.setEventId((Long) sponsorshipDetails[0]);
 
         return dto;
     }
