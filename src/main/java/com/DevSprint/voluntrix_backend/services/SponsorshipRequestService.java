@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.DevSprint.voluntrix_backend.dtos.SponsorRequestTableDTO;
+import com.DevSprint.voluntrix_backend.dtos.SponReqWithNameDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDTO;
 import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
@@ -48,17 +49,19 @@ public class SponsorshipRequestService {
                         "Sponsorship not found with ID: " + createDTO.getSponsorshipId()));
 
         SponsorEntity sponsor = sponsorRepository.findById(createDTO.getSponsorId())
-                .orElseThrow(() -> new SponsorNotFoundException("Sponsor not found with ID: " + createDTO.getSponsorId()));
+                .orElseThrow(
+                        () -> new SponsorNotFoundException("Sponsor not found with ID: " + createDTO.getSponsorId()));
 
         // check availability
-        if(!sponsorship.isAvailable()) {
+        if (!sponsorship.isAvailable()) {
             throw new SponsorshipIsNotAvailableException("Sponsorship is not available for requests.");
         }
 
-        SponsorshipRequestEntity requestEntity = SponsorshipRequestDTOConverter.toSponsorshipRequestEntity(sponsor, sponsorship);
+        SponsorshipRequestEntity requestEntity = SponsorshipRequestDTOConverter.toSponsorshipRequestEntity(sponsor,
+                sponsorship);
 
         SponsorshipRequestEntity savedRequest = sponsorshipRequestRepository.save(requestEntity);
-        
+
         return sponsorshipDTOConverter.toSponsorshipRequestDTO(savedRequest);
     }
 
@@ -67,7 +70,7 @@ public class SponsorshipRequestService {
                 .orElseThrow(() -> new SponsorNotFoundException("Sponsor not found with ID: " + sponsorId));
 
         List<SponsorshipRequestEntity> requests = sponsorshipRequestRepository.findBySponsor_SponsorId(sponsorId);
-        
+
         return sponsorshipDTOConverter.toSponsorshipRequestDTOList(requests);
     }
 
@@ -76,9 +79,10 @@ public class SponsorshipRequestService {
                 .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
 
         List<SponsorshipRequestEntity> requests = sponsorshipRequestRepository.findBySponsorship_Event_EventId(eventId);
-        if (requests.isEmpty()) {
-            throw new SponsorshipRequestNotFoundException("No sponsorship requests found for event ID: " + eventId);
-        }
+        // if (requests.isEmpty()) {
+        // throw new SponsorshipRequestNotFoundException("No sponsorship requests found
+        // for event ID: " + eventId);
+        // }
 
         return sponsorshipDTOConverter.toSponsorshipRequestDTOList(requests);
     }
@@ -137,10 +141,12 @@ public class SponsorshipRequestService {
 
     public SponsorshipRequestDTO updateSponsorshipRequestStatus(Long requestId, String status) {
         SponsorshipRequestEntity request = sponsorshipRequestRepository.findByRequestId(requestId)
-                .orElseThrow(() -> new SponsorshipRequestNotFoundException("Sponsorship request not found with ID: " + requestId));
+                .orElseThrow(() -> new SponsorshipRequestNotFoundException(
+                        "Sponsorship request not found with ID: " + requestId));
 
         // Validate status
-        if (!"PENDING".equalsIgnoreCase(status) && !"APPROVED".equalsIgnoreCase(status) && !"REJECTED".equalsIgnoreCase(status)) {
+        if (!"PENDING".equalsIgnoreCase(status) && !"APPROVED".equalsIgnoreCase(status)
+                && !"REJECTED".equalsIgnoreCase(status)) {
             throw new IllegalArgumentException("Invalid status: " + status);
         }
 
@@ -153,7 +159,15 @@ public class SponsorshipRequestService {
 
     public void deleteSponsorshipRequest(Long requestId) {
         SponsorshipRequestEntity request = sponsorshipRequestRepository.findByRequestId(requestId)
-                .orElseThrow(() -> new SponsorshipRequestNotFoundException("Sponsorship request not found with ID: " + requestId));
+                .orElseThrow(() -> new SponsorshipRequestNotFoundException(
+                        "Sponsorship request not found with ID: " + requestId));
         sponsorshipRequestRepository.delete(request);
+    }
+
+    public List<SponReqWithNameDTO> getSponReqWithNameDTOs(Long eventIdLong) {
+        List<SponsorshipRequestEntity> requests = sponsorshipRequestRepository
+                .findBySponsorship_Event_EventId(eventIdLong);
+
+        return sponsorshipDTOConverter.toSponReqWithNameDTOList(requests);
     }
 }

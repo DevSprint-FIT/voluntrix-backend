@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.DevSprint.voluntrix_backend.dtos.SponsorRequestTableDTO;
+import com.DevSprint.voluntrix_backend.dtos.SponReqWithNameDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDTO;
 import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorshipEntity;
@@ -17,7 +18,8 @@ import com.DevSprint.voluntrix_backend.enums.SponsorshipRequestStatus;
 @Component
 public class SponsorshipRequestDTOConverter {
 
-    public static SponsorshipRequestEntity toSponsorshipRequestEntity(SponsorEntity sponsor, SponsorshipEntity sponsorship) {
+    public static SponsorshipRequestEntity toSponsorshipRequestEntity(SponsorEntity sponsor,
+            SponsorshipEntity sponsorship) {
         SponsorshipRequestEntity requestEntity = new SponsorshipRequestEntity();
         requestEntity.setSponsor(sponsor);
         requestEntity.setSponsorship(sponsorship);
@@ -66,29 +68,47 @@ public class SponsorshipRequestDTOConverter {
     }
 
     public List<SponsorRequestTableDTO> toSponsorRequestTableDTOList(List<Object[]> sponsorshipDetails,
-            SponsorshipPaymentStatus paymentStatus, Double totalAmountPaid) {
-                return sponsorshipDetails.stream()
-                .map(detail -> {
-                    Long eventId = (Long) detail[0];
-                    String eventTitle = (String) detail[1];
-                    LocalDate eventStartDate = (LocalDate) detail[2];
-                    String type = (String) detail[3];
-                    Integer price = (Integer) detail[4];
-                    Long requestId = (Long) detail[5];
+        SponsorshipPaymentStatus paymentStatus, Double totalAmountPaid) {
+            return sponsorshipDetails.stream()
+            .map(detail -> {
+                Long eventId = (Long) detail[0];
+                String eventTitle = (String) detail[1];
+                LocalDate eventStartDate = (LocalDate) detail[2];
+                String type = (String) detail[3];
+                Integer price = (Integer) detail[4];
+                Long requestId = (Long) detail[5];
 
-                    SponsorRequestTableDTO dto = new SponsorRequestTableDTO();
-                    dto.setEventId(eventId);
-                    dto.setEventTitle(eventTitle);
-                    dto.setEventStartDate(eventStartDate);
-                    dto.setType(type);
-                    dto.setPrice(price);
-                    dto.setRequestId(requestId);
-                    dto.setPaymentStatus(paymentStatus);
-                    dto.setTotalAmountPaid(totalAmountPaid);
+                SponsorRequestTableDTO dto = new SponsorRequestTableDTO();
+                dto.setEventId(eventId);
+                dto.setEventTitle(eventTitle);
+                dto.setEventStartDate(eventStartDate);
+                dto.setType(type);
+                dto.setPrice(price);
+                dto.setRequestId(requestId);
+                dto.setPaymentStatus(paymentStatus);
+                dto.setTotalAmountPaid(totalAmountPaid);
 
-                    return dto;
-                })
-                .collect(Collectors.toList());
+                return dto;
+            })
+            .collect(Collectors.toList());
+        }
 
+    public SponReqWithNameDTO toSponReqWithNameDTO(SponsorshipRequestEntity savedRequest) {
+        SponReqWithNameDTO dto = new SponReqWithNameDTO();
+        dto.setRequestId(savedRequest.getRequestId());
+        dto.setStatus(savedRequest.getStatus());
+        dto.setSponsorId(savedRequest.getSponsor().getSponsorId());
+        dto.setSponsorshipId(savedRequest.getSponsorship().getSponsorshipId());
+        dto.setCompany(savedRequest.getSponsor().getCompany());
+        dto.setJobTitle(savedRequest.getSponsor().getJobTitle());
+        dto.setSponsorshipName(savedRequest.getSponsorship().getType());
+
+        return dto;
+    }
+
+    public List<SponReqWithNameDTO> toSponReqWithNameDTOList(List<SponsorshipRequestEntity> requests) {
+        return requests.stream()
+                .map(this::toSponReqWithNameDTO)
+                .toList();
     }
 }
