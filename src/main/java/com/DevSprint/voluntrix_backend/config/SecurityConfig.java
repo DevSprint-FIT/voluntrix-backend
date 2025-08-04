@@ -78,6 +78,7 @@ public class SecurityConfig {
                 "https://voluntrix-frontend.vercel.app", "https://voluntrix-devsprint.vercel.app",
                 "https://92079f1daded.ngrok-free.app"));
         config.setAllowedHeaders(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowCredentials(true); // Needed if frontend sends credentials (e.g., tokens)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
