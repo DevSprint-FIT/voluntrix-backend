@@ -14,12 +14,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.DevSprint.voluntrix_backend.dtos.SponsorRequestTableDTO;
+import com.DevSprint.voluntrix_backend.dtos.SponsorshipPaymentDTO;
+import com.DevSprint.voluntrix_backend.dtos.SponReqWithNameDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDTO;
 import com.DevSprint.voluntrix_backend.services.SponsorshipRequestService;
 import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
 import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 import com.DevSprint.voluntrix_backend.validation.RequiresRole;
+import com.DevSprint.voluntrix_backend.enums.SponsorshipRequestStatus;
 import com.DevSprint.voluntrix_backend.enums.UserType;
 
 import jakarta.validation.Valid;
@@ -30,18 +34,18 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/sponsorship-requests")
 @Validated
 public class SponsorshipRequestController {
-    
+
     private final SponsorshipRequestService sponsorshipRequestService;
     private final CurrentUserService currentUserService;
 
     @PostMapping
     @RequiresRole(UserType.SPONSOR)
-    public ResponseEntity<ApiResponse<SponsorshipRequestDTO>> createSponsorshipRequest(@Valid @RequestBody SponsorshipRequestCreateDTO createDTO) {
+    public ResponseEntity<ApiResponse<SponsorshipRequestDTO>> createSponsorshipRequest(
+            @Valid @RequestBody SponsorshipRequestCreateDTO createDTO) {
         SponsorshipRequestDTO createdRequest = sponsorshipRequestService.createSponsorshipRequest(createDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>("Sponsorship request created successfully", createdRequest));
     }
-
 
     @GetMapping("/sponsor/my-requests")
     @RequiresRole(UserType.SPONSOR)
@@ -52,34 +56,37 @@ public class SponsorshipRequestController {
     }
 
     @GetMapping("/event/{eventId}")
-    @RequiresRole({UserType.ORGANIZATION, UserType.VOLUNTEER})
-    public ResponseEntity<ApiResponse<List<SponsorshipRequestDTO>>> getSponsorshipRequestsByEventId(@PathVariable Long eventId) {
+    @RequiresRole({ UserType.ORGANIZATION, UserType.VOLUNTEER })
+    public ResponseEntity<ApiResponse<List<SponsorshipRequestDTO>>> getSponsorshipRequestsByEventId(
+            @PathVariable Long eventId) {
         List<SponsorshipRequestDTO> requests = sponsorshipRequestService.getSponsorshipRequestsByEventId(eventId);
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship requests retrieved successfully", requests));
     }
 
     @GetMapping("/sponsor/status/{status}")
     @RequiresRole(UserType.SPONSOR)
-    public ResponseEntity<ApiResponse<List<SponsorshipRequestDTO>>> getSponsorshipRequestsBySponsorIdAndStatus(
-            @PathVariable String status) {
+    public ResponseEntity<ApiResponse<List<SponsorRequestTableDTO>>> getSponsorshipRequestsBySponsorIdAndStatus(
+            @PathVariable SponsorshipRequestStatus status) {
         Long sponsorId = currentUserService.getCurrentEntityId();
-        List<SponsorshipRequestDTO> requests = sponsorshipRequestService.getSponsorshipRequestsBySponsorIdAndStatus(sponsorId, status);
+        List<SponsorRequestTableDTO> requests = sponsorshipRequestService.getSponsorshipRequestsBySponsorIdAndStatus(sponsorId, status);
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship requests retrieved successfully", requests));
     }
 
     @GetMapping("/event/{eventId}/status/{status}")
-    @RequiresRole({UserType.ORGANIZATION, UserType.VOLUNTEER})
+    @RequiresRole({ UserType.ORGANIZATION, UserType.VOLUNTEER })
     public ResponseEntity<ApiResponse<List<SponsorshipRequestDTO>>> getSponsorshipRequestsByEventIdAndStatus(
             @PathVariable Long eventId, @PathVariable String status) {
-        List<SponsorshipRequestDTO> requests = sponsorshipRequestService.getSponsorshipRequestsByEventIdAndStatus(eventId, status);
+        List<SponsorshipRequestDTO> requests = sponsorshipRequestService
+                .getSponsorshipRequestsByEventIdAndStatus(eventId, status);
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship requests retrieved successfully", requests));
     }
 
     @PatchMapping("/{requestId}/status/{status}")
-    @RequiresRole(UserType.SPONSOR)
+    @RequiresRole(UserType.VOLUNTEER)
     public ResponseEntity<ApiResponse<SponsorshipRequestDTO>> updateSponsorshipRequestStatus(
             @PathVariable Long requestId, @PathVariable String status) {
-        SponsorshipRequestDTO updatedRequest = sponsorshipRequestService.updateSponsorshipRequestStatus(requestId, status);
+        SponsorshipRequestDTO updatedRequest = sponsorshipRequestService.updateSponsorshipRequestStatus(requestId,
+                status);
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship request status updated successfully", updatedRequest));
     }
 
@@ -90,4 +97,20 @@ public class SponsorshipRequestController {
         return ResponseEntity.ok(new ApiResponse<>("Sponsorship request deleted successfully", null));
     }
 
+    @GetMapping("/event/with-sponsor/{eventId}")
+    @RequiresRole({ UserType.ORGANIZATION, UserType.VOLUNTEER })
+    public ResponseEntity<ApiResponse<List<SponReqWithNameDTO>>> getSponsorshipRequestsWithSponsor(
+            @PathVariable Long eventId) {
+        List<SponReqWithNameDTO> requests = sponsorshipRequestService.getSponReqWithNameDTOs(eventId);
+        return ResponseEntity.ok(new ApiResponse<>("Sponsorship requests retrieved successfully", requests));
+    }
+
+    @GetMapping("/sponsor-requests/{requestId}")
+    @RequiresRole({ UserType.SPONSOR })
+    public ResponseEntity<ApiResponse<SponsorshipPaymentDTO>> getSponsorshipRequestById(
+            @PathVariable Long requestId) {
+        Long sponsorId = currentUserService.getCurrentEntityId();
+        SponsorshipPaymentDTO request = sponsorshipRequestService.getSponsorshipRequestById(requestId, sponsorId);
+        return ResponseEntity.ok(new ApiResponse<>("Sponsorship request retrieved successfully", request));
+    }
 }

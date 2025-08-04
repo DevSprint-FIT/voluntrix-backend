@@ -284,12 +284,30 @@ public class AuthService {
             default -> "/dashboard";
         };
 
+        String imageURL;
+
+        // based on user role get the image URL
+        if( user.getRole() == null) {
+            imageURL = "https://img.icons8.com/material-outlined/24/gender-neutral-user.png";
+        } else {
+            imageURL = switch (user.getRole()) {
+                case VOLUNTEER -> volunteerRepository.findImageUrlByUserId(userId)
+                    .orElse("/images/default-volunteer.png");
+                case SPONSOR -> sponsorRepository.findImageUrlByUserId(userId)
+                    .orElse("/images/default-sponsor.png");
+                case ORGANIZATION -> organizationRepository.findImageUrlByUserId(userId)
+                    .orElse("/images/default-organization.png");
+                default -> "/images/default-user.png";
+            };
+        }
+
         return CurrentUserDTO.builder()
             .userId(user.getUserId())
             .email(user.getEmail())
             .handle(user.getHandle())
             .fullName(user.getFullName())
             .role(user.getRole())
+            .imageURL(imageURL)
             .emailVerified(user.getIsVerified())
             .profileCompleted(isProfileCompleted)
             .authProvider(user.getAuthProvider())

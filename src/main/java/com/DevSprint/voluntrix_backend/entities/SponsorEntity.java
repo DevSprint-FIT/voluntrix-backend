@@ -44,11 +44,14 @@ public class SponsorEntity {
     @Column(nullable = true)
     private String website;
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 500)
     private String sponsorshipNote;
 
     @Column(nullable = true)
     private String documentUrl;
+
+    @Column(nullable = true)
+    private String imageUrl;
 
     @Column(nullable = true)
     private String linkedinProfile;

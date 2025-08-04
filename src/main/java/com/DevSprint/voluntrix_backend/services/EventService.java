@@ -95,8 +95,14 @@ public class EventService {
                 .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
     }
 
-    public List<EventDTO> getAllEvents() {
-        return entityDTOConvert.toEventDTOList(eventRepository.findAll());
+    public List<EventAndOrgDTO> getAllEvents() {
+        return entityDTOConvert.toEventAndOrgDTOList(eventRepository.findAll());
+    }
+
+    public List<EventAndOrgDTO> getAllAvailableEvents() {
+        List<EventEntity> events = eventRepository
+                .findByEventStatusIn(List.of(EventStatus.ACTIVE, EventStatus.COMPLETE));
+        return entityDTOConvert.toEventAndOrgDTOList(events);
     }
 
     public void updateEvent(Long eventId, EventDTO eventDTO, Long eventHostId) {

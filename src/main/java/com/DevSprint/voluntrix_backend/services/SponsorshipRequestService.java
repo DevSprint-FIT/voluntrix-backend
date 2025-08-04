@@ -5,11 +5,15 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.DevSprint.voluntrix_backend.dtos.SponsorRequestTableDTO;
+import com.DevSprint.voluntrix_backend.dtos.SponsorshipPaymentDTO;
+import com.DevSprint.voluntrix_backend.dtos.SponReqWithNameDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestCreateDTO;
 import com.DevSprint.voluntrix_backend.dtos.SponsorshipRequestDTO;
 import com.DevSprint.voluntrix_backend.entities.SponsorEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorshipEntity;
 import com.DevSprint.voluntrix_backend.entities.SponsorshipRequestEntity;
+import com.DevSprint.voluntrix_backend.enums.SponsorshipPaymentStatus;
 import com.DevSprint.voluntrix_backend.enums.SponsorshipRequestStatus;
 import com.DevSprint.voluntrix_backend.exceptions.EventNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.SponsorNotFoundException;
@@ -17,6 +21,7 @@ import com.DevSprint.voluntrix_backend.exceptions.SponsorshipIsNotAvailableExcep
 import com.DevSprint.voluntrix_backend.exceptions.SponsorshipNotFoundException;
 import com.DevSprint.voluntrix_backend.exceptions.SponsorshipRequestNotFoundException;
 import com.DevSprint.voluntrix_backend.repositories.EventRepository;
+import com.DevSprint.voluntrix_backend.repositories.PaymentRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorshipRepository;
 import com.DevSprint.voluntrix_backend.repositories.SponsorshipRequestRepository;
@@ -37,6 +42,8 @@ public class SponsorshipRequestService {
     private final SponsorshipRequestDTOConverter sponsorshipDTOConverter;
     private final SponsorRepository sponsorRepository;
     private final EventRepository eventRepository;
+    private final PaymentRepository paymentRepository;
+    private final PaymentService paymentService;
 
     public SponsorshipRequestDTO createSponsorshipRequest(SponsorshipRequestCreateDTO createDTO) {
         SponsorshipEntity sponsorship = sponsorshipRepository.findById(createDTO.getSponsorshipId())
@@ -44,17 +51,19 @@ public class SponsorshipRequestService {
                         "Sponsorship not found with ID: " + createDTO.getSponsorshipId()));
 
         SponsorEntity sponsor = sponsorRepository.findById(createDTO.getSponsorId())
-                .orElseThrow(() -> new SponsorNotFoundException("Sponsor not found with ID: " + createDTO.getSponsorId()));
+                .orElseThrow(
+                        () -> new SponsorNotFoundException("Sponsor not found with ID: " + createDTO.getSponsorId()));
 
         // check availability
-        if(!sponsorship.isAvailable()) {
+        if (!sponsorship.isAvailable()) {
             throw new SponsorshipIsNotAvailableException("Sponsorship is not available for requests.");
         }
 
-        SponsorshipRequestEntity requestEntity = SponsorshipRequestDTOConverter.toSponsorshipRequestEntity(sponsor, sponsorship);
+        SponsorshipRequestEntity requestEntity = SponsorshipRequestDTOConverter.toSponsorshipRequestEntity(sponsor,
+                sponsorship);
 
         SponsorshipRequestEntity savedRequest = sponsorshipRequestRepository.save(requestEntity);
-        
+
         return sponsorshipDTOConverter.toSponsorshipRequestDTO(savedRequest);
     }
 
@@ -63,7 +72,7 @@ public class SponsorshipRequestService {
                 .orElseThrow(() -> new SponsorNotFoundException("Sponsor not found with ID: " + sponsorId));
 
         List<SponsorshipRequestEntity> requests = sponsorshipRequestRepository.findBySponsor_SponsorId(sponsorId);
-        
+
         return sponsorshipDTOConverter.toSponsorshipRequestDTOList(requests);
     }
 
@@ -72,30 +81,45 @@ public class SponsorshipRequestService {
                 .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
 
         List<SponsorshipRequestEntity> requests = sponsorshipRequestRepository.findBySponsorship_Event_EventId(eventId);
-        if (requests.isEmpty()) {
-            throw new SponsorshipRequestNotFoundException("No sponsorship requests found for event ID: " + eventId);
-        }
+        // if (requests.isEmpty()) {
+        // throw new SponsorshipRequestNotFoundException("No sponsorship requests found
+        // for event ID: " + eventId);
+        // }
 
         return sponsorshipDTOConverter.toSponsorshipRequestDTOList(requests);
     }
 
-    public List<SponsorshipRequestDTO> getSponsorshipRequestsBySponsorIdAndStatus(Long sponsorId, String status) {
+    public List<SponsorRequestTableDTO> getSponsorshipRequestsBySponsorIdAndStatus(Long sponsorId, SponsorshipRequestStatus status) {
         sponsorRepository.findById(sponsorId)
                 .orElseThrow(() -> new SponsorNotFoundException("Sponsor not found with ID: " + sponsorId));
-
-        List<SponsorshipRequestEntity> requests = sponsorshipRequestRepository.findBySponsor_SponsorId(sponsorId);
-        if (requests.isEmpty()) {
-            throw new SponsorshipRequestNotFoundException("No sponsorship requests found for sponsor ID: " + sponsorId);
+    
+        List<Object[]> sponsorshipDetails = sponsorshipRequestRepository.findEventDetailsWithSponsorshipBySponsorIdAndStatus(sponsorId, status);
+        if (sponsorshipDetails.isEmpty()) {
+            throw new SponsorshipRequestNotFoundException("No sponsorship requests found for sponsor ID: " + sponsorId + " with status: " + status);
         }
 
-        // Filter by status if needed
-        if (!"ALL".equalsIgnoreCase(status)) {
-            requests = requests.stream()
-                    .filter(req -> req.getStatus().name().equals(status))
-                    .collect(Collectors.toList());
+        Long eventId = (Long) sponsorshipDetails.get(0)[0];
+
+        if (status.name().equals("APPROVED")) {
+            Double totalAmountPaid = paymentRepository.sumTotalAmountPaidByEventIdAndSponsorId(eventId, sponsorId);
+            SponsorshipPaymentStatus paymentStatus;
+
+            if(totalAmountPaid == null) {
+                totalAmountPaid = 0.0;
+                paymentStatus = SponsorshipPaymentStatus.UNPAID;
+            }else if (totalAmountPaid > (Integer) sponsorshipDetails.get(0)[4]) {
+                throw new IllegalArgumentException("Total amount paid exceeds the sponsorship price.");
+            } else if(totalAmountPaid < (Integer) sponsorshipDetails.get(0)[4]) {
+                paymentStatus = SponsorshipPaymentStatus.PARTIALPAID;
+            } else {
+                paymentStatus = SponsorshipPaymentStatus.FULLPAID;
+            }
+
+            return sponsorshipDTOConverter.toSponsorRequestTableDTOList(sponsorshipDetails, paymentStatus, totalAmountPaid);
+
         }
 
-        return sponsorshipDTOConverter.toSponsorshipRequestDTOList(requests);
+        return sponsorshipDTOConverter.toSponsorRequestTableDTOList(sponsorshipDetails);
     }
 
     public List<SponsorshipRequestDTO> getSponsorshipRequestsByEventIdAndStatus(Long eventId, String status) {
@@ -119,10 +143,12 @@ public class SponsorshipRequestService {
 
     public SponsorshipRequestDTO updateSponsorshipRequestStatus(Long requestId, String status) {
         SponsorshipRequestEntity request = sponsorshipRequestRepository.findByRequestId(requestId)
-                .orElseThrow(() -> new SponsorshipRequestNotFoundException("Sponsorship request not found with ID: " + requestId));
+                .orElseThrow(() -> new SponsorshipRequestNotFoundException(
+                        "Sponsorship request not found with ID: " + requestId));
 
         // Validate status
-        if (!"PENDING".equalsIgnoreCase(status) && !"APPROVED".equalsIgnoreCase(status) && !"REJECTED".equalsIgnoreCase(status)) {
+        if (!"PENDING".equalsIgnoreCase(status) && !"APPROVED".equalsIgnoreCase(status)
+                && !"REJECTED".equalsIgnoreCase(status)) {
             throw new IllegalArgumentException("Invalid status: " + status);
         }
 
@@ -135,7 +161,52 @@ public class SponsorshipRequestService {
 
     public void deleteSponsorshipRequest(Long requestId) {
         SponsorshipRequestEntity request = sponsorshipRequestRepository.findByRequestId(requestId)
-                .orElseThrow(() -> new SponsorshipRequestNotFoundException("Sponsorship request not found with ID: " + requestId));
+                .orElseThrow(() -> new SponsorshipRequestNotFoundException(
+                        "Sponsorship request not found with ID: " + requestId));
         sponsorshipRequestRepository.delete(request);
+    }
+
+    public List<SponReqWithNameDTO> getSponReqWithNameDTOs(Long eventIdLong) {
+        List<SponsorshipRequestEntity> requests = sponsorshipRequestRepository
+                .findBySponsorship_Event_EventId(eventIdLong);
+
+        return sponsorshipDTOConverter.toSponReqWithNameDTOList(requests);
+    }
+
+    public SponsorshipPaymentDTO getSponsorshipRequestById(Long requestId, Long sponsorId) {
+        sponsorshipRequestRepository.findByRequestId(requestId)
+                .orElseThrow(() -> new SponsorshipRequestNotFoundException(
+                        "Sponsorship request not found with ID: " + requestId));
+
+        Object[] sponsorshipDetails = sponsorshipRequestRepository
+                .findEventDetailsWithSponsorshipByRequestIdAndSponsorId(requestId, sponsorId)
+                .orElseThrow(() -> new SponsorshipRequestNotFoundException(
+                        "Sponsorship request not found with ID: " + requestId + " for sponsor ID: " + sponsorId));
+        
+        // Check if the array is empty
+        if (sponsorshipDetails.length == 0) {
+            throw new SponsorshipRequestNotFoundException(
+                "No sponsorship details found for request ID: " + requestId + " and sponsor ID: " + sponsorId);
+        }
+        
+        // Extract the nested array (the actual data is inside the first element)
+        Object[] actualData = (Object[]) sponsorshipDetails[0];
+
+        System.out.println("Actual data length: " + actualData.length);
+        for (int i = 0; i < actualData.length; i++) {
+            Object item = actualData[i];
+            System.out.println("Index " + i + ": Type=" + 
+                (item != null ? item.getClass().getSimpleName() : "null") + 
+                ", Value=" + item);
+        }
+
+        String orderId = paymentService.generateOrderId("SPONSORSHIP");
+        Long eventId = (Long) actualData[0];
+        Double payableAmount = ((Number) actualData[3]).doubleValue() - paymentRepository.sumTotalAmountPaidByEventIdAndSponsorId(eventId, sponsorId);
+        System.out.println("Payable Amount: " + payableAmount);
+        SponsorshipPaymentDTO sponsorshipPaymentDTO = sponsorshipDTOConverter
+                .toSponsorshipPaymentDTO(actualData, sponsorId, orderId, payableAmount);
+
+        return sponsorshipPaymentDTO;
     }
 }

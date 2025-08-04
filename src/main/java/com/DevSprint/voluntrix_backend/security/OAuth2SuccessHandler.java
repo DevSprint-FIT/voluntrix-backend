@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import com.DevSprint.voluntrix_backend.entities.UserEntity;
 import com.DevSprint.voluntrix_backend.enums.AuthProvider;
-import com.DevSprint.voluntrix_backend.enums.UserType;
 import com.DevSprint.voluntrix_backend.repositories.UserRepository;
 import com.DevSprint.voluntrix_backend.services.JwtService;
 
@@ -40,16 +39,16 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         } else {
             user = UserEntity.builder()
                     .email(email)
+                    .handle(oAuth2User.getAttribute("name"))
                     .authProvider(AuthProvider.GOOGLE)
-                    .role(UserType.PUBLIC)
                     .isVerified(true)
                     .build();
             userRepository.save(user);
         }
 
         String jwtToken = jwtService.generateToken(user);
-        
-        String redirectUrl = "http://localhost:3000/auth/success?token=" + jwtToken + "&role=" + user.getRole();
+        String redirectUrl = "https://92079f1daded.ngrok-free.app/auth/success?token=" + jwtToken + "&role=" + user.getRole();
+
         response.sendRedirect(redirectUrl); 
     }
 }

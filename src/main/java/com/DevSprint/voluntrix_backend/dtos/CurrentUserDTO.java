@@ -32,4 +32,5 @@ public class CurrentUserDTO {
     private String nextStep;
     private String redirectUrl;
     private Long entityId; // The role-specific entity ID (volunteerId, sponsorId, etc.)
+    private String imageURL;
 }

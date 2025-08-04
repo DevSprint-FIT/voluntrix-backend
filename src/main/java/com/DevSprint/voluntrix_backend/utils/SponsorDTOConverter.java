@@ -21,6 +21,7 @@ public class SponsorDTOConverter {
         // Map from associated UserEntity
         dto.setName(sponsor.getUser().getFullName());
         dto.setEmail(sponsor.getUser().getEmail());
+        dto.setHandle(sponsor.getUser().getHandle());
         
         // Map sponsor-specific fields
         dto.setCompany(sponsor.getCompany());
@@ -30,6 +31,7 @@ public class SponsorDTOConverter {
         dto.setWebsite(sponsor.getWebsite());
         dto.setSponsorshipNote(sponsor.getSponsorshipNote());
         dto.setDocumentUrl(sponsor.getDocumentUrl());
+        dto.setImageUrl(sponsor.getImageUrl());
         dto.setLinkedinProfile(sponsor.getLinkedinProfile());
         dto.setAddress(sponsor.getAddress());
         dto.setAppliedAt(sponsor.getAppliedAt());
@@ -50,6 +52,7 @@ public class SponsorDTOConverter {
         entity.setWebsite(dto.getWebsite());
         entity.setSponsorshipNote(dto.getSponsorshipNote());
         entity.setDocumentUrl(dto.getDocumentUrl());
+        entity.setImageUrl(dto.getImageUrl());
         entity.setLinkedinProfile(dto.getLinkedinProfile());
         entity.setAddress(dto.getAddress());
         
