@@ -439,8 +439,6 @@ public class RewardService {
             task.setAssignee(null);
             taskRepository.save(task);
 
-            // TODO: Trigger notification to event host that task is now unassigned and needs reassignment
-
         }
     }
 

@@ -33,37 +33,36 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**")) // Disable CSRF only for APIs
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(
-                            "/swagger-ui/**",
-                            "/v3/api-docs/**",
-                            "/swagger-ui.html",
-                            "/api/auth/signup",
-                            "/api/auth/login", 
-                            "/api/auth/verify-email",
-                            "/api/auth/resend-verification",
-                            "/api/public/**",
-                            "/api/payment/**"
-                    ).permitAll()
-                    .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
-                    .requestMatchers("/api/**").authenticated()
-                    .anyRequest().authenticated() // Require authentication for everything else
-            )
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Use stateless session management4
-            .oauth2Login(oauth2 -> oauth2
-                .loginPage("/oauth2/authorization/google") // Explicit OAuth2 login page
-                .authorizationEndpoint(authorization -> authorization
-                    .baseUri("/oauth2/authorization")) // Only handle OAuth2 for this specific endpoint
-                .successHandler(oAuth2SuccessHandler)
-            )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter
-            .userDetailsService(customUserDetailsService) // Set custom user details service
-            .formLogin(form -> form.disable())
-            .httpBasic(httpBasic -> httpBasic.disable());
-        
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**")) // Disable CSRF only for APIs
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-ui.html",
+                                "/api/auth/signup",
+                                "/api/auth/login",
+                                "/api/auth/verify-email",
+                                "/api/auth/resend-verification",
+                                "/api/public/**",
+                                "/api/payment/**")
+                        .permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
+                        .requestMatchers("/api/**").authenticated()
+                        .anyRequest().authenticated() // Require authentication for everything else
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Use stateless session management4
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/oauth2/authorization/google") // Explicit OAuth2 login page
+                        .authorizationEndpoint(authorization -> authorization
+                                .baseUri("/oauth2/authorization")) // Only handle OAuth2 for this specific endpoint
+                        .successHandler(oAuth2SuccessHandler))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter
+                .userDetailsService(customUserDetailsService) // Set custom user details service
+                .formLogin(form -> form.disable())
+                .httpBasic(httpBasic -> httpBasic.disable());
+
         return http.build();
     }
 
@@ -75,9 +74,11 @@ public class SecurityConfig {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "https://voluntrix-preview.vercel.app", "https://92079f1daded.ngrok-free.app")); // Allow local & production frontend
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "https://voluntrix-preview.vercel.app",
+                "https://voluntrix-frontend.vercel.app", "https://voluntrix-devsprint.vercel.app",
+                "https://92079f1daded.ngrok-free.app"));
         config.setAllowedHeaders(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowCredentials(true); // Needed if frontend sends credentials (e.g., tokens)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
