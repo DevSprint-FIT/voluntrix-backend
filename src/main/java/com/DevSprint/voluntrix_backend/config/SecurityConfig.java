@@ -76,7 +76,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of("http://localhost:3000", "https://voluntrix-preview.vercel.app",
                 "https://voluntrix-frontend.vercel.app", "https://voluntrix-devsprint.vercel.app",
-                "https://92079f1daded.ngrok-free.app"));
+                "https://92079f1daded.ngrok-free.app", "https://voluntrix-frontend-preview.vercel.app"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowCredentials(true); // Needed if frontend sends credentials (e.g., tokens)
