@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -33,36 +34,41 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**")) // Disable CSRF only for APIs
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/swagger-ui.html",
-                                "/api/auth/signup",
-                                "/api/auth/login",
-                                "/api/auth/verify-email",
-                                "/api/auth/resend-verification",
-                                "/api/public/**",
-                                "/api/payment/**")
-                        .permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
-                        .requestMatchers("/api/**").authenticated()
-                        .anyRequest().authenticated() // Require authentication for everything else
-                )
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Use stateless session management4
-                .oauth2Login(oauth2 -> oauth2
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**")) // Disable CSRF only for APIs
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(
+                            "/swagger-ui/**",
+                            "/v3/api-docs/**",
+                            "/swagger-ui.html",
+                            "/api/auth/signup",
+                            "/api/auth/login", 
+                            "/api/auth/verify-email",
+                            "/api/auth/resend-verification",
+                            "/api/public/**",
+                            "/api/payment/**"
+                    ).permitAll()
+                    .requestMatchers("/api/**").authenticated()
+                    .requestMatchers("/api/auth/**").authenticated() // Other auth endpoints need auth
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
+                    .requestMatchers("/api/chat/**").permitAll() // Allow chat API endpoints
+                    .requestMatchers("/api/private-chat/**").permitAll() // Allow private chat API endpoints
+                    .requestMatchers("/ws/**").permitAll() // Allow WebSocket connections
+                    .requestMatchers("/chat", "/chat.html", "/static/**", "/*.html", "/*.css", "/*.js", "/").permitAll()
+                    .anyRequest().authenticated() // Require authentication for everything else
+            )
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Use stateless session management4
+            .oauth2Login(oauth2 -> oauth2
                         .loginPage("/oauth2/authorization/google") // Explicit OAuth2 login page
                         .authorizationEndpoint(authorization -> authorization
                                 .baseUri("/oauth2/authorization")) // Only handle OAuth2 for this specific endpoint
-                        .successHandler(oAuth2SuccessHandler))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter
-                .userDetailsService(customUserDetailsService) // Set custom user details service
-                .formLogin(form -> form.disable())
-                .httpBasic(httpBasic -> httpBasic.disable());
-
+                        .successHandler(oAuth2SuccessHandler)
+            )
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter
+            .userDetailsService(customUserDetailsService) // Set custom user details service
+            .formLogin(form -> form.disable())
+            .httpBasic(httpBasic -> httpBasic.disable());
         return http.build();
     }
 
