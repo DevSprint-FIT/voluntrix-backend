@@ -20,7 +20,18 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOriginPatterns("http://localhost:3000", "http://localhost:3001", "http://localhost:3002", "http://localhost:3003") // Allow frontend origins
-                .withSockJS();
+                .setAllowedOriginPatterns(
+                    "http://localhost:3000", 
+                    "http://localhost:3001", 
+                    "http://localhost:3002", 
+                    "http://localhost:3003",
+                    "https://localhost:8443",
+                    "https://voluntrix-preview.vercel.app",
+                    "https://voluntrix-frontend.vercel.app", 
+                    "https://voluntrix-frontend-preview.vercel.app",
+                    "https://voluntrix-devsprint.vercel.app"
+                )
+                .withSockJS()
+                .setDisconnectDelay(30 * 1000);
     }
 }

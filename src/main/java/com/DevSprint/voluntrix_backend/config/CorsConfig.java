@@ -21,8 +21,16 @@ public class CorsConfig {
             "http://localhost:3001", 
             "http://localhost:3002",
             "http://localhost:3003",
+            "https://localhost:8443",
+            "http://localhost:8081",
+            "https://localhost:*",
+            "http://localhost:*",
             "https://voluntrix-preview.vercel.app",
-            "https://1d49-2402-4000-2100-693d-a5c6-d62f-f9bc-2e42.ngrok-free.app"
+            "https://voluntrix-frontend.vercel.app",
+            "https://voluntrix-frontend-preview.vercel.app",
+            "https://voluntrix-devsprint.vercel.app",
+            "https://1d49-2402-4000-2100-693d-a5c6-d62f-f9bc-2e42.ngrok-free.app",
+            "https://92079f1daded.ngrok-free.app"
         ));
         
         // Allow all HTTP methods

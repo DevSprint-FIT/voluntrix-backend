@@ -11,8 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import com.DevSprint.voluntrix_backend.security.JwtAuthenticationFilter;
@@ -21,8 +20,6 @@ import com.DevSprint.voluntrix_backend.services.auth.CustomUserDetailsService;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfig {
@@ -30,12 +27,13 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService customUserDetailsService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**")) // Disable CSRF only for APIs
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/ws/**", "/app/**", "/topic/**", "/user/**")) // Disable CSRF for APIs and WebSocket
+            .cors(cors -> cors.configurationSource(corsConfigurationSource))
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers(
                             "/swagger-ui/**",
@@ -46,15 +44,18 @@ public class SecurityConfig {
                             "/api/auth/verify-email",
                             "/api/auth/resend-verification",
                             "/api/public/**",
-                            "/api/payment/**"
+                            "/api/payment/**",
+                            "/api/chat/**",
+                            "/api/private-chat/**"
                     ).permitAll()
-                    .requestMatchers("/api/**").authenticated()
-                    .requestMatchers("/api/auth/**").authenticated() // Other auth endpoints need auth
-                    .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
-                    .requestMatchers("/api/chat/**").permitAll() // Allow chat API endpoints
-                    .requestMatchers("/api/private-chat/**").permitAll() // Allow private chat API endpoints
-                    .requestMatchers("/ws/**").permitAll() // Allow WebSocket connections
+                    .requestMatchers("/ws/**").permitAll() // Allow all WebSocket and SockJS connections
+                    .requestMatchers("/app/**").permitAll() // Allow STOMP application destination prefixes
+                    .requestMatchers("/topic/**").permitAll() // Allow STOMP topic subscriptions
+                    .requestMatchers("/user/**").permitAll() // Allow STOMP user-specific subscriptions
                     .requestMatchers("/chat", "/chat.html", "/static/**", "/*.html", "/*.css", "/*.js", "/").permitAll()
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
+                    .requestMatchers("/api/auth/**").authenticated() // Other auth endpoints need auth
+                    .requestMatchers("/api/**").authenticated() // General API endpoints need auth
                     .anyRequest().authenticated() // Require authentication for everything else
             )
             .sessionManagement(session -> session
@@ -78,24 +79,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UrlBasedCorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "https://voluntrix-preview.vercel.app",
-                "https://voluntrix-frontend.vercel.app", "https://voluntrix-devsprint.vercel.app",
-                "https://92079f1daded.ngrok-free.app", "https://voluntrix-frontend-preview.vercel.app"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowCredentials(true); // Needed if frontend sends credentials (e.g., tokens)
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
-    }
-
-    @Bean
-    public CorsFilter corsFilter() {
-        return new CorsFilter(corsConfigurationSource());
+    public CorsFilter corsFilter(CorsConfigurationSource corsConfigurationSource) {
+        return new CorsFilter(corsConfigurationSource);
     }
 
     @Bean
