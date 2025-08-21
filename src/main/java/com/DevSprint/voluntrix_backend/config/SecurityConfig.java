@@ -44,8 +44,11 @@ public class SecurityConfig {
                             "/api/auth/signup",
                             "/api/auth/login", 
                             "/api/auth/verify-email",
-                            "/api/auth/resend-verification"
+                            "/api/auth/resend-verification",
+                            "/api/public/**",
+                            "/api/payment/**"
                     ).permitAll()
+                    .requestMatchers("/api/**").authenticated()
                     .requestMatchers("/api/auth/**").authenticated() // Other auth endpoints need auth
                     .requestMatchers("/api/admin/**").hasRole("ADMIN") // Restrict `/api/admin/` to ADMIN role
                     .requestMatchers("/api/chat/**").permitAll() // Allow chat API endpoints
@@ -57,13 +60,15 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Use stateless session management4
             .oauth2Login(oauth2 -> oauth2
-                .successHandler(oAuth2SuccessHandler)
+                        .loginPage("/oauth2/authorization/google") // Explicit OAuth2 login page
+                        .authorizationEndpoint(authorization -> authorization
+                                .baseUri("/oauth2/authorization")) // Only handle OAuth2 for this specific endpoint
+                        .successHandler(oAuth2SuccessHandler)
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT filter
             .userDetailsService(customUserDetailsService) // Set custom user details service
             .formLogin(form -> form.disable())
             .httpBasic(httpBasic -> httpBasic.disable());
-        
         return http.build();
     }
 
@@ -75,9 +80,11 @@ public class SecurityConfig {
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "https://voluntrix-preview.vercel.app", "https://1d49-2402-4000-2100-693d-a5c6-d62f-f9bc-2e42.ngrok-free.app")); // Allow local & production frontend
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        config.setAllowedOrigins(List.of("http://localhost:3000", "https://voluntrix-preview.vercel.app",
+                "https://voluntrix-frontend.vercel.app", "https://voluntrix-devsprint.vercel.app",
+                "https://92079f1daded.ngrok-free.app", "https://voluntrix-frontend-preview.vercel.app"));
         config.setAllowedHeaders(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowCredentials(true); // Needed if frontend sends credentials (e.g., tokens)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

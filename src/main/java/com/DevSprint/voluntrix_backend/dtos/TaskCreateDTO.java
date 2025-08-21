@@ -33,7 +33,7 @@ public class TaskCreateDTO {
     private TaskDifficulty taskDifficulty; // EASY, MEDIUM, HARD, EXTREME
 
     @NotNull(message = "Task category is required")
-    private ContributionArea taskCategory; // DESIGN, EDITORIAL, LOGISTICS, PROGRAMMING
+    private ContributionArea taskCategory; // DESIGN, EDITORIAL, LOGISTICS, PROGRAM
 
     @NotNull(message = "Assignee ID is required")
     private Long assigneeId;

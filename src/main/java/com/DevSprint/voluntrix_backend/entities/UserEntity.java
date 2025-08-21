@@ -46,7 +46,8 @@ public class UserEntity implements UserDetails{
     private String handle; // User's display handle/username
 
     @Column(nullable = false)
-    private String fullName;
+    @Builder.Default
+    private String fullName = "Annonymous User";
 
     private String password;
 

@@ -25,10 +25,13 @@ public class TaskDTOConvert {
         TaskDTO dto = modelMapper.map(task, TaskDTO.class);
 
         // Manually map nested fields
-        // if (task.getAssignee() != null) {
-        //     dto.setAssigneeId(task.getAssignee().getVolunteerId());
-        //     dto.setAssigneeUsername(task.getAssignee().getUsername());
-        // }
+        if (task.getAssignee() != null) {
+            dto.setAssigneeId(task.getAssignee().getVolunteerId());
+            // Get the username from the User entity associated with the volunteer
+            if (task.getAssignee().getUser() != null) {
+                dto.setAssigneeUsername(task.getAssignee().getUser().getHandle());
+            }
+        }
 
         if (task.getEvent() != null) {
             dto.setEventId(task.getEvent().getEventId());

@@ -77,7 +77,7 @@ public class TaskService {
 
 
     public TaskDTO getTaskById(Long taskId) {
-        Optional<TaskEntity> task = taskRepository.findById(taskId);
+        Optional<TaskEntity> task = taskRepository.findByIdWithAssigneeUser(taskId);
         return task.map(taskDTOConvert::toTaskDTO)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + taskId));
     }
@@ -135,7 +135,7 @@ public class TaskService {
     }
 
     public TaskDTO patchTask(Long taskId, TaskUpdateDTO taskUpdateDTO) {
-        TaskEntity task = taskRepository.findById(taskId)
+        TaskEntity task = taskRepository.findByIdWithAssigneeUser(taskId)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + taskId));
 
         // Track old values for comparison
@@ -199,7 +199,7 @@ public class TaskService {
     }
 
     public void deleteTask(Long taskId) {
-        TaskEntity task = taskRepository.findById(taskId)
+        TaskEntity task = taskRepository.findByIdWithAssigneeUser(taskId)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with ID: " + taskId));
 
         // Process reward deductions before deleting

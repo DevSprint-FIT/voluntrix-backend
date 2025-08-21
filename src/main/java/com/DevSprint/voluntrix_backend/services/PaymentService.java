@@ -136,5 +136,25 @@ public class PaymentService {
 
         return new PaymentStatusResponseDTO(orderId, payment.getStatus());
     }
+
+    public String generateOrderId(String paymentType) {
+        String prefix = "";
+        if ("DONATION".equalsIgnoreCase(paymentType)) {
+            prefix = "ORD";
+        } else if ("SPONSORSHIP".equalsIgnoreCase(paymentType)) {
+            prefix = "SPO";
+        } else {
+            throw new IllegalArgumentException("Invalid payment type: " + paymentType);
+        }
+
+        // using current Date and time to generate a unique order ID with 6 digits
+        String uniqueId = String.format("%06d", System.currentTimeMillis() % 1000000);
+
+        //  hash the unique ID to ensure it's not easily guessable, but need to be 6 digit number no letters
+        uniqueId = md5(uniqueId).substring(0, 6);   
+
+        return prefix + uniqueId;
+
+    }
     
 }

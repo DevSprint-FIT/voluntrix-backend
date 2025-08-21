@@ -15,6 +15,7 @@ import com.DevSprint.voluntrix_backend.enums.EventVisibility;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -42,6 +43,8 @@ public class EventEntity {
     private Long eventId;
 
     private String eventTitle;
+
+    @Column(length = 500)
     private String eventDescription;
     private String eventLocation;
 

@@ -28,6 +28,8 @@ public class SponsorCreateDTO {
     private String sponsorshipNote;
     
     private String documentUrl;
+
+    private String imageUrl;
     
     private String linkedinProfile;
     

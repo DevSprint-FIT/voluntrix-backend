@@ -22,8 +22,8 @@ public class CurrentUserDTO {
     private String handle;
     private String fullName;
     private UserType role;
-    private Boolean isEmailVerified;
-    private Boolean isProfileCompleted;
+    private Boolean emailVerified;
+    private Boolean profileCompleted;
     private AuthProvider authProvider;
     private LocalDateTime createdAt;
     private LocalDateTime lastLogin;
@@ -32,4 +32,5 @@ public class CurrentUserDTO {
     private String nextStep;
     private String redirectUrl;
     private Long entityId; // The role-specific entity ID (volunteerId, sponsorId, etc.)
+    private String imageURL;
 }

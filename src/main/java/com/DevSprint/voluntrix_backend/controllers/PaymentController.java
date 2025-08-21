@@ -6,6 +6,7 @@ import com.DevSprint.voluntrix_backend.dtos.PaymentResponseDTO;
 import com.DevSprint.voluntrix_backend.dtos.PaymentStatusResponseDTO;
 import com.DevSprint.voluntrix_backend.exceptions.PaymentVerificationException;
 import com.DevSprint.voluntrix_backend.services.PaymentService;
+import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 import com.DevSprint.voluntrix_backend.utils.PaymentMapper;
 
 import jakarta.validation.Valid;
@@ -43,7 +44,7 @@ public class PaymentController {
         return ResponseEntity.ok(statusDto);
     }
 
-    @PostMapping("/payment/notify")
+    @PostMapping("/notify")
     public ResponseEntity<String> notifyPayment(@RequestParam Map<String, String> params) {
         boolean isValid = paymentService.verifyPayment(params);
 
@@ -56,4 +57,10 @@ public class PaymentController {
         
         return ResponseEntity.ok("Transaction saved succesfully.");
     } 
+
+    @PostMapping("/generate-order-id")
+    public ResponseEntity<ApiResponse<String>> generateOrderId(@RequestParam String paymentType) {
+        String orderId = paymentService.generateOrderId(paymentType);
+        return ResponseEntity.ok(new ApiResponse<>("Order ID generated successfully", orderId));
+    }
 }

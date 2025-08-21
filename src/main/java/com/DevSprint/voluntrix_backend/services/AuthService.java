@@ -98,8 +98,8 @@ public class AuthService {
             .handle(user.getHandle())
             .fullName(user.getFullName())
             .role(user.getRole() != null ? user.getRole().name() : null)
-            .isEmailVerified(user.getIsVerified())
-            .isProfileCompleted(user.getIsProfileCompleted())
+            .emailVerified(user.getIsVerified())
+            .profileCompleted(user.getIsProfileCompleted())
             .createdAt(user.getCreatedAt())
             .lastLogin(user.getLastLogin())
             .authProvider(user.getAuthProvider().name())
@@ -168,8 +168,8 @@ public class AuthService {
             .handle(user.getHandle())
             .fullName(user.getFullName())
             .role(user.getRole() != null ? user.getRole().name() : null)
-            .isEmailVerified(user.getIsVerified())
-            .isProfileCompleted(isProfileCompleted)
+            .emailVerified(user.getIsVerified())
+            .profileCompleted(isProfileCompleted)
             .createdAt(user.getCreatedAt())
             .lastLogin(user.getLastLogin())
             .authProvider(user.getAuthProvider().name())
@@ -284,14 +284,32 @@ public class AuthService {
             default -> "/dashboard";
         };
 
+        String imageURL;
+
+        // based on user role get the image URL
+        if( user.getRole() == null) {
+            imageURL = "https://img.icons8.com/material-outlined/24/gender-neutral-user.png";
+        } else {
+            imageURL = switch (user.getRole()) {
+                case VOLUNTEER -> volunteerRepository.findImageUrlByUserId(userId)
+                    .orElse("/images/default-volunteer.png");
+                case SPONSOR -> sponsorRepository.findImageUrlByUserId(userId)
+                    .orElse("/images/default-sponsor.png");
+                case ORGANIZATION -> organizationRepository.findImageUrlByUserId(userId)
+                    .orElse("/images/default-organization.png");
+                default -> "/images/default-user.png";
+            };
+        }
+
         return CurrentUserDTO.builder()
             .userId(user.getUserId())
             .email(user.getEmail())
             .handle(user.getHandle())
             .fullName(user.getFullName())
             .role(user.getRole())
-            .isEmailVerified(user.getIsVerified())
-            .isProfileCompleted(isProfileCompleted)
+            .imageURL(imageURL)
+            .emailVerified(user.getIsVerified())
+            .profileCompleted(isProfileCompleted)
             .authProvider(user.getAuthProvider())
             .createdAt(user.getCreatedAt())
             .lastLogin(user.getLastLogin())

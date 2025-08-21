@@ -19,4 +19,7 @@ public interface SponsorRepository extends JpaRepository<SponsorEntity, Long> {
     Optional<SponsorEntity> findByUser(UserEntity user);
     
     List<SponsorEntity> findByVerifiedFalse();
+
+    @Query("SELECT s.imageUrl FROM SponsorEntity s WHERE s.user.userId = :userId")
+    Optional<String> findImageUrlByUserId(@Param("userId") Long userId);
 }

@@ -54,4 +54,6 @@ public class EventAndOrgDTO implements Serializable {
     private String organizationName;
 
     private String organizationImageUrl;
+
+    private String institute;
 }

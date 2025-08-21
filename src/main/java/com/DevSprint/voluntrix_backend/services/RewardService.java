@@ -91,7 +91,7 @@ public class RewardService {
             } else if (submittedDate != null && submittedDate.toLocalDate().equals(dueDate.toLocalDate())) {
                 // On time submission - 1 point
                 bonusPoints = 1;
-            } else {
+            } else if (submittedDate != null) {
                 // Late submission - calculate penalty
                 long daysLate = 0;
                 if (submittedDate != null) {
@@ -438,8 +438,6 @@ public class RewardService {
             // Remove assignee so event host can reassign to someone else
             task.setAssignee(null);
             taskRepository.save(task);
-
-            // TODO: Trigger notification to event host that task is now unassigned and needs reassignment
 
         }
     }

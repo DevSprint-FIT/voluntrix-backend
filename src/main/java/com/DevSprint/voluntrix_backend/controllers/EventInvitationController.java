@@ -62,7 +62,7 @@ public class EventInvitationController {
     }
 
     @PatchMapping(value = "/{eventInvitationId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @RequiresRole(UserType.VOLUNTEER)
+    @RequiresRole(UserType.ORGANIZATION)
     public ResponseEntity<Void> updateEventInvitation(@PathVariable Long eventInvitationId,
             @Valid @RequestBody EventInvitationCreateDTO eventInvitationCreateDTO) {
         if (eventInvitationId == null || eventInvitationCreateDTO == null) {
@@ -85,7 +85,7 @@ public class EventInvitationController {
     }
 
     @GetMapping("/organization/{organizationId}")
-    @RequiresRole(UserType.VOLUNTEER)
+    @RequiresRole({UserType.VOLUNTEER, UserType.ORGANIZATION})
     public ResponseEntity<List<EventInvitationDTO>> getEventInvitationsByOrganizationId(@PathVariable Long organizationId) {
         if (organizationId == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -25,7 +25,7 @@ import com.DevSprint.voluntrix_backend.services.auth.CurrentUserService;
 import com.DevSprint.voluntrix_backend.utils.ApiResponse;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
@@ -86,8 +86,12 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse<String>> logout(@RequestBody(required = false) RefreshTokenRequestDTO request) {
-        String refreshToken = request != null ? request.getRefreshToken() : null;
+    public ResponseEntity<ApiResponse<String>> logout(HttpServletRequest request) {
+        String refreshToken = request.getHeader("X-Refresh-Token");
+        if (refreshToken == null || refreshToken.trim().isEmpty()) {
+        return ResponseEntity.badRequest()
+            .body(new ApiResponse<>("Logout failed", "Refresh token is required"));
+        }
         authService.logout(refreshToken);
         return ResponseEntity.ok(new ApiResponse<>("Logout successful", "You have been logged out successfully."));
     }

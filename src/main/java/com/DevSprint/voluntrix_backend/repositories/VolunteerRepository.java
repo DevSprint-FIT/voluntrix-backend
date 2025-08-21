@@ -26,4 +26,7 @@ public interface VolunteerRepository extends JpaRepository<VolunteerEntity, Long
     Optional<VolunteerEntity> findByIdWithCategories(@Param("volunteerId") Long volunteerId);
 
     Optional<VolunteerEntity> findByUserHandle(String username);
+
+    @Query("SELECT v.profilePictureUrl FROM VolunteerEntity v WHERE v.user.userId = :userId")
+    Optional<String> findImageUrlByUserId(@Param("userId") Long userId);
 }

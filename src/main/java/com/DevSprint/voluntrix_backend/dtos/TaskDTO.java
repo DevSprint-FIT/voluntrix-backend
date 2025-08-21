@@ -32,7 +32,7 @@ public class TaskDTO {
     
     private TaskStatus taskStatus; // TO_DO, IN_PROGRESS, DONE
     private TaskDifficulty taskDifficulty; // EASY, MEDIUM, HARD, EXTREME
-    private ContributionArea taskCategory; // DESIGN, EDITORIAL, LOGISTICS, PROGRAMMING
+    private ContributionArea taskCategory; // DESIGN, EDITORIAL, LOGISTICS, PROGRAM
     private String resourceUrl;
 
     @JsonFormat(pattern = "yyyy-MM-dd")

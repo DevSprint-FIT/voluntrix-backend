@@ -70,9 +70,11 @@ public class EventApplicationService {
         return entityDTOConvert.toEventApplicationDTO(eventApplicationEntity);
     }
 
-    public void updateEventApplication(EventApplicationCreateDTO eventApplicationCreateDTO, Long volunteerId) {
-        EventApplicationEntity selectedApplication = eventApplicationRepository.findById(volunteerId)
-                .orElseThrow(() -> new EventApplicationNotFoundException("Event application not found with ID: " + volunteerId));
+    public void updateEventApplication(EventApplicationCreateDTO eventApplicationCreateDTO, Long volunteerId,
+            Long eventApplicationId) {
+        EventApplicationEntity selectedApplication = eventApplicationRepository.findById(eventApplicationId)
+                .orElseThrow(() -> new EventApplicationNotFoundException(
+                        "Event application not found with ID: " + eventApplicationId));
 
         EventEntity event = selectedApplication.getEvent();
         VolunteerEntity volunteer = selectedApplication.getVolunteer();
@@ -93,11 +95,10 @@ public class EventApplicationService {
             Optional<EventApplicationEntity> existingApplication = eventApplicationRepository
                     .findByEventAndVolunteer(event, volunteer);
 
-            if (existingApplication != null && !existingApplication.get().getId().equals(volunteerId)) {
+            if (existingApplication.isPresent() && !existingApplication.get().getId().equals(eventApplicationId)) {
                 throw new DuplicateApplicationException(
-                        "Application already exists for this volunteer and event. Volunteer ID:"
-                                + selectedApplication.getVolunteer().getVolunteerId() + " Event ID:"
-                                + selectedApplication.getEvent().getEventId());
+                        "Application already exists for this volunteer and event. Volunteer ID: "
+                                + volunteer.getVolunteerId() + ", Event ID: " + event.getEventId());
             }
 
             selectedApplication.setEvent(event);
